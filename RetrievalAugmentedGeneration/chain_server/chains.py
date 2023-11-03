@@ -3,22 +3,21 @@ import base64
 from pathlib import Path
 from typing import Generator
 
-from llama_index import (
-    Prompt,
-    download_loader
-)
+from llama_index import Prompt, download_loader
 from llama_index.node_parser import SimpleNodeParser
 from llama_index.query_engine import RetrieverQueryEngine
 from llama_index.response.schema import StreamingResponse
+
 from chain_server.utils import (
-    get_embedding_model,
-    get_llm, get_doc_retriever,
-    set_service_context,
-    get_vector_index,
-    get_text_splitter,
+    LimitRetrievedNodesLength,
     get_config,
+    get_doc_retriever,
+    get_llm,
+    get_text_splitter,
+    get_vector_index,
     is_base64_encoded,
-    LimitRetrievedNodesLength)
+    set_service_context,
+)
 
 
 def llm_chain(
@@ -34,7 +33,7 @@ def llm_chain(
     return gen_response
 
 
-def rag_chain(prompt: str, num_tokens: int) -> "TokenGen":
+def rag_chain(prompt: str, num_tokens: int) -> Generator[str, None, None]:
     """Execute a Retrieval Augmented Generation chain using the components defined above."""
     set_service_context()
     get_llm().llm.tokens = num_tokens  # type: ignore

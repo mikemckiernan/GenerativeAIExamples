@@ -127,6 +127,9 @@ services:
       APP_MILVUS_URL: "http://milvus:19530"
       APP_TRITON_SERVERURL: "triton:8001"
       APP_TRITON_MODELNAME: ensemble
+      APP_CONFIG_FILE: ${APP_CONFIG_FILE}
+    volumes:
+      - ${APP_CONFIG_FILE}:${APP_CONFIG_FILE}
     ports:
     - "8081:8081"
     expose:

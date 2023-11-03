@@ -9,14 +9,15 @@ from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel
 
+from chain_server import utils
 from chain_server import chains
 
 # create the FastAPI server
 app = FastAPI()
 # prestage the embedding model
-_ = chains.get_embedding_model()
+_ = utils.get_embedding_model()
 # set the global service context for Llama Index
-chains.set_service_context()
+utils.set_service_context()
 
 
 class Prompt(BaseModel):
@@ -73,7 +74,7 @@ async def generate_answer(prompt: Prompt) -> StreamingResponse:
 @app.post("/documentSearch")
 def document_search(data: DocumentSearch) -> List[Dict[str, Any]]:
     """Search for the most relevant documents for the given search parameters."""
-    retriever = chains.get_doc_retriever(num_nodes=data.num_docs)
+    retriever = utils.get_doc_retriever(num_nodes=data.num_docs)
     nodes = retriever.retrieve(data.content)
     output = []
     for node in nodes:
