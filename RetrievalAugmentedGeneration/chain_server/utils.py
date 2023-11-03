@@ -1,19 +1,20 @@
-import torch
+"""Utility functions for the LLM Chains."""
 import os
 import base64
 from functools import lru_cache
-
 from typing import TYPE_CHECKING, List, Optional
+
+import torch
 from llama_index.indices.postprocessor.types import BaseNodePostprocessor
-from langchain.text_splitter import SentenceTransformersTokenTextSplitter
 from llama_index.schema import MetadataMode
 from llama_index.utils import globals_helper
 from llama_index.vector_stores import MilvusVectorStore
 from llama_index import VectorStoreIndex, ServiceContext, set_global_service_context
 from llama_index.llms import LangChainLLM
 from llama_index import LangchainEmbedding
-from chain_server.trt_llm import TensorRTLLM
+from langchain.text_splitter import SentenceTransformersTokenTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
+from chain_server.trt_llm import TensorRTLLM
 from chain_server import configuration
 
 if TYPE_CHECKING:
@@ -24,6 +25,7 @@ if TYPE_CHECKING:
 
 DEFAULT_MAX_CONTEXT = 1500
 DEFAULT_NUM_TOKENS = 50
+
 
 class LimitRetrievedNodesLength(BaseNodePostprocessor):
     """Llama Index chain filter to limit token lengths."""
@@ -129,9 +131,9 @@ def is_base64_encoded(s: str) -> bool:
 
 
 def get_text_splitter() -> SentenceTransformersTokenTextSplitter:
-    """ Returns the token text splitter instance from langchain """
+    """Return the token text splitter instance from langchain."""
     return SentenceTransformersTokenTextSplitter(
-            model_name=get_config().embeddings.model_name,
-            chunk_size=get_config().text_splitter.chunk_size,
-            chunk_overlap=get_config().text_splitter.chunk_overlap,
-        )
+        model_name=get_config().embeddings.model_name,
+        chunk_size=get_config().text_splitter.chunk_size,
+        chunk_overlap=get_config().text_splitter.chunk_overlap,
+    )
