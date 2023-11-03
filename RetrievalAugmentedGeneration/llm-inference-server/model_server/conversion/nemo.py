@@ -1,0 +1,56 @@
+"""This module contains the code for converting any .nemo formatted model to TRT LLM."""
+import logging
+import os
+from glob import glob
+from tarfile import TarFile
+from typing import IO, cast
+
+import yaml
+
+# pylint: disable-next=import-error
+from nemo.export import TensorRTLLM  # type: ignore
+
+from ..errors import ModelServerException
+from ..model import Model
+from . import ConversionOptions
+
+_LOGGER = logging.getLogger(__name__)
+
+
+def convert(model: Model, _: ConversionOptions) -> None:
+    """Convert a .nemo formatted model."""
+    # find the .nemo model file
+    model_files = glob(os.path.join(model.model_dir, "*.nemo"))
+    if len(model_files) > 1:
+        raise ModelServerException(
+            "More than one NeMo checkpoint found in the model directory. "
+            + "Please only include one NeMo checkpoint file."
+        )
+
+    # verify that the model parallelism matchines the
+    config = {}
+    with TarFile(model_files[0], "r") as archive:
+        try:
+            config_file = cast(IO[bytes], archive.extractfile("./model_config.yaml"))
+        except KeyError:
+            config_file = cast(IO[bytes], archive.extractfile("model_config.yaml"))
+        config = yaml.safe_load(config_file)
+        config_file.close()
+
+        if config.get("tensor_model_parallel_size", 1) != model.world_size:
+            raise ModelServerException(
+                f"The provided model has a tensor parallelism of {config.get('tensor_model_parallel_size', 1)} "
+                + f"and the server has been requested to use {model.world_size} "
+                + "gpus. Please use the NeMo inference container to rezise the parallelism of the model or change "
+                + "the model-server's world size."
+            )
+
+    # run the nemo to trt llm conversion
+    trt_llm_exporter = TensorRTLLM(model_dir=model.engine_dir)
+    _LOGGER.info(".nemo to TensorRT Conversion started. This will take a few minutes.")
+    _LOGGER.info(model.engine_dir)
+    trt_llm_exporter.export(
+        nemo_checkpoint_path=model_files[0],
+        model_type=model.family,
+        n_gpus=model.world_size,
+    )
