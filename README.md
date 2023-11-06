@@ -1,92 +1,122 @@
-# Open chat core
+# Quickstart Developer Guide
+
+## Prerequisites
+Before proceeding with this guide, make sure you meet the following prerequisites:
+
+- You should have at least one NVIDIA GPU. For this guide, we used an A100 data center GPU.
+
+    - NVIDIA driver version 535 or newer. To check the driver version run: ``nvidia-smi --query-gpu=driver_version --format=csv,noheader``.
+    - If you are running multiple GPUs they must all be set to the same mode (ie Compute vs. Display). You can check compute mode for each GPU using
+    ``nvidia-smi -q -d compute``
+
+### Setup the following
+
+- Docker and Docker-Compose are essential. Please follow the [installation instructions](https://docs.docker.com/engine/install/ubuntu/).
+
+        Note:
+            Please do **not** use Docker that is packaged with Ubuntu as the newer version of Docker is required for proper Docker Compose support.
+
+            Make sure your user account is able to execute Docker commands.
 
 
+- NVIDIA Container Toolkit is also required. Refer to the [installation instructions](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html).
 
-## Getting started
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+- NGC Account and API Key
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+    - Please refer to [instructions](https://docs.nvidia.com/ngc/gpu-cloud/ngc-overview/index.html) to create account and generate NGC API key.
+    - Docker login to `nvcr.io` using the following command:
+      ```
+        docker login nvcr.io
+      ```
 
-## Add your files
+- You can download Llama2 Chat Model Weights from [Meta](https://ai.meta.com/resources/models-and-libraries/llama-downloads/) or [HuggingFace](https://huggingface.co/meta-llama/Llama-2-13b-chat-hf/).
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+    **Note for checkpoint downloaded using Meta**:
 
-```
-cd existing_repo
-git remote add origin https://gitlab-master.nvidia.com/chat-labs/framework/open-chat-core.git
-git branch -M main
-git push -uf origin main
-```
+        When downloading model weights from Meta, you can follow the instructions up to the point of downloading the models using ``download.sh``. There is no need to deploy the model using the steps mentioned in the repository. We will use Triton to deploy the model.
 
-## Integrate with your tools
+        Meta will download two additional files, namely tokenizer.model and tokenizer_checklist.chk, outside of the model checkpoint directory. Ensure that you copy these files into the same directory as the model checkpoint directory.
 
-- [ ] [Set up project integrations](https://gitlab-master.nvidia.com/chat-labs/framework/open-chat-core/-/settings/integrations)
 
-## Collaborate with your team
+    **Note**:
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+        In this workflow, we will be leveraging a Llama2 (13B parameters) chat model, which requires 50 GB of GPU memory.  If you prefer to leverage 7B parameter model, this will require 38GB memory. The 70B parameter model initially requires 240GB memory.
+        IMPORTANT:  For this initial version of the workflow, an A100 GPU is supported.
 
-## Test and Deploy
 
-Use the built-in continuous integration in GitLab.
+## Install Guide
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+###  Step 1: Set Environment Variables
+1. Move to deploy directory
+    ```
+    cd deploy
+    ```
+2. Modify ``compose.env`` in the ``deploy`` directory to set your environment variables. The following variables are required.
 
-***
+    ```
+    # full path to the local copy of the model weights
+    export MODEL_DIRECTORY="$HOME/src/Llama-2-13b-chat-hf"
 
-# Editing this README
+    # the architecture of the model. eg: llama
+    export MODEL_ARCHITECTURE="llama"
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+    # the name of the model being used - only for displaying on frontend
+    export MODEL_NAME="llama-2-13b-chat"
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+    # [OPTIONAL] the config file for chain server
+    APP_CONFIG_FILE=/dev/null
+    ```
 
-## Name
-Choose a self-explaining name for your project.
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+### Step 3: Build and Start Containers
+1. Run the following command to build containers.
+    ```
+        source compose.env; docker compose build
+    ```
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+2. Run the following command to start containers.
+    ```
+        source compose.env; docker compose up -d
+    ```
+    > ⚠️ **NOTE**: It will take a few minutes for the containers to come up and may take up to 5 minutes for the Triton server to be ready. Adding the `-d` flag will have the services run in the background. ⚠️ 
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+3. Run ``docker ps -a``. When the containers are ready the output should look similar to the image below.
+    ![Docker Output](./images/docker-output.png "Docker Output Image")
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+### Step 4: Experiment with RAG in JupyterLab
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+This AI Workflow includes Jupyter notebooks which allow you to experiment with RAG.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+1. Using a web browser, type in the following URL to open Jupyter
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+    ``http://host-ip:8888``
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+2. Locate the LLM Streaming Client notebook ``01-llm-streaming-client.ipynb`` which demonstrates how to stream responses from the LLM.
+3. Proceed with the next 4 notebooks:
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+    - Document Question-Answering with LangChain ``02_langchain_simple.ipynb``
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+    - Document Question-Answering with LlamaIndex ``03_llama_index_simple.ipynb``
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+    - Advanced Document Question-Answering with LlamaIndex ``04_llamaindex_hier_node_parser.ipynb``
 
-## License
-For open source projects, say how it is licensed.
+    - Interact with REST FastAPI Server ``05_dataloader.ipynb``
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+### Step 5: Run the Sample Web Application
+A sample chatbot web application is provided in the workflow. Requests to the chat system are wrapped in FastAPI calls.
+
+1. Open the web application at ``http://host-ip:8090``.
+
+2. Type in the following question without using a knowledge base: "How many cores are on the Nvidia Grace superchip?"
+
+    **Note:** the chatbot mentions the chip doesn't exist.
+
+3. To use a knowledge base:
+
+    - Click the **Knowledge Base** tab and upload the file [dataset.zip](./RetrievalAugmentedGeneration/notebook/dataset.zip).
+
+4. Return to **Converse** tab and check **[X] Use knowledge base**.
+
+5. Retype the question:  "How many cores are on the Nvidia Grace superchip?"
+
