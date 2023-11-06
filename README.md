@@ -1,9 +1,9 @@
 # Quickstart Developer Guide
 
 ## Prerequisites
-Before continuing with this guide, ensure the following prerequisites are met:
+Before proceeding with this guide, make sure you meet the following prerequisites:
 
-- At least one NVIDIA GPU. For this guide, we used A100 data center GPU.
+- You should have at least one NVIDIA GPU. For this guide, we used an A100 data center GPU.
 
     - NVIDIA driver version 535 or newer. To check the driver version run: ``nvidia-smi --query-gpu=driver_version --format=csv,noheader``.
     - If you are running multiple GPUs they must all be set to the same mode (ie Compute vs. Display). You can check compute mode for each GPU using
@@ -11,9 +11,7 @@ Before continuing with this guide, ensure the following prerequisites are met:
 
 ### Setup the following
 
-- Docker and Docker-Compose
-
-    - Please refer to [installation instructions](https://docs.docker.com/engine/install/ubuntu/).
+- Docker and Docker-Compose are essential. Please follow the [installation instructions](https://docs.docker.com/engine/install/ubuntu/).
 
         Note:
             Please do **not** use Docker that is packaged with Ubuntu as the newer version of Docker is required for proper Docker Compose support.
@@ -21,15 +19,13 @@ Before continuing with this guide, ensure the following prerequisites are met:
             Make sure your user account is able to execute Docker commands.
 
 
-- NVIDIA Container Toolkit
-
-    - Please refer to [installation instructions](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html).
+- NVIDIA Container Toolkit is also required. Refer to the [installation instructions](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html).
 
 
 - NGC Account and API Key
 
-    - Please refer to [instructions](https://docs.nvidia.com/ngc/gpu-cloud/ngc-overview/index.html).
-    - Docker login to nvcr.io
+    - Please refer to [instructions](https://docs.nvidia.com/ngc/gpu-cloud/ngc-overview/index.html) to create account and generate NGC API key.
+    - Docker login to `nvcr.io` using the following command:
       ```
         docker login nvcr.io
       ```
@@ -38,8 +34,10 @@ Before continuing with this guide, ensure the following prerequisites are met:
 
     **Note for checkpoint downloaded using Meta**:
 
-        When downloading model weights from Meta, you can follow the instructions up to the point of downloading the models using ``download.sh``. You don't need to deploy the model using the steps mentioned in the repository. We will use Triton to deploy the model.
-        Meta will download ``tokenizer.model`` and ``tokenizer_checklist.chk``" outside of the model checkpoint directory. Be sure to copy these files into the same directory as the model checkpoint directory.
+        When downloading model weights from Meta, you can follow the instructions up to the point of downloading the models using ``download.sh``. There is no need to deploy the model using the steps mentioned in the repository. We will use Triton to deploy the model.
+
+        Meta will download two additional files, namely tokenizer.model and tokenizer_checklist.chk, outside of the model checkpoint directory. Ensure that you copy these files into the same directory as the model checkpoint directory.
+
 
     **Note**:
 
