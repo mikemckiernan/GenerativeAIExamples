@@ -38,23 +38,14 @@ Before continuing with this guide, ensure the following prerequisites are met:
 
     - Please refer to [installation instructions](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html).
 
-        Here is the break down of the instruction for ubuntu
-        - [Install Nvidia container toolkit using apt](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#installing-with-apt)
-
-        - [Configure docker for Nvidia toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#configuring-docker)
-
-        - [Verify You Have a CUDA-Capable GPU](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#pre-installation-actions) follow instruction from 2.1 to 2.4
-
-        - [Install Nvidia driver](https://docs.nvidia.com/datacenter/tesla/tesla-installation-notes/index.html#ubuntu-lts)
-
-        - [Enable power setup](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#environment-setup)
-
-        - [Run a sample workload with Docker](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/sample-workload.html#running-a-sample-workload-with-docker) to test nvidia container
-
 
 - NGC Account and API Key
 
     - Please refer to [instructions](https://docs.nvidia.com/ngc/gpu-cloud/ngc-overview/index.html).
+    - Docker login to nvcr.io
+      ```
+        docker login nvcr.io
+      ```
 
 - You can download Llama2 Chat Model Weights from [Meta](https://ai.meta.com/resources/models-and-libraries/llama-downloads/) or [HuggingFace](https://huggingface.co/meta-llama/Llama-2-13b-chat-hf/).
 
@@ -138,7 +129,7 @@ A sample chatbot web application is provided in the workflow. Requests to the ch
 
 3. To use a knowledge base:
 
-    - Click the **Knowledge Base** tab and upload the file [nvlink.pd]().
+    - Click the **Knowledge Base** tab and upload the file [dataset.zip](./RetrievalAugmentedGeneration/notebook/dataset.zip).
 
 4. Return to **Converse** tab and check **[X] Use knowledge base**.
 
