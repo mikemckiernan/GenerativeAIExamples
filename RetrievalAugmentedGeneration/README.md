@@ -1,7 +1,8 @@
 # Retrieval Augmented Generation
 
 ## Project Details
-**Project Goal**: An external reference for a chatbot to question answer off public press releases & tech blogs. Performs document ingestion & Q&A interface using best open models in any cloud or customer datacenter with TRT-LLM for speed with custom LangChain LLM wrapper. 
+**Project Goal**: An external reference for a chatbot to question answer off public press releases & tech blogs. Performs document ingestion & Q&A interface using best open models in any cloud or customer datacenter, leverages the power of GPU-accelerated Milvus for efficient vector storage and retrieval, along with TRT-LLM, to achieve lightning-fast inference speeds with custom LangChain LLM wrapper.
+
 
 ### Architecture
 
