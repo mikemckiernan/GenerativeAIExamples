@@ -1,13 +1,13 @@
 milvus:
   # The configuration of the Milvus connection.
 
-  url: http://localhost:19530
+  url: "http://milvus:19530"
 
 
 triton:
   # The configuration for the Triton server hosting the embedding models.
 
-  server_url: localhost:8001
+  server_url: triton:8001
   # The location of the Triton server hosting the embedding model.
   # Type: str
   # ENV Variable: APP_TRITON_SERVERURL
