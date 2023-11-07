@@ -3,20 +3,21 @@
 ## Project Details
 **Project Goal**: An external reference for a chatbot to question answer off public press releases & tech blogs. Performs document ingestion & Q&A interface using best open models in any cloud or customer datacenter, leverages the power of GPU-accelerated Milvus for efficient vector storage and retrieval, along with TRT-LLM, to achieve lightning-fast inference speeds with custom LangChain LLM wrapper.
 
-
-### Architecture
-
-#### Components
-- **LLM**: Llama2 -- 7b, 13b, and 70b all supported. 13b and 70b generate good responses. Wanted best open-source model available at the time of creation. 
+## Components
+- **LLM**: Llama2 -- 7b, 13b, and 70b all supported. 13b and 70b generate good responses. Wanted best open-source model available at the time of creation.
 - **LLM Backend**: TRT-LLM for speed.
 - **Vector DB**: Milvus because it's GPU accelerated.
-- **Embedding Model**: e5-large-v2 since it appeared to be one of the best embedding model available at the moment. 
+- **Embedding Model**: e5-large-v2 since it appeared to be one of the best embedding model available at the moment.
 - **Framework(s)**: LangChain and LlamaIndex.
 
-![Open chat core Architecture](./images/architecture.png "Architecture of Open chat core")
+This reference workflow uses a variety of components and services to customize and deploy the RAG based chatbot. The following diagram illustrates how they work together. Refer to the [detailed architecture guide](./docs/architecture.md) to understand more about these components and how they are tied together.
 
 
-# Quickstart Developer Guide
+![Diagram](./../RetrievalAugmentedGeneration/images/image3.jpg)
+
+
+# Getting Started
+This section covers step by step guide to setup and try out this example workflow.
 
 ## Prerequisites
 Before proceeding with this guide, make sure you meet the following prerequisites:
@@ -101,7 +102,7 @@ Modify ``compose.env`` in the ``deploy`` directory to set your environment varia
     ```
         source compose.env; docker compose up -d
     ```
-    > ⚠️ **NOTE**: It will take a few minutes for the containers to come up and may take up to 5 minutes for the Triton server to be ready. Adding the `-d` flag will have the services run in the background. ⚠️ 
+    > ⚠️ **NOTE**: It will take a few minutes for the containers to come up and may take up to 5 minutes for the Triton server to be ready. Adding the `-d` flag will have the services run in the background. ⚠️
 
 - Run ``docker ps -a``. When the containers are ready the output should look similar to the image below.
     ![Docker Output](./images/docker-output.png "Docker Output Image")
@@ -118,13 +119,13 @@ This AI Workflow includes Jupyter notebooks which allow you to experiment with R
 
 - Proceed with the next 4 notebooks:
 
-    - Document Question-Answering with LangChain ``02_langchain_simple.ipynb``
+    - [Document Question-Answering with LangChain](../notebooks/02_langchain_simple.ipynb)
 
-    - Document Question-Answering with LlamaIndex ``03_llama_index_simple.ipynb``
+    - [Document Question-Answering with LlamaIndex](../notebooks/03_llama_index_simple.ipynb)
 
-    - Advanced Document Question-Answering with LlamaIndex ``04_llamaindex_hier_node_parser.ipynb``
+    - [Advanced Document Question-Answering with LlamaIndex](../notebooks/04_llamaindex_hier_node_parser.ipynb)
 
-    - Interact with REST FastAPI Server ``05_dataloader.ipynb``
+    - [Interact with REST FastAPI Server](../notebooks/05_dataloader.ipynb)
 
 ### Step 5: Run the Sample Web Application
 A sample chatbot web application is provided in the workflow. Requests to the chat system are wrapped in FastAPI calls.
@@ -143,3 +144,16 @@ A sample chatbot web application is provided in the workflow. Requests to the ch
 
 - Retype the question:  "How many cores are on the Nvidia Grace superchip?"
 
+
+# Learn More
+1. [Architecture Guide](./docs/architecture.md): Detailed explanation of different components and how they are tried up together.
+2. Component Guides: Component specific features are enlisted in these sections.
+   1. [Chain Server](./docs/chat_server.md)
+   2. [NeMo Framework Inference Server](./docs/llm_inference_server.md)
+   3. [Jupyter Server](./docs/jupyter_server.md)
+   4. [Sample frontend](./docs/frontend.md)
+3. [Configuration Guide](./docs/configuration.md): This guide covers different configurations available for this workflow.
+
+# Known Issues
+- Uploading a file with size more than 10 MB may fail due to preset timeouts during the ingestion process.
+- If multiple pdf files are being uploaded the expected time of completion as shown in the UI may not be correct.
