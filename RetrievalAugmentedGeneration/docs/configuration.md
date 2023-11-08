@@ -2,7 +2,7 @@
 
 ### Chain Server Configuration
 
-In this section, we explore the configurations for the Chain Server. Chain server interaction with other components can be controlled by config. Chain Server interacts with components such as the `milvus` vector store and `triton` server, which hosts the Large Language Model (LLM). Additionally, we'll delve into customization options to fine-tune the behavior of the query server. These options include settings for the embedding model, chunk size, and prompts for generating responses.
+In this section, we explore the configurations for the [Chain Server](./chat_server.md). Chain server interaction with other components can be controlled by config. Chain Server interacts with components such as the `milvus` vector store and `triton` server, which hosts the Large Language Model (LLM). Additionally, we'll delve into customization options to fine-tune the behavior of the query server. These options include settings for the embedding model, chunk size, and prompts for generating responses.
 
 You can refer to [sample config](../deploy/config.yaml) to see the structure.
 
@@ -40,7 +40,7 @@ Customize prompts used for generating responses.
 You set path to use this config file to be used by chain server using enviornment variable `APP_CONFIG_FILE`. You can do the same in [compose.env](../deploy/compose.env) and source the file.
 
 ### Configuring docker compose file
-In this section, we will look into the environment variables and parameters that can be configured within the Docker Compose YAML file. Our system comprises multiple services that interact harmoniously to generate responses. These services include Triton, Jupyter Server, Milvus, Query/chain server, and Frontend.
+In this section, we will look into the environment variables and parameters that can be configured within the [Docker Compose](../deploy/docker-compose.yaml) YAML file. Our system comprises multiple services that interact harmoniously to generate responses. These services include Triton, Jupyter Server, Milvus, Query/chain server, and Frontend.
 
 #### Triton Configuration
 The Triton container is used for hosting the Large Language Model (LLM). You can configure the model information using the [compose.env](../deploy/compose.env) file or by setting the corresponding environment variables. Here is a list of environment variables utilized by the Triton server:
