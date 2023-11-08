@@ -66,14 +66,12 @@ Before proceeding with this guide, make sure you meet the following prerequisite
 
 ## Install Guide
 ###  Step 1: Move to deploy directory
-    ```
     cd deploy
-    ```
+
 ###  Step 2: Set Environment Variables
 
 Modify ``compose.env`` in the ``deploy`` directory to set your environment variables. The following variables are required.
 
-    ```
     # full path to the local copy of the model weights
     export MODEL_DIRECTORY="$HOME/src/Llama-2-13b-chat-hf"
 
@@ -85,7 +83,6 @@ Modify ``compose.env`` in the ``deploy`` directory to set your environment varia
 
     # [OPTIONAL] the config file for chain server
     APP_CONFIG_FILE=/dev/null
-    ```
 
 
 ### Step 3: Build and Start Containers
