@@ -11,7 +11,9 @@ This API endpoint allows for several actions:
 - [Running the chain server](#running-the-chain-server)
 
 The API server swagger schema can be visualized at ``host-ip:8081/docs``.
-The following sections describe the API endpoint actions further.
+You can checkout the openapi standard compatible schema for the endpoints supported [here](../chain_server/openapi_schema.json).
+
+The following sections describe the API endpoint actions further with relevant examples.
 
 ### Upload File Endpoint
 **Summary:** Upload a file. This endpoint should accept a post request with the following JSON in the body:
@@ -97,7 +99,6 @@ with requests.post(url, stream=True, json=data, timeout=10) as req:
 -  ``question`` (Type: string) - The question you want to ask.
 - ``context`` (Type: string) - Additional context for the question (optional).
 - ``use_knowledge_base`` (Type: boolean, Default: true) - Whether to use a knowledge base.
-- ``model_name`` (Type: string, Default: "llama2-7B-chat") - The name of the language model to use.
 - ``num_tokens`` (Type: integer, Default: 500) - The maximum number of tokens in the response.
 
 **Responses:**
