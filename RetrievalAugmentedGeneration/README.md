@@ -153,4 +153,3 @@ A sample chatbot web application is provided in the workflow. Requests to the ch
 
 # Known Issues
 - Uploading a file with size more than 10 MB may fail due to preset timeouts during the ingestion process.
-- If multiple pdf files are being uploaded the expected time of completion as shown in the UI may not be correct.

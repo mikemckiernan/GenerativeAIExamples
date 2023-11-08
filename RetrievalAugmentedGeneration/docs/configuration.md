@@ -13,22 +13,23 @@ You can refer to [sample config](../deploy/config.yaml) to see the structure.
 
 #### Triton Configuration
 LLM Inference server hosts the Large Language Model (LLM) with triton backend.
- 
+
     server_url: Specify the url of the LLM Inference Server.
 
     model_name: Provide the name of the model hosted on the Triton server.
+    Note: Changing the value of this field may need code changes.
 
 #### Text Splitter Configuration
 This section covers the settings for the Text Splitter component.
 
     chunk_size: Define the size at which text should be split before being converted into embeddings.
- 
+
     chunk_overlap: Specify the overlap between two consecutive text chunks to prevent loss of context.
 
 #### Embeddings Configuration
 The Embeddings section contains information required for generating embeddings.
 
-    model_name: Indicate the name of the model used to generate embeddings. 
+    model_name: Indicate the name of the model used to generate embeddings.
     Note: Note that this may also necessitate changes in the model's dimensions, which can be adjusted in the chain_server/utils.py file.
 
 #### Prompts Configuration

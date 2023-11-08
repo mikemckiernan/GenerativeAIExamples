@@ -27,5 +27,7 @@ If the web frontend needs to be stood up manually for development purposes, run 
 
 - Open the web application at ``http://host-ip:8090``
 
+Note:
+- If multiple pdf files are being uploaded the expected time of completion as shown in the UI may not be correct.
 
 
