@@ -130,9 +130,11 @@ class TritonPythonModel:
 
     def _id_to_token(self, token_id):
         # handle special tokens (end of string, unknown, etc)
-        special_token = self.tokenizer.added_tokens_decoder.get(token_id)
-        if special_token:
-            return special_token.content
+        try:
+            special_token_index = self.tokenizer.all_special_ids.index(token_id)
+            return self.tokenizer.all_special_tokens[special_token_index]
+        except ValueError:
+            pass
 
         # handle typical tokens
         tokens = self.tokenizer.convert_ids_to_tokens(token_id)

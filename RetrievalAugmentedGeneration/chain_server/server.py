@@ -22,7 +22,7 @@ from typing import Any, Dict, List
 
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse, StreamingResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from chain_server import utils
 from chain_server import chains
@@ -38,17 +38,17 @@ utils.set_service_context()
 class Prompt(BaseModel):
     """Definition of the Prompt API data type."""
 
-    question: str
-    context: str
-    use_knowledge_base: bool = True
-    num_tokens: int = 50
+    question: str = Field(description="The input query/prompt to the pipeline.")
+    context: str = Field(description="Additional context for the question (optional)")
+    use_knowledge_base: bool = Field(description="Whether to use a knowledge base", default=True)
+    num_tokens: int = Field(description="The maximum number of tokens in the response.", default=50)
 
 
 class DocumentSearch(BaseModel):
     """Definition of the DocumentSearch API data type."""
 
-    content: str
-    num_docs: int = 4
+    content: str = Field(description="The content or keywords to search for within documents.")
+    num_docs: int = Field(description="The maximum number of documents to return in the response.", default=4)
 
 
 @app.post("/uploadDocument")
