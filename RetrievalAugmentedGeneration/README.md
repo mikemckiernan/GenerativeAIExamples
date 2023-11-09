@@ -150,6 +150,7 @@ A sample chatbot web application is provided in the workflow. Requests to the ch
    3. [Jupyter Server](./docs/jupyter_server.md)
    4. [Sample frontend](./docs/frontend.md)
 3. [Configuration Guide](./docs/configuration.md): This guide covers different configurations available for this workflow.
+4. [Support Matrix](./docs/support_matrix.md): This covers GPU, CPU, Memory and Storage requirements for deploying this workflow.
 
 # Known Issues
 - Uploading a file with size more than 10 MB may fail due to preset timeouts during the ingestion process.

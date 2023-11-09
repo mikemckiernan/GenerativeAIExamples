@@ -28,15 +28,10 @@ NVIDIA AI Components
 ======================
 This reference workflow uses a variety of NVIDIA AI components to customize and deploy the RAG-based chatbot example.
 
-   - NVIDIA NeMo framework
    - NVIDIA TensorRT-LLM
    - NVIDIA NeMo Inference Server
 
 The following sections describe these NVIDIA AI components further.
-
-**NVIDIA NeMo Framework**
-
-As discussed, using a foundation model out of the box can be challenging since models are trained to handle a wide variety of tasks but may not contain domain/enterprise-specific knowledge. NVIDIA NeMo framework helps solve this; it is an end-to-end, cloud-native framework to build, customize, and deploy generative AI models anywhere. The framework includes training and inferencing software, guardrailing, and data curation tools, and supports state-of-the art community and NVIDIA pretrained LLMs, offering enterprises an easy, cost-effective, and fast way to adopt generative AI.
 
 **NVIDIA TensorRT-LLM Optimization**
 
@@ -48,7 +43,7 @@ In this workflow, we will be leveraging a Llama 2 (13B parameters) chat model. W
 With NeMo Framework Inference Server, the optimized LLM can be deployed for high-performance, cost-effective, and low-latency inference. NVIDIA NGC is used as model storage in this workflow, but you are free to choose different model storage solutions like MLFlow or AWS SageMaker.
 The Triton Inference Server uses models stored in a model repository, available locally to serve inference requests. Once they are available in Triton, inference requests are sent from a client application. Python and C++ libraries provide APIs to simplify communication. Clients send HTTP/REST requests directly to Triton using HTTP/REST or gRPC protocols.
 
-Within this workflow, the Llama2 LLM was optimized using NVIDIA TensorRT for LLMs (TRT-LLM) which accelerates and maximizes inference performance on the latest LLMs. This was automated in this workflow with this example.
+Within this workflow, the Llama2 LLM was optimized using NVIDIA TensorRT for LLMs (TRT-LLM) which accelerates and maximizes inference performance on the latest LLMs.
 
 Inference Pipeline
 ====================
@@ -79,17 +74,9 @@ An additional method of customization in the AI Workflow inference pipeline is v
 
 **Triton Model Server**
 
-NVIDIA NGC is used as model storage in this workflow, but you are free to choose different model storage solutions like MLFlow or AWS SageMaker.
 The Triton Inference Server uses models stored in a model repository, available locally to serve inference requests. Once they are available in Triton, inference requests are sent from a client application. Python and C++ libraries provide APIs to simplify communication. Clients send HTTP/REST requests directly to Triton using HTTP/REST or gRPC protocols.
 
-Within this workflow, the Llama2 LLM was optimized using NVIDIA TensorRT for LLMs (TRT-LLM) which accelerates and maximizes inference performance on the latest LLMs. This was automated in this workflow with this example.
-
-
-*Note::*
-```
-Be sure to update the values in the `volumes` flag so that your mount point is set appropriately in the docker compose file.
-The llama2 weights path ends in a pattern like ``/llama-2-13b-chat`` and you **must** mount the weights to ``/model``.
-```
+Within this workflow, the Llama2 LLM was optimized using NVIDIA TensorRT for LLMs (TRT-LLM) which accelerates and maximizes inference performance on the latest LLMs.
 
 **Vector DB**
 
