@@ -15,7 +15,7 @@ This reference workflow uses a variety of components and services to customize a
 
 ![Diagram](./../RetrievalAugmentedGeneration/images/image3.jpg)
 
-*Note:* 
+*Note:*
 We've used [Llama2](https://ai.meta.com/llama/) and [e5-large-v2](https://huggingface.co/intfloat/e5-large-v2) models as example defaults in this workflow, you should ensure that both the LLM and embedding model are appropriate for your use case, and validate that they are secure and have not been tampered with prior to use.
 
 # Getting Started
@@ -29,6 +29,8 @@ Before proceeding with this guide, make sure you meet the following prerequisite
     - NVIDIA driver version 535 or newer. To check the driver version run: ``nvidia-smi --query-gpu=driver_version --format=csv,noheader``.
     - If you are running multiple GPUs they must all be set to the same mode (ie Compute vs. Display). You can check compute mode for each GPU using
     ``nvidia-smi -q -d compute``
+
+- You should have access to [NeMo Framework](https://developer.nvidia.com/nemo-framework) to download the container used for deploying the Large Language Model. To access nemo-framework inference container please register at https://developer.nvidia.com/nemo-framework. After submitting a form you will be automatically accepted.
 
 ### Setup the following
 
