@@ -37,7 +37,6 @@ The response should be in JSON form. It should be a dictionary with a confirmati
 **Request:**
 
 - **Content-Type:** multipart/form-data
-- **Schema:** ``Body_upload_file_uploadDocument_post``
 - **Required:** Yes
 
 **Request Body Parameters:**
@@ -86,12 +85,9 @@ with requests.post(url, stream=True, json=data, timeout=10) as req:
 
 **HTTP Method:** POST
 
-**Operation ID:** ``generate_answer_generate_post``
-
 **Request:**
 
 - **Content-Type:** application/json
-- **Schema:** ``Prompt``
 - **Required:** Yes
 
 **Request Body Parameters:**
@@ -139,12 +135,9 @@ The response should in JSON form. It should be a list of dictionaries containing
 **Endpoint:** ``/documentSearch``
 **HTTP Method:** POST
 
-**Operation ID:** ``document_search_documentSearch_post``
-
 **Request:**
 
 - **Content-Type:** application/json
-- **Schema:** ``DocumentSearch``
 - **Required:** Yes
 
 **Request Body Parameters:**

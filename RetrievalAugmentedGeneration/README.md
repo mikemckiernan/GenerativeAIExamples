@@ -1,11 +1,11 @@
 # Retrieval Augmented Generation
 
 ## Project Details
-**Project Goal**: An external reference for a chatbot to question answer off public press releases & tech blogs. Performs document ingestion & Q&A interface using best open models in any cloud or customer datacenter, leverages the power of GPU-accelerated Milvus for efficient vector storage and retrieval, along with TRT-LLM, to achieve lightning-fast inference speeds with custom LangChain LLM wrapper.
+**Project Goal**: A reference Retrieval Augmented Generation(RAG) workflow for a chatbot to question answer off public press releases & tech blogs. It performs document ingestion & Q&A interface using open source models deployed on any cloud or customer datacenter, leverages the power of GPU-accelerated Milvus for efficient vector storage and retrieval, along with TRT-LLM, to achieve lightning-fast inference speeds with custom LangChain LLM wrapper.
 
 ## Components
-- **LLM**: [Llama2](https://ai.meta.com/llama/) - 7b, 13b, and 70b all supported. 13b and 70b generate good responses. Wanted best open-source model available at the time of creation.
-- **LLM Backend**: Nemo framework inference container with TRT-LLM backend for speed.
+- **LLM**: [Llama2](https://ai.meta.com/llama/) - 7b, 13b, and 70b all supported. 13b and 70b generate good responses.
+- **LLM Backend**: Nemo framework inference container with Triton inference server & TRT-LLM backend for speed.
 - **Vector DB**: Milvus because it's GPU accelerated.
 - **Embedding Model**: [e5-large-v2](https://huggingface.co/intfloat/e5-large-v2) since it is one of the best embedding model available at the moment.
 - **Framework(s)**: LangChain and LlamaIndex.
@@ -65,7 +65,7 @@ Before proceeding with this guide, make sure you meet the following prerequisite
     **Note**:
 
         In this workflow, we will be leveraging a Llama2 (13B parameters) chat model, which requires 50 GB of GPU memory.  If you prefer to leverage 7B parameter model, this will require 38GB memory. The 70B parameter model initially requires 240GB memory.
-        IMPORTANT:  For this initial version of the workflow, an A100 GPU is supported.
+        IMPORTANT:  For this initial version of the workflow, A100 and H100 GPUs are supported.
 
 
 ## Install Guide
@@ -116,17 +116,17 @@ This AI Workflow includes Jupyter notebooks which allow you to experiment with R
 
     ``http://host-ip:8888``
 
-- Locate the LLM Streaming Client notebook ``01-llm-streaming-client.ipynb`` which demonstrates how to stream responses from the LLM.
+- Locate the [LLM Streaming Client notebook](notebooks/01-llm-streaming-client.ipynb) which demonstrates how to stream responses from the LLM.
 
 - Proceed with the next 4 notebooks:
 
-    - [Document Question-Answering with LangChain](../notebooks/02_langchain_simple.ipynb)
+    - [Document Question-Answering with LangChain](notebooks/02_langchain_simple.ipynb)
 
-    - [Document Question-Answering with LlamaIndex](../notebooks/03_llama_index_simple.ipynb)
+    - [Document Question-Answering with LlamaIndex](notebooks/03_llama_index_simple.ipynb)
 
-    - [Advanced Document Question-Answering with LlamaIndex](../notebooks/04_llamaindex_hier_node_parser.ipynb)
+    - [Advanced Document Question-Answering with LlamaIndex](notebooks/04_llamaindex_hier_node_parser.ipynb)
 
-    - [Interact with REST FastAPI Server](../notebooks/05_dataloader.ipynb)
+    - [Interact with REST FastAPI Server](notebooks/05_dataloader.ipynb)
 
 ### Step 5: Run the Sample Web Application
 A sample chatbot web application is provided in the workflow. Requests to the chat system are wrapped in FastAPI calls.

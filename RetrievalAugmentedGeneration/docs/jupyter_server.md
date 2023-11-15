@@ -13,7 +13,7 @@ This notebook demonstrates how to use LangChain to build a chatbot that referenc
 
 3. [**Document Question-Answering with LlamaIndex**](../notebooks/03_llama_index_simple.ipynb)
 
-This notebook demonstrates how to use LlamaIndex to build a chatbot that references a custom knowledge-base. It contains the same functionality as this notebook before, but uses some LlamaIndex components instead of LangChain components. It also shows how the two frameworks can be used together.
+This notebook demonstrates how to use LlamaIndex to build a chatbot that references a custom knowledge-base. It contains the same functionality as the notebook before, but uses some LlamaIndex components instead of LangChain components. It also shows how the two frameworks can be used together.
 
 4. [**Advanced Document Question-Answering with LlamaIndex**](../notebooks/04_llamaindex_hier_node_parser.ipynb)
 
