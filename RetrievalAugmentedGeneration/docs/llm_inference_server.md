@@ -28,4 +28,4 @@ To convert Llama2 to TensorRT and host it on Triton Model Server for development
 
 **Note for checkpoint downloaded using Meta**:
 
-    When downloading model weights from Meta, you can follow the instructions up to the point of downloading the models using ``download.sh``. Meta will download two additional files, namely tokenizer.model and tokenizer_checklist.chk, outside of the model checkpoint directory. Ensure that you copy these files into the same directory as the model checkpoint directory.
+*When downloading model weights from Meta, you can follow the instructions up to the point of downloading the models using ``download.sh``. Meta will download two additional files, namely tokenizer.model and tokenizer_checklist.chk, outside of the model checkpoint directory. Ensure that you copy these files into the same directory as the model checkpoint directory.*

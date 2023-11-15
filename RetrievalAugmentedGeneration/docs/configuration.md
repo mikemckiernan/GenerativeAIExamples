@@ -71,4 +71,4 @@ The Frontend component is the UI server that interacts with the Query/Chain Serv
 
     APP_SERVERURL: Indicates the URL where the Query/Chain Server is hosted.
     APP_SERVERPORT: Specifies the port on which the Query/Chain Server operates.
-    APP_MODELNAME: Neme of the Large Language Model utilized for deployment. This information is for display purposes only and does not affect the inference process.
+    APP_MODELNAME: Name of the Large Language Model utilized for deployment. This information is for display purposes only and does not affect the inference process.

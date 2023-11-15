@@ -28,8 +28,8 @@ NVIDIA AI Components
 ======================
 This reference workflow uses a variety of NVIDIA AI components to customize and deploy the RAG-based chatbot example.
 
-   - NVIDIA TensorRT-LLM
-   - NVIDIA NeMo Inference Server
+   - [NVIDIA TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)
+   - [NVIDIA NeMo Inference Container](https://developer.nvidia.com/nemo)
 
 The following sections describe these NVIDIA AI components further.
 
@@ -38,12 +38,9 @@ The following sections describe these NVIDIA AI components further.
 A LLM can be optimized using TensorRT-LLM. NVIDIA NeMo uses TensorRT for LLMs (TensorRT-LLM), for deployment which accelerates and maximizes inference performance on the latest LLMs.
 In this workflow, we will be leveraging a Llama 2 (13B parameters) chat model. We will convert the foundational model to TensorRT format using TensorRT-LLM for optimized inference.
 
-**NVIDIA NeMo Framework Inference Server**
+**NVIDIA NeMo Framework Inference Container**
 
-With NeMo Framework Inference Server, the optimized LLM can be deployed for high-performance, cost-effective, and low-latency inference. NVIDIA NGC is used as model storage in this workflow, but you are free to choose different model storage solutions like MLFlow or AWS SageMaker.
-The Triton Inference Server uses models stored in a model repository, available locally to serve inference requests. Once they are available in Triton, inference requests are sent from a client application. Python and C++ libraries provide APIs to simplify communication. Clients send HTTP/REST requests directly to Triton using HTTP/REST or gRPC protocols.
-
-Within this workflow, the Llama2 LLM was optimized using NVIDIA TensorRT for LLMs (TRT-LLM) which accelerates and maximizes inference performance on the latest LLMs.
+With NeMo Framework Inference Container, the optimized LLM can be deployed for high-performance, cost-effective, and low-latency inference. NeMo Framework Inference Container contains modules and scripts to help exporting LLM models to [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM) and deploying them to [Triton Inference Server](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/index.html) with easy-to-use APIs.
 
 Inference Pipeline
 ====================
@@ -72,7 +69,7 @@ A sample chatbot web application is provided in the workflow so that you can tes
 An additional method of customization in the AI Workflow inference pipeline is via a prompt template. A prompt template is a pre-defined recipe for generating prompts for language models. They may contain instructions, few-shot examples, and context appropriate for a given task. In our example, we prompt our model to generate safe and polite responses.
 
 
-**Triton Model Server**
+**Triton Inference Server**
 
 The Triton Inference Server uses models stored in a model repository, available locally to serve inference requests. Once they are available in Triton, inference requests are sent from a client application. Python and C++ libraries provide APIs to simplify communication. Clients send HTTP/REST requests directly to Triton using HTTP/REST or gRPC protocols.
 
@@ -83,7 +80,5 @@ Within this workflow, the Llama2 LLM was optimized using NVIDIA TensorRT for LLM
 Milvus is an open-source vector database built to power embedding similarity search and AI applications. It makes unstructured data from API calls, PDFs, and other documents more accessible by storing them as embeddings.
 When content from the knowledge base is passed to an embedding model (e5-large-v2), it converts the content to vectors (referred to as “embeddings”). These embeddings are stored in a vector database. The vector DB used in this workflow is Milvus. Milvus is an open-source vector database capable of NVIDIA GPU accelerated vector searches.
 
-*Note::*
-```
-If needed, see Milvus's [documentation](https://milvus.io/docs/install_standalone-docker.md/) for how a Docker Compose file can be configured for Milvus.
-```
+*Note::
+If needed, see Milvus's [documentation](https://milvus.io/docs/install_standalone-docker.md/) for how a Docker Compose file can be configured for Milvus.*
