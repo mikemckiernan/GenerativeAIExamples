@@ -29,7 +29,7 @@ from llama_index.llms import LangChainLLM
 from llama_index import LangchainEmbedding
 from langchain.text_splitter import SentenceTransformersTokenTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
-from chain_server.trt_llm import TensorRTLLM
+from Langchain.llms.trt_llm import TritonTensorRTLLM
 from chain_server import configuration
 
 if TYPE_CHECKING:
@@ -104,7 +104,7 @@ def get_doc_retriever(num_nodes: int = 4) -> "BaseRetriever":
 def get_llm() -> LangChainLLM:
     """Create the LLM connection."""
     settings = get_config()
-    trtllm = TensorRTLLM(  # type: ignore
+    trtllm = TritonTensorRTLLM(  # type: ignore
         server_url=settings.triton.server_url,
         model_name=settings.triton.model_name,
         tokens=DEFAULT_NUM_TOKENS,

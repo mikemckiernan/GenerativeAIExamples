@@ -48,7 +48,7 @@ RANDOM_SEED = 0
 
 if USE_LANGCHAIN:
     # pylint: disable-next=too-few-public-methods  # Interface is defined by LangChain
-    class TensorRTLLM(LLM):  # LLM class not typed in langchain
+    class TritonTensorRTLLM(LLM):  # LLM class not typed in langchain
         """A custom Langchain LLM class that integrates with TRTLLM triton models.
 
         Arguments:
