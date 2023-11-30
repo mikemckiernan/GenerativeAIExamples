@@ -3,7 +3,7 @@ name: docs-build
 on:
   pull_request:
     branches: [ main ]
-    types: [ opened, synchronize ]
+    types: [ opened, synchronize, closed ]
 
   push:
     branches: [ main ]
@@ -47,7 +47,11 @@ jobs:
           diff=$(git diff --name-only HEAD..${first_commit})
           if [[ "${diff}" =~ docs/Dockerfile ]] && [[ "${{ github.event_name }}" == 'pull_request' ]]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
-            echo "image=${REGISTRY}/${IMAGE_NAME}:${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
+            if [[ "${{ github.event.pull_request.merged }}" == 'true' ]]; then
+              echo "image=${REGISTRY}/${IMAGE_NAME}:${TAG}" >> "$GITHUB_OUTPUT"
+            else
+              echo "image=${REGISTRY}/${IMAGE_NAME}:${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
+            fi
           else
             echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "image=${REGISTRY}/${IMAGE_NAME}:${TAG}" >> "$GITHUB_OUTPUT"
@@ -109,7 +113,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: html-build-artifact
-          path: docs/_build/
+          path: docs/_build/docs/
           if-no-files-found: error
           retention-days: 1
       - name: Store PR information
