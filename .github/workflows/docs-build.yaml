@@ -15,6 +15,7 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME_RAW: ${{ github.repository }}-docs
   TAG: 0.1.0
+  GH_TOKEN: ${{ github.token }}
 
 defaults:
   run:
@@ -36,22 +37,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
       - name: Lowercase the repo name
         run: |
           echo "IMAGE_NAME=${IMAGE_NAME_RAW,,}" >> "$GITHUB_ENV"
       - name: Detect change
         id: change
         run: |
-          first_commit=$(git rev-list HEAD | tail -n 1)
-          diff=$(git diff --name-only HEAD..${first_commit})
+          def_branch=$(gh api "repos/${GITHUB_REPOSITORY}" --jq ".default_branch")
+          diff=$(git diff --name-only HEAD.."origin/${def_branch}")
           if [[ "${diff}" =~ docs/Dockerfile ]] && [[ "${{ github.event_name }}" == 'pull_request' ]]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
+
             if [[ "${{ github.event.pull_request.merged }}" == 'true' ]]; then
               echo "image=${REGISTRY}/${IMAGE_NAME}:${TAG}" >> "$GITHUB_OUTPUT"
             else
               echo "image=${REGISTRY}/${IMAGE_NAME}:${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
             fi
+          elif ! docker manifest inspect "${REGISTRY}/${IMAGE_NAME}" 2>&1 > /dev/null; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "image=${REGISTRY}/${IMAGE_NAME}:${TAG}" >> "$GITHUB_OUTPUT"
           else
             echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "image=${REGISTRY}/${IMAGE_NAME}:${TAG}" >> "$GITHUB_OUTPUT"
