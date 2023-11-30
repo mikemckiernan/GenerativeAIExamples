@@ -23,7 +23,7 @@ from llama_index.node_parser import SimpleNodeParser
 from llama_index.query_engine import RetrieverQueryEngine
 from llama_index.response.schema import StreamingResponse
 
-from chain_server.utils import (
+from RetrievalAugmentedGeneration.common.utils import (
     LimitRetrievedNodesLength,
     get_config,
     get_doc_retriever,

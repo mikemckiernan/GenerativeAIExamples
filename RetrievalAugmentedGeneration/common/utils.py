@@ -29,14 +29,14 @@ from llama_index.llms import LangChainLLM
 from llama_index import LangchainEmbedding
 from langchain.text_splitter import SentenceTransformersTokenTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
-from Langchain.llms.trt_llm import TritonTensorRTLLM
-from chain_server import configuration
+from integrations.langchain.llms.triton_trt_llm import TensorRTLLM
+from RetrievalAugmentedGeneration.common import configuration
 
 if TYPE_CHECKING:
     from llama_index.indices.base_retriever import BaseRetriever
     from llama_index.indices.query.schema import QueryBundle
     from llama_index.schema import NodeWithScore
-    from chain_server.configuration_wizard import ConfigWizard
+    from RetrievalAugmentedGeneration.common.configuration_wizard import ConfigWizard
 
 DEFAULT_MAX_CONTEXT = 1500
 DEFAULT_NUM_TOKENS = 50
@@ -46,7 +46,7 @@ class LimitRetrievedNodesLength(BaseNodePostprocessor):
     """Llama Index chain filter to limit token lengths."""
 
     def postprocess_nodes(
-        self, nodes: List["NodeWithScore"], query_bundle: Optional["QueryBundle"] = None
+        self, nodes: List["NodeWithScore"] = [], query_bundle: Optional["QueryBundle"] = None
     ) -> List["NodeWithScore"]:
         """Filter function."""
         included_nodes = []
@@ -104,7 +104,7 @@ def get_doc_retriever(num_nodes: int = 4) -> "BaseRetriever":
 def get_llm() -> LangChainLLM:
     """Create the LLM connection."""
     settings = get_config()
-    trtllm = TritonTensorRTLLM(  # type: ignore
+    trtllm = TensorRTLLM(  # type: ignore
         server_url=settings.triton.server_url,
         model_name=settings.triton.model_name,
         tokens=DEFAULT_NUM_TOKENS,

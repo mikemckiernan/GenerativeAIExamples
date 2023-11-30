@@ -5,18 +5,19 @@ FROM python:3.10-slim
 WORKDIR /app
 
 #COPY notebooks
-COPY notebooks/*.ipynb .
+COPY ./notebooks/*.ipynb .
 
 RUN mkdir -p /app/imgs
 
-COPY notebooks/dataset.zip .
+COPY ./notebooks/dataset.zip .
 
-COPY notebooks/imgs/* imgs/
+COPY ./notebooks/imgs/* imgs/
 
-COPY chain_server/trt_llm.py .
+COPY ./integrations/langchain/llms/triton_trt_llm.py .
 
-COPY notebooks/requirements.txt .
-#Run pip dependencies
+COPY ./notebooks/requirements.txt .
+
+# Run pip dependencies
 RUN pip3 install -r requirements.txt
 
 RUN apt-get update && apt-get install -y unzip wget git libgl1-mesa-glx libglib2.0-0
