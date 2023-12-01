@@ -14,7 +14,7 @@
 # limitations under the License.
 
 """The definition of the application configuration."""
-from chain_server.configuration_wizard import ConfigWizard, configclass, configfield
+from RetrievalAugmentedGeneration.common.configuration_wizard import ConfigWizard, configclass, configfield
 
 
 @configclass
