@@ -9,7 +9,7 @@ milvus:
 triton:
   # The configuration for the Triton server hosting the embedding models.
 
-  server_url: triton:8001
+  server_url: triton:9999
   # The location of the Triton server hosting the embedding model.
   # Type: str
   # ENV Variable: APP_TRITON_SERVERURL

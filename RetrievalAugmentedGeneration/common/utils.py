@@ -30,6 +30,7 @@ from llama_index import LangchainEmbedding
 from langchain.text_splitter import SentenceTransformersTokenTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
 from integrations.langchain.llms.triton_trt_llm import TensorRTLLM
+from integrations.langchain.llms.nemo_infer import NemoInfer
 from RetrievalAugmentedGeneration.common import configuration
 
 if TYPE_CHECKING:
@@ -46,7 +47,9 @@ class LimitRetrievedNodesLength(BaseNodePostprocessor):
     """Llama Index chain filter to limit token lengths."""
 
     def postprocess_nodes(
-        self, nodes: List["NodeWithScore"] = [], query_bundle: Optional["QueryBundle"] = None
+        self,
+        nodes: List["NodeWithScore"] = [],
+        query_bundle: Optional["QueryBundle"] = None,
     ) -> List["NodeWithScore"]:
         """Filter function."""
         included_nodes = []
@@ -104,12 +107,14 @@ def get_doc_retriever(num_nodes: int = 4) -> "BaseRetriever":
 def get_llm() -> LangChainLLM:
     """Create the LLM connection."""
     settings = get_config()
-    trtllm = TensorRTLLM(  # type: ignore
-        server_url=settings.triton.server_url,
-        model_name=settings.triton.model_name,
+
+    llm = NemoInfer(
+        server_url=f"http://{settings.triton.server_url}/v1/completions",
+        model=settings.triton.model_name,
         tokens=DEFAULT_NUM_TOKENS,
     )
-    return LangChainLLM(llm=trtllm)
+
+    return LangChainLLM(llm=llm)
 
 
 @lru_cache

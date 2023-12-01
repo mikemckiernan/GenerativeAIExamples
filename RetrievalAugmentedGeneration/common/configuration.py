@@ -41,12 +41,12 @@ class TritonConfig(ConfigWizard):
 
     server_url: str = configfield(
         "server_url",
-        default="localhost:8001",
+        default="localhost:9999",
         help_txt="The location of the Triton server hosting the llm model.",
     )
     model_name: str = configfield(
         "model_name",
-        default="ensemble",
+        default="Llama-2-13b-chat-hf",
         help_txt="The name of the hosted model.",
     )
 
