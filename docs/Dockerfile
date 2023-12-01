@@ -10,7 +10,6 @@ ENV PM_PACKAGES_ROOT=/var/tmp/packman
 COPY . /work
 
 RUN /work/repo docs || true
-
 RUN /work/tools/packman/python.sh -m pip install --no-cache-dir --no-deps -U \
    -t /tmp/extension \
    sphinx-copybutton
