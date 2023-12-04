@@ -10,10 +10,10 @@
 - **Embedding Model**: [e5-large-v2](https://huggingface.co/intfloat/e5-large-v2) since it is one of the best embedding model available at the moment.
 - **Framework(s)**: LangChain and LlamaIndex.
 
-This reference workflow uses a variety of components and services to customize and deploy the RAG based chatbot. The following diagram illustrates how they work together. Refer to the [detailed architecture guide](./docs/architecture.md) to understand more about these components and how they are tied together.
+This reference workflow uses a variety of components and services to customize and deploy the RAG based chatbot. The following diagram illustrates how they work together. Refer to the [detailed architecture guide](../docs/rag/architecture.md) to understand more about these components and how they are tied together.
 
 
-![Diagram](./../RetrievalAugmentedGeneration/images/image3.jpg)
+![Diagram](../docs/rag/images/image3.jpg)
 
 *Note:*
 We've used [Llama2](https://ai.meta.com/llama/) and [e5-large-v2](https://huggingface.co/intfloat/e5-large-v2) models as example defaults in this workflow, you should ensure that both the LLM and embedding model are appropriate for your use case, and validate that they are secure and have not been tampered with prior to use.
@@ -69,12 +69,12 @@ Before proceeding with this guide, make sure you meet the following prerequisite
 
 
 ## Install Guide
-###  Step 1: Move to deploy directory
-    cd deploy
 
-###  Step 2: Set Environment Variables
+Follow the below steps from the root of this project to setup the RAG example.
 
-Modify ``compose.env`` in the ``deploy`` directory to set your environment variables. The following variables are required.
+###  Step 1: Set Environment Variables
+
+Modify ``compose.env`` in the ``deploy/compose`` directory to set your environment variables. The following variables are required.
 
     # full path to the local copy of the model weights
     export MODEL_DIRECTORY="$HOME/src/Llama-2-13b-chat-hf"
@@ -89,26 +89,26 @@ Modify ``compose.env`` in the ``deploy`` directory to set your environment varia
     APP_CONFIG_FILE=/dev/null
 
 
-### Step 3: Build and Start Containers
+### Step 2: Build and Start Containers
 - Pull lfs files. This will pull large files from repository.
     ```
         git lfs pull
     ```
 - Run the following command to build containers.
     ```
-        source compose.env; docker compose build
+        source deploy/compose/compose.env;  docker compose -f deploy/compose/developer-rag-compose.yaml build
     ```
 
 - Run the following command to start containers.
     ```
-        source compose.env; docker compose up -d
+        source deploy/compose/compose.env; docker compose -f deploy/compose/developer-rag-compose.yaml up -d
     ```
     > ⚠️ **NOTE**: It will take a few minutes for the containers to come up and may take up to 5 minutes for the Triton server to be ready. Adding the `-d` flag will have the services run in the background. ⚠️
 
 - Run ``docker ps -a``. When the containers are ready the output should look similar to the image below.
-    ![Docker Output](./images/docker-output.png "Docker Output Image")
+    ![Docker Output](../docs/rag/images/docker-output.png "Docker Output Image")
 
-### Step 4: Experiment with RAG in JupyterLab
+### Step 3: Experiment with RAG in JupyterLab
 
 This AI Workflow includes Jupyter notebooks which allow you to experiment with RAG.
 
@@ -116,19 +116,19 @@ This AI Workflow includes Jupyter notebooks which allow you to experiment with R
 
     ``http://host-ip:8888``
 
-- Locate the [LLM Streaming Client notebook](notebooks/01-llm-streaming-client.ipynb) which demonstrates how to stream responses from the LLM.
+- Locate the [LLM Streaming Client notebook](../notebooks/01-llm-streaming-client.ipynb) which demonstrates how to stream responses from the LLM.
 
 - Proceed with the next 4 notebooks:
 
-    - [Document Question-Answering with LangChain](notebooks/02_langchain_simple.ipynb)
+    - [Document Question-Answering with LangChain](../notebooks/02_langchain_simple.ipynb)
 
-    - [Document Question-Answering with LlamaIndex](notebooks/03_llama_index_simple.ipynb)
+    - [Document Question-Answering with LlamaIndex](../notebooks/03_llama_index_simple.ipynb)
 
-    - [Advanced Document Question-Answering with LlamaIndex](notebooks/04_llamaindex_hier_node_parser.ipynb)
+    - [Advanced Document Question-Answering with LlamaIndex](../notebooks/04_llamaindex_hier_node_parser.ipynb)
 
-    - [Interact with REST FastAPI Server](notebooks/05_dataloader.ipynb)
+    - [Interact with REST FastAPI Server](../notebooks/05_dataloader.ipynb)
 
-### Step 5: Run the Sample Web Application
+### Step 4: Run the Sample Web Application
 A sample chatbot web application is provided in the workflow. Requests to the chat system are wrapped in FastAPI calls.
 
 - Open the web application at ``http://host-ip:8090``.
@@ -139,7 +139,7 @@ A sample chatbot web application is provided in the workflow. Requests to the ch
 
 - To use a knowledge base:
 
-    - Click the **Knowledge Base** tab and upload the file [dataset.zip](./RetrievalAugmentedGeneration/notebook/dataset.zip).
+    - Click the **Knowledge Base** tab and upload the file [dataset.zip](../notebooks/dataset.zip).
 
 - Return to **Converse** tab and check **[X] Use knowledge base**.
 
@@ -147,14 +147,14 @@ A sample chatbot web application is provided in the workflow. Requests to the ch
 
 
 # Learn More
-1. [Architecture Guide](./docs/architecture.md): Detailed explanation of different components and how they are tried up together.
+1. [Architecture Guide](../docs/rag/architecture.md): Detailed explanation of different components and how they are tried up together.
 2. Component Guides: Component specific features are enlisted in these sections.
-   1. [Chain Server](./docs/chat_server.md)
-   2. [NeMo Framework Inference Server](./docs/llm_inference_server.md)
-   3. [Jupyter Server](./docs/jupyter_server.md)
-   4. [Sample frontend](./docs/frontend.md)
-3. [Configuration Guide](./docs/configuration.md): This guide covers different configurations available for this workflow.
-4. [Support Matrix](./docs/support_matrix.md): This covers GPU, CPU, Memory and Storage requirements for deploying this workflow.
+   1. [Chain Server](../docs/rag/chat_server.md)
+   2. [NeMo Framework Inference Server](../docs/rag/llm_inference_server.md)
+   3. [Jupyter Server](../docs/rag/jupyter_server.md)
+   4. [Sample frontend](../docs/rag/frontend.md)
+3. [Configuration Guide](../docs/rag/configuration.md): This guide covers different configurations available for this workflow.
+4. [Support Matrix](../docs/rag/support_matrix.md): This covers GPU, CPU, Memory and Storage requirements for deploying this workflow.
 
 # Known Issues
 - Uploading a file with size more than 10 MB may fail due to preset timeouts during the ingestion process.

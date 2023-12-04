@@ -24,8 +24,8 @@ from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field
 
-from chain_server import utils
-from chain_server import chains
+from RetrievalAugmentedGeneration.common import utils
+from RetrievalAugmentedGeneration.examples.developer_rag import chains
 
 # create the FastAPI server
 app = FastAPI()

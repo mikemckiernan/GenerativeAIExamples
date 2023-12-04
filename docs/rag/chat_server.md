@@ -11,7 +11,7 @@ This API endpoint allows for several actions:
 - [Running the chain server](#running-the-chain-server)
 
 The API server swagger schema can be visualized at ``host-ip:8081/docs``.
-You can checkout the openapi standard compatible schema for the endpoints supported [here](../chain_server/openapi_schema.json).
+You can checkout the openapi standard compatible schema for the endpoints supported [here](./api_reference/openapi_schema.json).
 
 The following sections describe the API endpoint actions further with relevant examples.
 

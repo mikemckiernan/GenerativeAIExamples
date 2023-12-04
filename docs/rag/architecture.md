@@ -22,7 +22,7 @@ This RAG-based reference chatbot workflow contains:
 
 This RAG chatbot workflow provides a reference for you to build your own enterprise AI solution with minimal effort. This AI workflow was designed to be deployed as a Developer experience using Docker Compose on an NVIDIA AI Enterprise-supported platform, which can be deployed on-prem or using a cloud service provider (CSP). Workflow components are used to deploy models and inference pipeline, integrated together with the additional components as indicated in the diagram below:
 
-![Diagram](./../images/image0.png)
+![Diagram](./images/image0.png)
 
 NVIDIA AI Components
 ======================
@@ -48,7 +48,7 @@ To get started with the inferencing pipeline, we will first connect the customiz
 
 Since foundational LLMs are not trained on your proprietary enterprise data and are only trained up to a fixed point in time, they need to be augmented with additional data. RAG consists of two processes. First, *retrieval* of data from document repositories, databases, or APIs that are all outside of the foundational model’s knowledge. Second, is the *generation* of responses via Inference. The example used within this workflow is a corporate communications co-pilot that could either ingest source data from storage or by scraping. The following graphic describes an overview of this inference pipeline:
 
-![Diagram](./../images/image1.png)
+![Diagram](./images/image1.png)
 
 **Document Ingestion and Retrieval**
 
@@ -60,7 +60,7 @@ When a user query is sent to the inference server, it is converted to an embeddi
 
 The following diagram illustrates the ingestion of documents and generation of responses.
 
-![Diagram](./../images/image2.png)
+![Diagram](./images/image2.png)
 
 LangChain allows you to write LLM wrappers for your own custom LLMs, so we have provided a sample wrapper for streaming responses from a TensorRT-LLM Llama 2 model running on Triton Inference Server. This wrapper allows us to leverage LangChain’s standard interface for interacting with LLMs while still achieving vast performance speedup from TensorRT-LLM and scalable and flexible inference from Triton Inference Server.
 
