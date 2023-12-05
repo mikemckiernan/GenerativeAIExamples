@@ -6,19 +6,23 @@ milvus:
   # Type: str
   # ENV Variable: APP_MILVUS_URL
 
-triton:
-  # The configuration for the Triton server hosting the embedding models.
+llm:
+  # The configuration for the server hosting the Large Language models.
 
-  server_url: triton:8001
-  # The location of the Triton server hosting the embedding model.
+  server_url: "llm:8001"
+  # The location of the server hosting the large language model.
   # Type: str
-  # ENV Variable: APP_TRITON_SERVERURL
+  # ENV Variable: APP_LLM_SERVERURL
 
   model_name: ensemble
   # The name of the hosted model.
   # Type: str
-  # ENV Variable: APP_TRITON_MODELNAME
+  # ENV Variable: APP_LLM_MODELNAME
 
+  model_engine: triton-trt-llm
+  # The backend name hosting the model. Right now only triton-trt-llm is supported.
+  # Type: str
+  # ENV Variable: APP_LLM_MODELENGINE
 
 text_splitter:
   # The configuration for the Text Splitter.
@@ -36,6 +40,14 @@ embeddings:
 
   model_name: intfloat/e5-large-v2
   # The name embedding search model from huggingface.
+  # Type: str
+
+  dimensions: 1024
+  # The dimensions of the embedding search model from huggingface.
+  # Type: int
+
+  model_engine: huggingface
+  # The backend name hosting the model. Right now only huggingface is supported.
   # Type: str
 
 prompts:
