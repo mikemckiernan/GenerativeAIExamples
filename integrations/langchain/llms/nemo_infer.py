@@ -117,7 +117,7 @@ class NemoInfer(LLM):
     ) -> str:
         """parse streaming response from nemo ms api
         """
-        response = requests.post(self.server_url, json=data)
+        response = requests.post(self.server_url, json=data, stream=True)
         current_string = ""
         resp = ""
 
