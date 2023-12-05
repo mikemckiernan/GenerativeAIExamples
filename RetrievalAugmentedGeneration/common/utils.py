@@ -18,6 +18,7 @@ import os
 import base64
 from functools import lru_cache
 from typing import TYPE_CHECKING, List, Optional
+from langchain.llms.nv_aiplay import GeneralLLM
 
 import torch
 from llama_index.indices.postprocessor.types import BaseNodePostprocessor
@@ -39,7 +40,7 @@ if TYPE_CHECKING:
     from RetrievalAugmentedGeneration.common.configuration_wizard import ConfigWizard
 
 DEFAULT_MAX_CONTEXT = 1500
-DEFAULT_NUM_TOKENS = 50
+DEFAULT_NUM_TOKENS = 150
 
 
 class LimitRetrievedNodesLength(BaseNodePostprocessor):
@@ -112,9 +113,16 @@ def get_llm() -> LangChainLLM:
             tokens=DEFAULT_NUM_TOKENS,
         )
         return LangChainLLM(llm=trtllm)
+    elif settings.llm.model_engine == "ai-playground":
+        if os.getenv('NVAPI_KEY') is not None:
+            raise RuntimeError("AI PLayground key is not set")
+        aipl_llm = GeneralLLM(
+                max_tokens = DEFAULT_NUM_TOKENS,
+                streaming=True
+        )
+        return LangChainLLM(llm=aipl_llm)
     else:
         raise RuntimeError("Unable to find any supported Large Language Model server. Supported engines are triton-trt-llm and nemo-infer.")
-
 
 
 @lru_cache
