@@ -19,8 +19,8 @@ llm:
   # Type: str
   # ENV Variable: APP_LLM_MODELNAME
 
-  model_engine: triton-trt-llm
-  # The backend name hosting the model. Right now only triton-trt-llm is supported.
+  model_engine: nemo-infer
+  # The backend name hosting the model. Right now only triton-trt-llm and nemo-infer is supported.
   # Type: str
   # ENV Variable: APP_LLM_MODELENGINE
 
