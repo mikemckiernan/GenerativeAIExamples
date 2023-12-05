@@ -30,6 +30,7 @@ from llama_index import LangchainEmbedding
 from langchain.text_splitter import SentenceTransformersTokenTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
 from integrations.langchain.llms.triton_trt_llm import TensorRTLLM
+from integrations.langchain.llms.nv_aiplay import GeneralLLM
 from RetrievalAugmentedGeneration.common import configuration
 
 if TYPE_CHECKING:
@@ -39,7 +40,7 @@ if TYPE_CHECKING:
     from RetrievalAugmentedGeneration.common.configuration_wizard import ConfigWizard
 
 DEFAULT_MAX_CONTEXT = 1500
-DEFAULT_NUM_TOKENS = 50
+DEFAULT_NUM_TOKENS = 150
 
 
 class LimitRetrievedNodesLength(BaseNodePostprocessor):
@@ -112,9 +113,17 @@ def get_llm() -> LangChainLLM:
             tokens=DEFAULT_NUM_TOKENS,
         )
         return LangChainLLM(llm=trtllm)
+    elif settings.llm.model_engine == "ai-playground":
+        if os.getenv('NVAPI_KEY') is None:
+            raise RuntimeError("AI PLayground key is not set")
+        aipl_llm = GeneralLLM(
+                model=settings.llm.model_name,
+                max_tokens=DEFAULT_NUM_TOKENS,
+                streaming=True
+        )
+        return LangChainLLM(llm=aipl_llm)
     else:
         raise RuntimeError("Unable to find any supported Large Language Model server. Supported engines are triton-trt-llm and nemo-infer.")
-
 
 
 @lru_cache
