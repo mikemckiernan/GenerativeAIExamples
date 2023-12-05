@@ -1,20 +1,6 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-# SPDX-License-Identifier: Apache-2.0
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 """LLM Chains for executing Retrival Augmented Generation."""
 import base64
+import os
 from pathlib import Path
 from typing import Generator
 
@@ -70,9 +56,23 @@ def rag_chain(prompt: str, num_tokens: int) -> Generator[str, None, None]:
 
 def ingest_docs(data_dir: str, filename: str) -> None:
     """Ingest documents to the VectorDB."""
-    unstruct_reader = download_loader("UnstructuredReader")
-    loader = unstruct_reader()
-    documents = loader.load_data(file=Path(data_dir), split_documents=False)
+    _, ext = os.path.splitext(filename)
+
+    try:
+        if ext.lower() == ".pdf":
+            PDFReader = download_loader("PDFReader")
+            loader = PDFReader()
+            documents = loader.load_data(file=Path(data_dir))
+
+        else:
+            unstruct_reader = download_loader("UnstructuredReader")
+            loader = unstruct_reader()
+            documents = loader.load_data(file=Path(data_dir), split_documents=False)
+
+    except Exception as e:
+        raise ValueError(
+            "Ingest of file: " + data_dir + " failed with error: " + str(e)
+        )
 
     encoded_filename = filename[:-4]
     if not is_base64_encoded(encoded_filename):
