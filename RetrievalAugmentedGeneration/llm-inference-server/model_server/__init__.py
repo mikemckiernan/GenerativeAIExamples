@@ -106,12 +106,14 @@ def main(args: argparse.Namespace) -> int:
         max_output_length=args.max_output_length,
         tensor_parallelism=args.tensor_parallelism,
         pipline_parallelism=args.pipeline_parallelism,
+        quantization = args.quantization,
     )
 
     # print discovered model parameters
     _LOGGER.info("Model file format: %s", model.format.name)
     _LOGGER.info("World Size: %d", model.world_size)
     _LOGGER.info("Compute Capability: %s", model.compute_cap)
+    _LOGGER.info("Quantization: %s", conversion_opts.quantization)
 
     # convert model
     if _should_convert(args, model):
