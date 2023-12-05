@@ -1,6 +1,6 @@
 services:
 
-  triton:
+  llm:
     container_name: triton-inference-server
     image: llm-inference-server:latest
     build:
