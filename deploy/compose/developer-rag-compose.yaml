@@ -1,7 +1,7 @@
 services:
 
   llm:
-    container_name: triton-inference-server
+    container_name: llm-inference-server
     image: llm-inference-server:latest
     build:
       context: ../.././RetrievalAugmentedGeneration/llm-inference-server/
@@ -33,7 +33,7 @@ services:
       start_period: 10m
 
   jupyter-server:
-    container_name: jupyter-notebook-server
+    container_name: notebook-server
     image: notebook-server:latest
     build:
       context: ../../
@@ -50,7 +50,7 @@ services:
               count: 1
               capabilities: [gpu]
     depends_on:
-      - "triton"
+      - "llm"
 
   etcd:
     container_name: milvus-etcd
@@ -118,7 +118,7 @@ services:
               count: 1
 
   query:
-    container_name: query-router
+    container_name: chain-server
     image: chain-server:latest
     build:
       context: ../../
@@ -126,8 +126,9 @@ services:
     command: --port 8081 --host 0.0.0.0
     environment:
       APP_MILVUS_URL: "http://milvus:19530"
-      APP_TRITON_SERVERURL: "triton:8001"
-      APP_TRITON_MODELNAME: ensemble
+      APP_LLM_SERVERURL: "llm:8001"
+      APP_LLM_MODELNAME: ensemble
+      APP_LLM_MODELENGINE: triton-trt-llm
       APP_CONFIG_FILE: ${APP_CONFIG_FILE}
     volumes:
       - ${APP_CONFIG_FILE}:${APP_CONFIG_FILE}
@@ -150,7 +151,7 @@ services:
     #   retries: 3
     depends_on:
       - "milvus"
-      - "triton"
+      - "llm"
 
   frontend:
     container_name: llm-playground

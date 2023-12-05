@@ -9,19 +9,20 @@ milvus:
 llm:
   # The configuration for the server hosting the Large Language models.
 
-  server_url: llm:9999
+  server_url: "llm:9999"
   # The location of the server hosting the large language model.
   # Type: str
-  # ENV Variable: APP_TRITON_SERVERURL
+  # ENV Variable: APP_LLM_SERVERURL
 
   model_name: ensemble
   # The name of the hosted model.
   # Type: str
-  # ENV Variable: APP_TRITON_MODELNAME
+  # ENV Variable: APP_LLM_MODELNAME
 
   model_engine: triton-trt-llm
   # The backend name hosting the model. Right now only triton-trt-llm is supported.
   # Type: str
+  # ENV Variable: APP_LLM_MODELENGINE
 
 text_splitter:
   # The configuration for the Text Splitter.
