@@ -123,8 +123,8 @@ services:
     command: --port 8081 --host 0.0.0.0
     environment:
       APP_MILVUS_URL: "http://milvus:19530"
-      APP_LLM_SERVERURL: "llm:8001"
-      APP_LLM_MODELNAME: ensemble
+      APP_LLM_SERVERURL: "llm:9999"
+      APP_LLM_MODELNAME: ${MODEL_NAME:?please update the env file and source it before running}
       APP_LLM_MODELENGINE: nemo-infer
       APP_CONFIG_FILE: ${APP_CONFIG_FILE}
     volumes:
