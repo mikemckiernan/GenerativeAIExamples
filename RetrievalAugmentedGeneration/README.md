@@ -136,11 +136,7 @@ A sample chatbot web application is provided in the workflow. Requests to the ch
 - Retype the question:  "How many cores are on the Nvidia Grace superchip?"
 
 
-<<<<<<< HEAD
-### Local-GPU setup 
-=======
-### Local LLM setup 
->>>>>>> 3011adb4cffd347820bc7cd81ef04e5a3781a407
+### Local LLM setup
 
 NVIDIA TensorRT LLM providex state of the art performance for running LLM inference. Follow the below steps from the root of this project to setup the RAG example with TensorRT LLM and Triton.
 
