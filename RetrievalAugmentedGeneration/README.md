@@ -93,7 +93,7 @@ Modify ``compose.env`` in the ``deploy/compose`` directory to set your environme
     ```
 - Run the following command to build containers.
     ```
-        source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose-local.yaml build
+        source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose-playground.yaml build
     ```
 
 - Run the following command to start containers.
