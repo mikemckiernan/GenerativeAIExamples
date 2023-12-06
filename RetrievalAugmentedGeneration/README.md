@@ -96,12 +96,12 @@ Modify ``compose.env`` in the ``deploy/compose`` directory to set your environme
     ```
 - Run the following command to build containers.
     ```
-        source deploy/compose/compose.env;  docker compose -f deploy/compose/developer-rag-compose.yaml build
+        source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose-developer.yaml build
     ```
 
 - Run the following command to start containers.
     ```
-        source deploy/compose/compose.env; docker compose -f deploy/compose/developer-rag-compose.yaml up -d
+        source deploy/compose/compose.env; docker compose -f deploy/compose/docker-compose-developer.yaml up -d
     ```
     > ⚠️ **NOTE**: It will take a few minutes for the containers to come up and may take up to 5 minutes for the Triton server to be ready. Adding the `-d` flag will have the services run in the background. ⚠️
 
