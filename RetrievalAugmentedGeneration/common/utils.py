@@ -18,6 +18,7 @@ import os
 import base64
 from functools import lru_cache
 from typing import TYPE_CHECKING, List, Optional
+from langchain.llms.nv_aiplay import GeneralLLM
 
 import torch
 from llama_index.indices.postprocessor.types import BaseNodePostprocessor

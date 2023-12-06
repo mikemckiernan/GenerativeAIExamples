@@ -20,7 +20,7 @@ llm:
   # Type: str
   # ENV Variable: APP_LLM_SERVERURL
 
-  model_name: "llama2_13b"
+  model_name: "ensemble"
   # if model_engine is "triton-trt-llm" set this to "ensemble"
   # if model_engine is "ai-plaground" options are "llama2_13b", "llama2_70b", "mistral_7b" 
   # The name of the hosted model.
