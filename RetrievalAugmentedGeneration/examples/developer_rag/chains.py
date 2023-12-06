@@ -52,7 +52,10 @@ def llm_chain(
 def rag_chain(prompt: str, num_tokens: int) -> Generator[str, None, None]:
     """Execute a Retrieval Augmented Generation chain using the components defined above."""
     set_service_context()
-    get_llm().llm.tokens = num_tokens  # type: ignore
+    if get_config().llm.model_engine == "triton-trt-llm":
+        get_llm().llm.tokens = num_tokens  # type: ignore
+    else:
+        get_llm().llm.max_tokens = num_tokens
     retriever = get_doc_retriever(num_nodes=4)
     qa_template = Prompt(get_config().prompts.rag_template)
     query_engine = RetrieverQueryEngine.from_args(
