@@ -54,20 +54,22 @@ Before proceeding with this guide, make sure you meet the following prerequisite
       ```
 
 - You can download the model from NGC.
-    1. List down the models supported for deployment using nemo microservice inference
+
+    1. Download the llama2 13b model from ngc
+    ```
+    ngc registry model download-version "ohlfw0olaadg/ea-participants/llama-2-13b-chat:LLAMA-2-13B-CHAT-4K-FP16"
+    ```
+    Note: You can check list of available models using
     ```
     ngc registry model list "ohlfw0olaadg/ea-participants/*"
     ```
-    2. Download the model from the list using
+
+    2. Move to the downloaded directory and unzip the model
     ```
-    ngc registry model download-version "ohlfw0olaadg/ea-participants/<model-name>:<model-tag>"
+    cd llama-2-13b-chat_vLLAMA-2-13B-CHAT-4K-FP16/
+    tar -xzf LLAMA-2-13B-CHAT-4K-FP16.tar.gz
     ```
-    3. Move the the downloaded directory and unzip the model
-    ```
-    cd <model_name>_v<model_tag>
-    tar -xzf <model_name>_<model_tag>.tar.gz 
-    ```
-    4. Check `model-store` directory after unzipping.
+    3. Check `model-store` directory after unzipping in the same directory.
 
 
 ## Install Guide
