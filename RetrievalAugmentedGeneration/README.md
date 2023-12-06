@@ -1,6 +1,8 @@
 # Retrieval Augmented Generation
 
-For Enterprise RAG refer [README.md](../docs/rag/enterprise-rag-README.md)
+Mention is the developer version of RAG workflow. If you're interested in enterprise version please follow [README.md](../docs/rag/enterprise-rag-README.md).
+
+Enterprise RAG uses Nemo Microservice Inference EA for scalable deployment of LLM models. Nemo Microservice Inference EA is currently under Early Access(EA) and to be able to access enterprise workflow you will need access to Nemo-Microservice NGC org.
 
 ## Project Details
 **Project Goal**: A reference Retrieval Augmented Generation(RAG) workflow for a chatbot to question answer off public press releases & tech blogs. It performs document ingestion & Q&A interface using open source models deployed on any cloud or customer datacenter, leverages the power of GPU-accelerated Milvus for efficient vector storage and retrieval, along with TRT-LLM, to achieve lightning-fast inference speeds with custom LangChain LLM wrapper.
@@ -98,12 +100,12 @@ Modify ``compose.env`` in the ``deploy/compose`` directory to set your environme
     ```
 - Run the following command to build containers.
     ```
-        source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose-developer.yaml build
+        source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose.yaml build
     ```
 
 - Run the following command to start containers.
     ```
-        source deploy/compose/compose.env; docker compose -f deploy/compose/docker-compose-developer.yaml up -d
+        source deploy/compose/compose.env; docker compose -f deploy/compose/docker-compose.yaml up -d
     ```
     > ⚠️ **NOTE**: It will take a few minutes for the containers to come up and may take up to 5 minutes for the Triton server to be ready. Adding the `-d` flag will have the services run in the background. ⚠️
 
@@ -157,6 +159,3 @@ A sample chatbot web application is provided in the workflow. Requests to the ch
    4. [Sample frontend](../docs/rag/frontend.md)
 3. [Configuration Guide](../docs/rag/configuration.md): This guide covers different configurations available for this workflow.
 4. [Support Matrix](../docs/rag/support_matrix.md): This covers GPU, CPU, Memory and Storage requirements for deploying this workflow.
-
-# Known Issues
-- Uploading a file with size more than 10 MB may fail due to preset timeouts during the ingestion process.

@@ -1,10 +1,10 @@
 # Retrieval Augmented Generation
 
 ## Project Details
-**Project Goal**: A reference Retrieval Augmented Generation(RAG) workflow for a chatbot to question answer off public press releases & tech blogs. It performs document ingestion & Q&A interface using open source models deployed on any cloud or customer datacenter, leverages the power of GPU-accelerated Milvus for efficient vector storage and retrieval, and nemo microservice inference to deploy llm and achieve lightning-fast inference speeds with custom LangChain LLM wrapper.
+**Project Goal**: A optimized reference Retrieval Augmented Generation(RAG) workflow for a chatbot utilizing cutting-edge NVIDIA AI Enterprise Microservices. This workflow is using [Nemo Microservice Inference (EA)](nvcr.io/ohlfw0olaadg/ea-participants/nemollm-inference-ms:23.10) Microservice for LLM model deployment. In example we've ingested nvidia press release and blots to answer queries in example.
 
 ## Components
-- **LLM**: [Llama2](https://ai.meta.com/llama/) - 7b, 13b, and 70b all supported. 13b and 70b generate good responses. `nemotron`- NV-GPT-8B-base, NV-GPT-43B-chat
+- **LLM**: [Llama2](https://ai.meta.com/llama/) - 7b, 13b, and 70b all supported. 13b and 70b generate good responses. `NeMo LLM`- NV-GPT-8B-base, NV-GPT-43B-chat
 - **LLM Backend**: [NeMo Microservice Inference (NMI)](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms) incorporates CUDA, TRT, TRT-LLM, and Triton, NMI brings state of the art GPU accelerated Large Language model serving.
 - **Vector DB**: Milvus because it's GPU accelerated.
 - **Embedding Model**: [e5-large-v2](https://huggingface.co/intfloat/e5-large-v2) since it is one of the best embedding model available at the moment.
@@ -64,7 +64,7 @@ Before proceeding with this guide, make sure you meet the following prerequisite
     ```
     3. Move the the downloaded directory and unzip the model
     ```
-    cd <model_name>_<model_tag>
+    cd <model_name>_v<model_tag>
     tar -xzf <model_name>_<model_tag>.tar.gz 
     ```
     4. Check `model-store` directory after unzipping.
@@ -91,16 +91,7 @@ Modify ``compose.env`` in the ``deploy/compose`` directory to set your environme
     APP_CONFIG_FILE=/dev/null
 
 
-### Step 2: Build and Start Containers
-- Pull lfs files. This will pull large files from repository.
-    ```
-        git lfs pull
-    ```
-- Run the following command to build containers.
-    ```
-        source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose-enterprise.yaml build
-    ```
-
+### Step 2: Start Containers
 - Run the following command to start containers.
     ```
         source deploy/compose/compose.env; docker compose -f deploy/compose/docker-compose-enterprise.yaml up -d
