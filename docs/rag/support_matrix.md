@@ -7,6 +7,8 @@ Llama2-13B-Chat requires about 50GB of GPU memory.
 
 Llama2-70B-Chat requires about 320GB of GPU memory.
 
+Llama2-7B-Chat AWQ quantized requires about 25GB of GPU memory.
+
 These resources can be provided by multiple GPUs on the same machine.
 
 To perform retrieval augmentation, another model must be hosted. This model is much smaller and is called an embedding model. It is responsible for converting a sequence of words to a representation in the form of a vector of numbers. This model requires an additional 2GB of GPU memory.
