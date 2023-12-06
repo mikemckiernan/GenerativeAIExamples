@@ -53,7 +53,7 @@ Before proceeding with this guide, make sure you meet the following prerequisite
         docker login nvcr.io
       ```
 
-- You can download Llama2 Chat Model Weights from [Meta](https://ai.meta.com/resources/models-and-libraries/llama-downloads/) or [HuggingFace](https://huggingface.co/meta-llama/Llama-2-13b-chat-hf/).
+- You can download Llama2 Chat Model Weights from [Meta](https://ai.meta.com/resources/models-and-libraries/llama-downloads/) or [HuggingFace](https://huggingface.co/meta-llama/Llama-2-13b-chat-hf/). You can skip this step [if you are interested in using cloud based LLM's using Nvidia AI Playground](#using-nvdia-cloud-based-llm).
 
     **Note for checkpoint downloaded using Meta**:
 
@@ -72,7 +72,7 @@ Before proceeding with this guide, make sure you meet the following prerequisite
 
 ### Using Nvdia Cloud based LLM
 
-**NVIDIA AI Playground** on NGC allows developers to experience state of the art LLMs accelerated on NVIDIA DGX Cloud with NVIDIA TensorRT nd Triton Inference Server. Developers get **free credits for 10K requests** to any of the available models. Sign up process is easy. Follow the below steps from the root of this project to setup the RAG example.
+**NVIDIA AI Playground** on NGC allows developers to experience state of the art LLMs accelerated on NVIDIA DGX Cloud with NVIDIA TensorRT and Triton Inference Server. Developers get **free credits for 10K requests** to any of the available models. Sign up process is easy. Follow the below steps from the root of this project to setup the RAG example.
 
 #### Step 1: Sign up to AI playground
 
@@ -110,13 +110,7 @@ This AI Workflow includes Jupyter notebooks which allow you to experiment with R
 
     ``http://host-ip:8888``
 
-- Locate the [LLM Streaming Client notebook](../notebooks/01-llm-streaming-client.ipynb) which demonstrates how to stream responses from the LLM.
-
-- Proceed with the next 2 notebooks:
-
-    - [Document Question-Answering with LangChain](../notebooks/01_AI_playground.ipynb)
-
-    - [Interact with REST FastAPI Server](../notebooks/05_dataloader.ipynb)
+- Locate the [AI Playground notebook](../notebooks/06_AI_playground.ipynb) which demonstrates how to stream responses from the LLM hosted in Nvidia AI Playground.
 
 #### Step 4: Run the Sample Web Application
 A sample chatbot web application is provided in the workflow. Requests to the chat system are wrapped in FastAPI calls.
@@ -164,12 +158,12 @@ Modify ``compose.env`` in the ``deploy/compose`` directory to set your environme
     ```
 - Run the following command to build containers.
     ```
-        source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose-local.yaml build
+        source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose.yaml build
     ```
 
 - Run the following command to start containers.
     ```
-        source deploy/compose/compose.env; docker compose -f deploy/compose/docker-compose-local.yaml up -d
+        source deploy/compose/compose.env; docker compose -f deploy/compose/docker-compose.yaml up -d
     ```
     > ⚠️ **NOTE**: It will take a few minutes for the containers to come up and may take up to 5 minutes for the Triton server to be ready. Adding the `-d` flag will have the services run in the background. ⚠️
 

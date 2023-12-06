@@ -5,9 +5,7 @@ FROM python:3.10-slim
 WORKDIR /app
 
 #COPY notebooks
-COPY ./notebooks/playground/01_AI_playground.ipynb .
-
-COPY ./notebooks/05_dataloader.ipynb .
+COPY ./notebooks/*.ipynb .
 
 RUN mkdir -p /app/imgs
 
@@ -16,6 +14,8 @@ COPY ./notebooks/dataset.zip .
 COPY ./notebooks/imgs/* imgs/
 
 COPY ./integrations/langchain/llms/triton_trt_llm.py .
+
+COPY ./integrations/langchain/llms/nv_aiplay.py .
 
 COPY ./notebooks/requirements.txt .
 
