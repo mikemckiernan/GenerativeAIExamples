@@ -1,6 +1,6 @@
 # Retrieval Augmented Generation
 
-Mention is the developer version of RAG workflow. If you're interested in enterprise version please follow [README.md](../docs/rag/enterprise-rag-README.md).
+This document covers developer RAG workflow. If you're interested in enterprise version please follow [README.md](../docs/rag/enterprise-rag-README.md).
 
 Enterprise RAG uses Nemo Microservice Inference EA for scalable deployment of LLM models. Nemo Microservice Inference EA is currently under Early Access(EA) and to be able to access enterprise workflow you will need access to Nemo-Microservice NGC org.
 
