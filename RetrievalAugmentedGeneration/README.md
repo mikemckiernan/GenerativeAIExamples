@@ -1,5 +1,7 @@
 # Retrieval Augmented Generation
 
+For Enterprise RAG refer [README.md](../docs/rag/enterprise-rag-README.md)
+
 ## Project Details
 **Project Goal**: A reference Retrieval Augmented Generation(RAG) workflow for a chatbot to question answer off public press releases & tech blogs. It performs document ingestion & Q&A interface using open source models deployed on any cloud or customer datacenter, leverages the power of GPU-accelerated Milvus for efficient vector storage and retrieval, along with TRT-LLM, to achieve lightning-fast inference speeds with custom LangChain LLM wrapper.
 
