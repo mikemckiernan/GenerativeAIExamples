@@ -1,43 +1,11 @@
 services:
 
-  llm:
-    container_name: llm-inference-server
-    image: llm-inference-server:latest
-    build:
-      context: ../.././RetrievalAugmentedGeneration/llm-inference-server/
-      dockerfile: Dockerfile
-    volumes:
-    - ${MODEL_DIRECTORY:?please update the env file and source it before running}:/model
-    command: ${MODEL_ARCHITECTURE:?please update the env file and source it before running} --max-input-length ${MODEL_MAX_INPUT_LENGTH:-3000} --max-output-length ${MODEL_MAX_OUTPUT_LENGTH:-512} --quantization ${QUANTIZATION:-None}
-    ports:
-    - "8000:8000"
-    - "8001:8001"
-    - "8002:8002"
-    expose:
-      - "8000"
-      - "8001"
-      - "8002"
-    shm_size: 20gb
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: ${INFERENCE_GPU_COUNT:-all}
-              capabilities: [gpu]
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/v2/health/ready"]
-      interval: 30s
-      timeout: 20s
-      retries: 3
-      start_period: 10m
-
   jupyter-server:
-    container_name: notebook-server
+    container_name: jupyter-notebook-server
     image: notebook-server:latest
     build:
       context: ../../
-      dockerfile: ./notebooks/Dockerfile.notebooks
+      dockerfile: ./notebooks/Dockerfile.notebooks-playground
     ports:
     - "8888:8888"
     expose:
@@ -49,8 +17,6 @@ services:
             - driver: nvidia
               count: 1
               capabilities: [gpu]
-    depends_on:
-      - "llm"
 
   etcd:
     container_name: milvus-etcd
@@ -118,7 +84,7 @@ services:
               count: 1
 
   query:
-    container_name: chain-server
+    container_name: query-router
     image: chain-server:latest
     build:
       context: ../../
@@ -126,10 +92,10 @@ services:
     command: --port 8081 --host 0.0.0.0
     environment:
       APP_MILVUS_URL: "http://milvus:19530"
-      APP_LLM_SERVERURL: "llm:8001"
-      APP_LLM_MODELNAME: ensemble
-      APP_LLM_MODELENGINE: triton-trt-llm
+      APP_LLM_MODELNAME: "llama2_13b"
+      APP_LLM_MODELENGINE: "ai-playground"
       APP_CONFIG_FILE: ${APP_CONFIG_FILE}
+      NVAPI_KEY: ${AI_PLAYGROUND_API_KEY}
     volumes:
       - ${APP_CONFIG_FILE}:${APP_CONFIG_FILE}
     ports:
@@ -151,7 +117,6 @@ services:
     #   retries: 3
     depends_on:
       - "milvus"
-      - "llm"
 
   frontend:
     container_name: llm-playground

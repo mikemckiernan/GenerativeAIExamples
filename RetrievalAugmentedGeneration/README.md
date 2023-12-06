@@ -70,9 +70,77 @@ Before proceeding with this guide, make sure you meet the following prerequisite
 
 ## Install Guide
 
-Follow the below steps from the root of this project to setup the RAG example.
+### Using Nvdia Cloud based LLM
 
-###  Step 1: Set Environment Variables
+**NVIDIA AI Playground** on NGC allows developers to experience state of the art LLMs accelerated on NVIDIA DGX Cloud with NVIDIA TensorRT nd Triton Inference Server. Developers get **free credits for 10K requests** to any of the available models. Sign up process is easy. Follow the below steps from the root of this project to setup the RAG example.
+
+#### Step 1: Sign up to AI playground
+
+Follow the instructions [here](../docs/rag/aiplayground.md) to get access to an API key.
+
+#### Step 2: Set Environment Variables
+
+Modify ``compose.env`` in the ``deploy/compose`` directory to set your environment variables. The following variable is required.
+
+    # Fill this out if you dont have a GPU. Leave this empty if you have a local GPU
+    export AI_PLAYGROUND_API_KEY="nvapi-*"
+
+
+#### Step 3: Build and Start Containers
+- Pull lfs files. This will pull large files from repository.
+    ```
+        git lfs pull
+    ```
+- Run the following command to build containers.
+    ```
+        source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose-playground.yaml build
+    ```
+
+- Run the following command to start containers.
+    ```
+        source deploy/compose/compose.env; docker compose -f deploy/compose/docker-compose-playground.yaml up -d
+    ```
+    > ⚠️ **NOTE**: It will take a few minutes for the containers to come up. Adding the `-d` flag will have the services run in the background. ⚠️
+
+#### Step 4: Experiment with RAG in JupyterLab
+
+This AI Workflow includes Jupyter notebooks which allow you to experiment with RAG.
+
+- Using a web browser, type in the following URL to open Jupyter
+
+    ``http://host-ip:8888``
+
+- Locate the [LLM Streaming Client notebook](../notebooks/01-llm-streaming-client.ipynb) which demonstrates how to stream responses from the LLM.
+
+- Proceed with the next 2 notebooks:
+
+    - [Document Question-Answering with LangChain](../notebooks/01_AI_playground.ipynb)
+
+    - [Interact with REST FastAPI Server](../notebooks/05_dataloader.ipynb)
+
+#### Step 4: Run the Sample Web Application
+A sample chatbot web application is provided in the workflow. Requests to the chat system are wrapped in FastAPI calls.
+
+- Open the web application at ``http://host-ip:8090``.
+
+- Type in the following question without using a knowledge base: "How many cores are on the Nvidia Grace superchip?"
+
+    **Note:** the chatbot mentions the chip doesn't exist.
+
+- To use a knowledge base:
+
+    - Click the **Knowledge Base** tab and upload the file [dataset.zip](../notebooks/dataset.zip).
+
+- Return to **Converse** tab and check **[X] Use knowledge base**.
+
+- Retype the question:  "How many cores are on the Nvidia Grace superchip?"
+
+
+### Local LLM setup
+
+NVIDIA TensorRT LLM providex state of the art performance for running LLM inference. Follow the below steps from the root of this project to setup the RAG example with TensorRT LLM and Triton.
+
+####  Step 1: Set Environment Variables
 
 Modify ``compose.env`` in the ``deploy/compose`` directory to set your environment variables. The following variables are required.
 
@@ -89,26 +157,26 @@ Modify ``compose.env`` in the ``deploy/compose`` directory to set your environme
     APP_CONFIG_FILE=/dev/null
 
 
-### Step 2: Build and Start Containers
+#### Step 2: Build and Start Containers
 - Pull lfs files. This will pull large files from repository.
     ```
         git lfs pull
     ```
 - Run the following command to build containers.
     ```
-        source deploy/compose/compose.env;  docker compose -f deploy/compose/developer-rag-compose.yaml build
+        source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose-local.yaml build
     ```
 
 - Run the following command to start containers.
     ```
-        source deploy/compose/compose.env; docker compose -f deploy/compose/developer-rag-compose.yaml up -d
+        source deploy/compose/compose.env; docker compose -f deploy/compose/docker-compose-local.yaml up -d
     ```
     > ⚠️ **NOTE**: It will take a few minutes for the containers to come up and may take up to 5 minutes for the Triton server to be ready. Adding the `-d` flag will have the services run in the background. ⚠️
 
 - Run ``docker ps -a``. When the containers are ready the output should look similar to the image below.
     ![Docker Output](../docs/rag/images/docker-output.png "Docker Output Image")
 
-### Step 3: Experiment with RAG in JupyterLab
+#### Step 3: Experiment with RAG in JupyterLab
 
 This AI Workflow includes Jupyter notebooks which allow you to experiment with RAG.
 
@@ -128,7 +196,7 @@ This AI Workflow includes Jupyter notebooks which allow you to experiment with R
 
     - [Interact with REST FastAPI Server](../notebooks/05_dataloader.ipynb)
 
-### Step 4: Run the Sample Web Application
+#### Step 4: Run the Sample Web Application
 A sample chatbot web application is provided in the workflow. Requests to the chat system are wrapped in FastAPI calls.
 
 - Open the web application at ``http://host-ip:8090``.
