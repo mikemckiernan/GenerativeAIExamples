@@ -1,11 +1,11 @@
 services:
 
   jupyter-server:
-    container_name: jupyter-notebook-server
+    container_name: notebook-server
     image: notebook-server:latest
     build:
       context: ../../
-      dockerfile: ./notebooks/Dockerfile.notebooks-playground
+      dockerfile: ./notebooks/Dockerfile.notebooks
     ports:
     - "8888:8888"
     expose:
@@ -84,7 +84,7 @@ services:
               count: 1
 
   query:
-    container_name: query-router
+    container_name: chain-server
     image: chain-server:latest
     build:
       context: ../../

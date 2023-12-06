@@ -37,7 +37,7 @@ services:
     image: notebook-server:latest
     build:
       context: ../../
-      dockerfile: ./notebooks/Dockerfile.notebooks-local
+      dockerfile: ./notebooks/Dockerfile.notebooks
     ports:
     - "8888:8888"
     expose:
