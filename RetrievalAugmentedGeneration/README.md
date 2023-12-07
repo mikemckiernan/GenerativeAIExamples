@@ -34,8 +34,6 @@ Before proceeding with this guide, make sure you meet the following prerequisite
     - If you are running multiple GPUs they must all be set to the same mode (ie Compute vs. Display). You can check compute mode for each GPU using
     ``nvidia-smi -q -d compute``
 
-- You should have access to [NeMo Framework](https://developer.nvidia.com/nemo-framework) to download the container used for deploying the Large Language Model. To access nemo-framework inference container please register at https://developer.nvidia.com/nemo-framework. After submitting a form you will be automatically accepted.
-
 ### Setup the following
 
 - Docker and Docker-Compose are essential. Please follow the [installation instructions](https://docs.docker.com/engine/install/ubuntu/).
@@ -78,7 +76,7 @@ Follow the below steps from the root of this project to setup the RAG example.
 
 ###  Step 1: Set Environment Variables
 
-Modify ``compose.env`` in the ``deploy/compose`` directory to set your environment variables. The following variables are required.
+Modify ``compose.env`` in the ``deploy/compose`` directory to set your environment variables. The following variables are required as shown below for using a llama based model.
 
     # full path to the local copy of the model weights
     export MODEL_DIRECTORY="$HOME/src/Llama-2-13b-chat-hf"

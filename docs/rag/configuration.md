@@ -11,13 +11,17 @@ You can refer to [sample config](../deploy/config.yaml) to see the structure.
 
     url: Configure the HTTP URI where the Milvus server is hosted.
 
-#### Triton Configuration
+#### LLM server Configuration
 LLM Inference server hosts the Large Language Model (LLM) with triton backend.
 
     server_url: Specify the url of the LLM Inference Server.
 
     model_name: Provide the name of the model hosted on the Triton server.
     Note: Changing the value of this field may need code changes.
+
+    model_engine: An enum specifying the backend name hosting the model. Options currently supported are:
+    1. `triton-trt-llm` for using locally deployed LLM models. Follow steps [here](../../RetrievalAugmentedGeneration/README.md#local-llm-setup) to understand how to deploy and use on-prem deployed models.
+    2. `ai-playground` for using NV AI Playground based models. Follow steps [here](../../RetrievalAugmentedGeneration/README.md#using-nvdia-cloud-based-llm) to understand how to deploy and use TRT-LLM optimized playground models from cloud.
 
 #### Text Splitter Configuration
 This section covers the settings for the Text Splitter component.
@@ -30,7 +34,9 @@ This section covers the settings for the Text Splitter component.
 The Embeddings section contains information required for generating embeddings.
 
     model_name: Indicate the name of the model used to generate embeddings.
-    Note: Note that this may also necessitate changes in the model's dimensions, which can be adjusted in the chain_server/utils.py file.
+    model_engine: An enum specifying the backend name hosting the model. Right now only "huggingface" is supported.
+    dimensions: Integer value specifying the dimensions of the embedding search model from huggingface.
+    Note: Any change in `model_name`` may also necessitate changes in the model's `dimensions`, which can be adjusted using this field.
 
 #### Prompts Configuration
 Customize prompts used for generating responses.
@@ -43,7 +49,7 @@ You set path to use this config file to be used by chain server using enviornmen
 ### Configuring docker compose file
 In this section, we will look into the environment variables and parameters that can be configured within the [Docker Compose](../deploy/docker-compose.yaml) YAML file. Our system comprises multiple microservices that interact harmoniously to generate responses. These microservices include LLM Inference Server, Jupyter Server, Milvus, Query/chain server, and Frontend.
 
-#### Triton Configuration
+#### LLM server Configurations
 The LLM Inference Server is used for hosting the Large Language Model (LLM) with triton backend. You can configure the model information using the [compose.env](../deploy/compose.env) file or by setting the corresponding environment variables. Here is a list of environment variables utilized by the llm inference server:
 
     MODEL_DIRECTORY: Specifies the path to the model directory where model checkpoints are stored.
@@ -62,8 +68,11 @@ Milvus serves as a GPU-accelerated vector store database, where we store embeddi
 The Query service is the core component responsible for interacting with the llm inference server and the Milvus server to obtain responses. The environment variables utilized by this container are described as follows:
 
     APP_MILVUS_URL: Specifies the URL where the Milvus server is hosted.
-    APP_TRITON_SERVERURL: Specifies the URL where the Triton server is hosted.
-    APP_TRITON_MODELNAME: The model name used by the Triton server.
+    APP_LLM_SERVERURL: Specifies the URL where the Triton server is hosted.
+    APP_LLM_MODELNAME: The model name used by the Triton server.
+    APP_LLM_MODELENGINE: An enum specifying the backend name hosting the model. Options currently supported are:
+    1. `triton-trt-llm` if you are using locally deployed LLM models.
+    2. `ai-playground` if you are using NV AI Playground based models.
     APP_CONFIG_FILE: Provides the path to the configuration file used by the Chain Server or this container. Defaults to /dev/null
 
 #### Frontend
