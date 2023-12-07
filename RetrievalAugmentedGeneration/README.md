@@ -67,6 +67,8 @@ Before proceeding with this guide, make sure you meet the following prerequisite
         In this workflow, we will be leveraging a Llama2 (13B parameters) chat model, which requires 50 GB of GPU memory.  If you prefer to leverage 7B parameter model, this will require 38GB memory. The 70B parameter model initially requires 240GB memory.
         IMPORTANT:  For this initial version of the workflow, A100 and H100 GPUs are supported.
 
+    - We also support quantization of LLama2 model using AWQ, which changes model precision to INT4, thereby reducing memory usage. Checkout the steps [here](../docs/rag/llm_inference_server.md) to enable quantization.
+
 
 ## Install Guide
 

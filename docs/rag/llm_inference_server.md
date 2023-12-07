@@ -5,11 +5,11 @@ We use [NeMo Framework Inference Server](https://docs.nvidia.com/nemo-framework/
 
 # Running the LLM Inference Server
 
-To convert Llama2 to TensorRT and host it on Triton Model Server for development purposes, run the following commands:
+### Llama2 model deployment:
 
-- Download Llama2 Chat Model Weights from [Meta](https://ai.meta.com/resources/models-and-libraries/llama-downloads/) or [HuggingFace](https://huggingface.co/meta-llama/Llama-2-13b-chat-hf/). You can check [support matrix](../docs/support_matrix.md) for GPU requirements for the deployment.
+- Download Llama2 Chat Model Weights from [Meta](https://ai.meta.com/resources/models-and-libraries/llama-downloads/) or [HuggingFace](https://huggingface.co/meta-llama/Llama-2-13b-chat-hf/). You can check [support matrix](support_matrix.md) for GPU requirements for the deployment.
 
-- Update [compose.env](../deploy/compose.env) with MODEL_DIRECTORY as Llama2 model downloaded path and other model parameters as needed.
+- Update [compose.env](../../deploy/compose/compose.env) with MODEL_DIRECTORY as Llama2 model downloaded path and other model parameters as needed.
 
 - Build the llm inference server container from source
 ```
@@ -24,6 +24,64 @@ To convert Llama2 to TensorRT and host it on Triton Model Server for development
 
 - Once the optimized Llama2 is deployed in Triton Server, clients can send HTTP/REST or gRPC requests directly to Triton Server. Example implmentation of the client can be found [here](../llm-inference-server/model_server_client/trt_llm.py).
 
+
+
+### Quantized Llama2 model deployment
+
+- Download Llama2 Chat Model Weights from [Meta](https://ai.meta.com/resources/models-and-libraries/llama-downloads/) or [HuggingFace](https://huggingface.co/meta-llama/Llama-2-13b-chat-hf/). You can check [support matrix](support_matrix.md) for GPU requirements for the deployment.
+
+- For quantization of the Llama2 model using AWQ, first clone the [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM/tree/release/0.5.0) repository separately and checkout release/v0.5.0. 
+
+   - Also copy the Llama2 model directory downloaded earlier to the TensorRT-LLM repo
+  
+```
+  git clone https://github.com/NVIDIA/TensorRT-LLM.git
+  cp -r <path-to-Llama2-model-directory> TensorRT-LLM/
+  cd TensorRT-LLM/
+  git checkout release/0.5.0
+```
+
+- Now setup the TensorRT-LLM repo seprately using steps [here](https://github.com/NVIDIA/TensorRT-LLM/blob/release/0.5.0/docs/source/installation.md)
+
+- Once the model is downloaded and TensorRT-LLM repo is setup, we can quantize the model using the TensorRT-LLM container.
+
+  - Follow the steps from [here](https://github.com/NVIDIA/TensorRT-LLM/tree/v0.5.0/examples/llama#awq) to quantize using AWQ, run these commands inside the container.
+
+  - While running the quantization script, make sure to point `--model_dir` to your downloaded Llama2 model directory
+
+  - Once the quantization is completed, copy the generated PyTorch (.pt) file inside the model directory
+
+  ```
+   cp <quantized-checkpoint>.pt <model-dir>
+  ```
+
+- Now, we will come back our repository, follow the steps below to deploy this quantized model using the inference server.
+
+  - Update [compose.env](../../deploy/compose/compose.env) with `MODEL_DIRECTORY` pointing to Llama2 model directory containing the quantized checkpoint.
+
+  - Make sure the qantized PyTorch model (.pt) file generated using above steps is present inside the MODEL_DIRECTORY.
+
+
+
+  - Uncomment the QUANTIZATION variable which specifies quantization as "int4_awq" inside the [compose.env](../../deploy/compose/compose.env).
+  ```
+    export QUANTIZATION="int4_awq"
+  ```
+
+- Build the llm inference server container from source
+```
+  cd deploy/
+  source compose.env
+  docker compose build triton
+```
+- Run the container which will start the triton server with TRT-LLM optimized Llama2 model
+```
+  docker compose up triton
+```
+
+- Alternatively you can also follow [quick start guide](../../RetrievalAugmentedGeneration/README.md) to deploy the model server along with the complete pipeline.
+
+- Once the optimized Llama2 is deployed in Triton Server, clients can send HTTP/REST or gRPC requests directly to Triton Server. Example implmentation of the client can be found [here](../llm-inference-server/model_server_client/trt_llm.py).
 
 
 **Note for checkpoint downloaded using Meta**:
