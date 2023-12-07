@@ -31,7 +31,7 @@ services:
 
   jupyter-server:
     container_name: notebook-server
-    image: nvcr.io/nvidian/generative-ai-examples:v0.2.0-notebook-server-enterprise-rag
+    image: nvcr.io/nvidian/generative-ai-examples:0.2.0-rc1-notebook-server-enterprise-rag
     build:
       context: ../../
       dockerfile: ./notebooks/Dockerfile.notebooks
@@ -116,7 +116,7 @@ services:
 
   query:
     container_name: chain-server
-    image: nvcr.io/nvidian/generative-ai-examples:v0.2.0-chain-server-enterprise-rag
+    image: nvcr.io/nvidian/generative-ai-examples:0.2.0-rc1-chain-server-enterprise-rag
     build:
       context: ../../
       dockerfile: ./RetrievalAugmentedGeneration/Dockerfile
@@ -152,7 +152,7 @@ services:
 
   frontend:
     container_name: llm-playground
-    image: nvcr.io/nvidian/generative-ai-examples:v0.2.0-llm-playground-enterprise-rag
+    image: nvcr.io/nvidian/generative-ai-examples:0.2.0-rc1-llm-playground-enterprise-rag
     build:
       context: ../.././RetrievalAugmentedGeneration/frontend/
       dockerfile: Dockerfile
