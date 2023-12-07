@@ -30,8 +30,6 @@ Before proceeding with this guide, make sure you meet the following prerequisite
     - If you are running multiple GPUs they must all be set to the same mode (ie Compute vs. Display). You can check compute mode for each GPU using
     ``nvidia-smi -q -d compute``
 
-- You should have access to [NeMo Framework](https://developer.nvidia.com/nemo-framework) to download the container used for deploying the Large Language Model. To access nemo-framework inference container please register at https://developer.nvidia.com/nemo-framework. After submitting a form you will be automatically accepted.
-
 ### Setup the following
 
 - Docker and Docker-Compose are essential. Please follow the [installation instructions](https://docs.docker.com/engine/install/ubuntu/).
@@ -72,7 +70,7 @@ Before proceeding with this guide, make sure you meet the following prerequisite
 
 ## Install Guide
 
-### Using Nvdia Cloud based LLM
+### Using Nvdia Cloud based LLM's
 
 **NVIDIA AI Playground** on NGC allows developers to experience state of the art LLMs accelerated on NVIDIA DGX Cloud with NVIDIA TensorRT and Triton Inference Server. Developers get **free credits for 10K requests** to any of the available models. Sign up process is easy. Follow the below steps from the root of this project to setup the RAG example.
 
@@ -132,13 +130,13 @@ A sample chatbot web application is provided in the workflow. Requests to the ch
 - Retype the question:  "How many cores are on the Nvidia Grace superchip?"
 
 
-### Local LLM setup
+### Using on-prem LLM's
 
-NVIDIA TensorRT LLM providex state of the art performance for running LLM inference. Follow the below steps from the root of this project to setup the RAG example with TensorRT LLM and Triton.
+NVIDIA TensorRT LLM providex state of the art performance for running LLM inference. Follow the below steps from the root of this project to setup the RAG example with TensorRT LLM and Triton deployed locally.
 
 ####  Step 1: Set Environment Variables
 
-Modify ``compose.env`` in the ``deploy/compose`` directory to set your environment variables. The following variables are required.
+Modify ``compose.env`` in the ``deploy/compose`` directory to set your environment variables. The following variables are required as shown below for using a llama based model.
 
     # full path to the local copy of the model weights
     export MODEL_DIRECTORY="$HOME/src/Llama-2-13b-chat-hf"
@@ -219,6 +217,3 @@ A sample chatbot web application is provided in the workflow. Requests to the ch
    4. [Sample frontend](../docs/rag/frontend.md)
 3. [Configuration Guide](../docs/rag/configuration.md): This guide covers different configurations available for this workflow.
 4. [Support Matrix](../docs/rag/support_matrix.md): This covers GPU, CPU, Memory and Storage requirements for deploying this workflow.
-
-# Known Issues
-- Uploading a file with size more than 10 MB may fail due to preset timeouts during the ingestion process.
