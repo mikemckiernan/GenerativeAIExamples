@@ -15,6 +15,7 @@
 
 """LLM Chains for executing Retrival Augmented Generation."""
 import base64
+import os
 from pathlib import Path
 from typing import Generator
 
@@ -70,9 +71,23 @@ def rag_chain(prompt: str, num_tokens: int) -> Generator[str, None, None]:
 
 def ingest_docs(data_dir: str, filename: str) -> None:
     """Ingest documents to the VectorDB."""
-    unstruct_reader = download_loader("UnstructuredReader")
-    loader = unstruct_reader()
-    documents = loader.load_data(file=Path(data_dir), split_documents=False)
+    _, ext = os.path.splitext(filename)
+
+    try:
+        if ext.lower() == ".pdf":
+            PDFReader = download_loader("PDFReader")
+            loader = PDFReader()
+            documents = loader.load_data(file=Path(data_dir))
+
+        else:
+            unstruct_reader = download_loader("UnstructuredReader")
+            loader = unstruct_reader()
+            documents = loader.load_data(file=Path(data_dir), split_documents=False)
+
+    except Exception as e:
+        raise ValueError(
+            "Ingest of file: " + data_dir + " failed with error: " + str(e)
+        )
 
     encoded_filename = filename[:-4]
     if not is_base64_encoded(encoded_filename):

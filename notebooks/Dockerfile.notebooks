@@ -14,6 +14,7 @@ COPY ./notebooks/dataset.zip .
 COPY ./notebooks/imgs/* imgs/
 
 COPY ./integrations/langchain/llms/triton_trt_llm.py .
+COPY ./integrations/langchain/llms/nemo_infer.py .
 
 COPY ./notebooks/requirements.txt .
 

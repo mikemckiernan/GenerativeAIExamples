@@ -92,7 +92,7 @@ def get_config() -> "ConfigWizard":
 def get_vector_index() -> VectorStoreIndex:
     """Create the vector db index."""
     config = get_config()
-    vector_store = MilvusVectorStore(uri=config.milvus.url, dim=1024, overwrite=False)
+    vector_store = MilvusVectorStore(uri=config.milvus.url, dim=config.embeddings.dimensions, overwrite=False)
     return VectorStoreIndex.from_vector_store(vector_store)
 
 
@@ -108,13 +108,23 @@ def get_llm() -> LangChainLLM:
     """Create the LLM connection."""
     settings = get_config()
 
-    llm = NemoInfer(
-        server_url=f"http://{settings.triton.server_url}/v1/completions",
-        model=settings.triton.model_name,
-        tokens=DEFAULT_NUM_TOKENS,
-    )
+    if settings.llm.model_engine == "triton-trt-llm":
+        trtllm = TensorRTLLM(  # type: ignore
+            server_url=settings.llm.server_url,
+            model_name=settings.llm.model_name,
+            tokens=DEFAULT_NUM_TOKENS,
+        )
+        return LangChainLLM(llm=trtllm)
+    elif settings.llm.model_engine == "nemo-infer":
+        nemo_infer = NemoInfer(
+            server_url=f"http://{settings.llm.server_url}/v1/completions",
+            model=settings.llm.model_name,
+            tokens=DEFAULT_NUM_TOKENS,
+        )
+        return LangChainLLM(llm=nemo_infer)
+    else:
+        raise RuntimeError("Unable to find any supported Large Language Model server. Supported engines are triton-trt-llm and nemo-infer.")
 
-    return LangChainLLM(llm=llm)
 
 
 @lru_cache
@@ -125,14 +135,18 @@ def get_embedding_model() -> LangchainEmbedding:
         model_kwargs["device"] = "cuda:0"
 
     encode_kwargs = {"normalize_embeddings": False}
-    hf_embeddings = HuggingFaceEmbeddings(
-        model_name=get_config().embeddings.model_name,
-        model_kwargs=model_kwargs,
-        encode_kwargs=encode_kwargs,
-    )
+    settings = get_config()
 
-    # Load in a specific embedding model
-    return LangchainEmbedding(hf_embeddings)
+    if settings.embeddings.model_engine == "huggingface":
+        hf_embeddings = HuggingFaceEmbeddings(
+            model_name=settings.embeddings.model_name,
+            model_kwargs=model_kwargs,
+            encode_kwargs=encode_kwargs,
+        )
+        # Load in a specific embedding model
+        return LangchainEmbedding(hf_embeddings)
+    else:
+        raise RuntimeError("Unable to find any supported embedding model. Supported engine is huggingface.")
 
 
 @lru_cache

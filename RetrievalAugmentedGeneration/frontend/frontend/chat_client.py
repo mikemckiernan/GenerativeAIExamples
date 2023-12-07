@@ -91,5 +91,5 @@ class ChatClient:
             )
 
             _ = requests.post(
-                url, headers=headers, files=files, timeout=30  # type: ignore [arg-type]
+                url, headers=headers, files=files, timeout=600  # type: ignore [arg-type]
             )

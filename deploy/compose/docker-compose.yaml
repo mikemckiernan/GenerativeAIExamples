@@ -1,19 +1,22 @@
 services:
 
-  triton:
-    container_name: nemollm-inference-ms
-    image: nvcr.io/ohlfw0olaadg/ea-participants/nemollm-inference-ms:23.10
+  llm:
+    container_name: llm-inference-server
+    image: llm-inference-server:latest
+    build:
+      context: ../.././RetrievalAugmentedGeneration/llm-inference-server/
+      dockerfile: Dockerfile
     volumes:
-    - ${MODEL_DIRECTORY:?please update the env file and source it before running}:/model-store
-    command: nemollm_inference_ms --model ${MODEL_NAME:?please update the env file and source it before running} --openai_port 9999 --nemo_port 9998 --num_gpus=1
+    - ${MODEL_DIRECTORY:?please update the env file and source it before running}:/model
+    command: ${MODEL_ARCHITECTURE:?please update the env file and source it before running} --max-input-length ${MODEL_MAX_INPUT_LENGTH:-3000} --max-output-length ${MODEL_MAX_OUTPUT_LENGTH:-512}
     ports:
     - "8000:8000"
-    - "9998:9998"
-    - "9999:9999"
+    - "8001:8001"
+    - "8002:8002"
     expose:
-    - "8000"
-    - "9998"
-    - "9999"
+      - "8000"
+      - "8001"
+      - "8002"
     shm_size: 20gb
     deploy:
       resources:
@@ -30,8 +33,8 @@ services:
       start_period: 10m
 
   jupyter-server:
-    container_name: jupyter-notebook-server
-    image: nvcr.io/nvidian/generative-ai-examples:v0.2.0-notebook-server-enterprise-rag
+    container_name: notebook-server
+    image: notebook-server:latest
     build:
       context: ../../
       dockerfile: ./notebooks/Dockerfile.notebooks
@@ -47,7 +50,7 @@ services:
               count: 1
               capabilities: [gpu]
     depends_on:
-      - "triton"
+      - "llm"
 
   etcd:
     container_name: milvus-etcd
@@ -115,16 +118,17 @@ services:
               count: 1
 
   query:
-    container_name: query-router
-    image: nvcr.io/nvidian/generative-ai-examples:v0.2.0-chain-server-enterprise-rag
+    container_name: chain-server
+    image: chain-server:latest
     build:
       context: ../../
       dockerfile: ./RetrievalAugmentedGeneration/Dockerfile
     command: --port 8081 --host 0.0.0.0
     environment:
       APP_MILVUS_URL: "http://milvus:19530"
-      APP_TRITON_SERVERURL: "triton:9999"
-      APP_TRITON_MODELNAME: ${MODEL_NAME:?please update the env file and source it before running}
+      APP_LLM_SERVERURL: "llm:8001"
+      APP_LLM_MODELNAME: ensemble
+      APP_LLM_MODELENGINE: triton-trt-llm
       APP_CONFIG_FILE: ${APP_CONFIG_FILE}
     volumes:
       - ${APP_CONFIG_FILE}:${APP_CONFIG_FILE}
@@ -147,11 +151,11 @@ services:
     #   retries: 3
     depends_on:
       - "milvus"
-      - "triton"
+      - "llm"
 
   frontend:
     container_name: llm-playground
-    image: nvcr.io/nvidian/generative-ai-examples:v0.2.0-llm-playground-enterprise-rag
+    image: llm-playground:latest
     build:
       context: ../.././RetrievalAugmentedGeneration/frontend/
       dockerfile: Dockerfile
@@ -159,7 +163,7 @@ services:
     environment:
       APP_SERVERURL: http://query
       APP_SERVERPORT: 8081
-      APP_MODELNAME: ${MODEL_NAME:?please update the env file and source it before running}
+      APP_MODELNAME: ${MODEL_NAME:-${MODEL_ARCHITECTURE}}
     ports:
     - "8090:8090"
     expose:

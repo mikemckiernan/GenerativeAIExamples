@@ -32,7 +32,7 @@ class MilvusConfig(ConfigWizard):
 
 
 @configclass
-class TritonConfig(ConfigWizard):
+class LLMConfig(ConfigWizard):
     """Configuration class for the Triton connection.
 
     :cvar server_url: The location of the Triton server hosting the llm model.
@@ -48,6 +48,11 @@ class TritonConfig(ConfigWizard):
         "model_name",
         default="Llama-2-13b-chat-hf",
         help_txt="The name of the hosted model.",
+    )
+    model_engine: str = configfield(
+        "model_engine",
+        default="nemo-infer",
+        help_txt="The server type of the hosted model. Allowed values are triton-trt-llm and nemo-infer",
     )
 
 
@@ -82,6 +87,16 @@ class EmbeddingConfig(ConfigWizard):
         "model_name",
         default="intfloat/e5-large-v2",
         help_txt="The name of huggingface embedding model.",
+    )
+    model_engine: str = configfield(
+        "model_engine",
+        default="huggingface",
+        help_txt="The server type of the hosted model. Allowed values are hugginface",
+    )
+    dimensions: int = configfield(
+        "dimensions",
+        default=1024,
+        help_txt="The required dimensions of the embedding model. Currently utilized for vector DB indexing.",
     )
 
 
@@ -141,11 +156,11 @@ class AppConfig(ConfigWizard):
         help_txt="The configuration of the Milvus connection.",
         default=MilvusConfig(),
     )
-    triton: TritonConfig = configfield(
-        "triton",
+    llm: LLMConfig = configfield(
+        "llm",
         env=False,
-        help_txt="The configuration for the Triton server hosting the embedding models.",
-        default=TritonConfig(),
+        help_txt="The configuration for the server hosting the Large Language Models.",
+        default=LLMConfig(),
     )
     text_splitter: TextSplitterConfig = configfield(
         "text_splitter",
