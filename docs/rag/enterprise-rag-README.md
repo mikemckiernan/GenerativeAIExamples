@@ -71,6 +71,17 @@ Before proceeding with this guide, make sure you meet the following prerequisite
     ```
     3. Check `model-store` directory after unzipping in the same directory.
 
+    Note: List od supported model and their version are mentioned below. You might see inference failure when using other model version
+    | Model Name  | Model Version Supported |
+    | ------------- |:-------------:|
+    | [Llama-2-70b](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-70b)      | LLAMA-2-70B-4K-FP16     |
+    | [Llama-2-70b-Chat](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-70b-chat)      | LLAMA-2-70B-CHAT-4K-FP16     |
+    | [Llama-2-13b](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-13b)      | LLAMA-2-13B-4K-FP16 |
+    | [Llama-2-13b-Chat](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-13b-chat)      | LLAMA-2-13B-CHAT-4K-FP16     |
+    | [Llama-2-7b](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-7b)      | LLAMA-2-7B-4K-FP16 |
+    | [Llama-2-7b-Chat](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-7b-chat)      | LLAMA-2-7B-CHAT-4K-FP16 |
+    | [NV-GPT-8B-base](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/nv-gpt-8b-base)      | NV-GPT-8B-base-4K-FP16-1 |
+
 
 ## Install Guide
 
