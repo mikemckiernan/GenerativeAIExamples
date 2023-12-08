@@ -20,9 +20,9 @@ from pathlib import Path
 from typing import Generator
 
 from llama_index import Prompt, download_loader
-from llama_index.node_parser import SimpleNodeParser
 from llama_index.query_engine import RetrieverQueryEngine
 from llama_index.response.schema import StreamingResponse
+from llama_index.node_parser import LangchainNodeParser
 
 from RetrievalAugmentedGeneration.common.utils import (
     LimitRetrievedNodesLength,
@@ -99,7 +99,6 @@ def ingest_docs(data_dir: str, filename: str) -> None:
         document.metadata = {"filename": encoded_filename}
 
     index = get_vector_index()
-    text_splitter = get_text_splitter()
-    node_parser = SimpleNodeParser.from_defaults(text_splitter=text_splitter)
+    node_parser = LangchainNodeParser(get_text_splitter())
     nodes = node_parser.get_nodes_from_documents(documents)
     index.insert_nodes(nodes)
