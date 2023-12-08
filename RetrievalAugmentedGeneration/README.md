@@ -207,6 +207,28 @@ A sample chatbot web application is provided in the workflow. Requests to the ch
 
 - Retype the question:  "How many cores are on the Nvidia Grace superchip?"
 
+### RAG Evaluation
+
+#### Prerequisite
+Make sure the corps comm dataset is loaded into the vector database using the [Dataloader](../notebooks/05_dataloader.ipynb) notebook as part of step-3 of setup.
+
+This workflow include jupyter notebooks which allow you perform evaluation of your RAG application on the corps-comms-dataset and they can be extended to other datasets as well. After setting up the workflow. 
+
+
+- Using a web browser, type in the following URL to open Jupyter
+
+    ``http://host-ip:8889``
+
+- Locate the [synthetic data generation](../evaluation/01_synthetic_data_generation.ipynb) which demonstrates how to generate synthetic data of question answer pairs for evaluation
+
+- Proceed with the next 3 notebooks:
+
+    - [Filling generated answers](../evaluation/02_filling_RAG_outputs_for_Evaluation.ipynb)
+
+    - [Ragas evaluation with NVIDIA AI playground](../evaluation/03_eval_ragas.ipynb)
+
+    - [LLM as a Judge evaluation with NVIDIA AI playground](../evaluation/04_Human_Like_RAG_Evaluation-AIP.ipynb)
+
 
 # Learn More
 1. [Architecture Guide](../docs/rag/architecture.md): Detailed explanation of different components and how they are tried up together.
