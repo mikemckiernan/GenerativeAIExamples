@@ -51,6 +51,9 @@ Before proceeding with this guide, make sure you meet the following prerequisite
         docker login nvcr.io
       ```
 
+- git-lfs
+    - Make sure you have [git-lfs](https://git-lfs.github.com) installed. 
+
 - You can download Llama2 Chat Model Weights from [Meta](https://ai.meta.com/resources/models-and-libraries/llama-downloads/) or [HuggingFace](https://huggingface.co/meta-llama/Llama-2-13b-chat-hf/). You can skip this step [if you are interested in using cloud based LLM's using Nvidia AI Playground](#using-nvdia-cloud-based-llm).
 
     **Note for checkpoint downloaded using Meta**:
