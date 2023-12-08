@@ -21,13 +21,13 @@ from functools import lru_cache
 from typing import TYPE_CHECKING, List, Optional
 
 import torch
-from llama_index.indices.postprocessor.types import BaseNodePostprocessor
+from llama_index.postprocessor.types import BaseNodePostprocessor
 from llama_index.schema import MetadataMode
 from llama_index.utils import globals_helper
 from llama_index.vector_stores import MilvusVectorStore
 from llama_index import VectorStoreIndex, ServiceContext, set_global_service_context
 from llama_index.llms import LangChainLLM
-from llama_index import LangchainEmbedding
+from llama_index.embeddings import LangchainEmbedding
 from langchain.text_splitter import SentenceTransformersTokenTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
 from integrations.langchain.llms.triton_trt_llm import TensorRTLLM
@@ -49,7 +49,7 @@ DEFAULT_NUM_TOKENS = 150
 class LimitRetrievedNodesLength(BaseNodePostprocessor):
     """Llama Index chain filter to limit token lengths."""
 
-    def postprocess_nodes(
+    def _postprocess_nodes(
         self, nodes: List["NodeWithScore"] = [], query_bundle: Optional["QueryBundle"] = None
     ) -> List["NodeWithScore"]:
         """Filter function."""
