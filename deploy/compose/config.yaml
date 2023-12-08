@@ -14,7 +14,7 @@ llm:
   # Type: str
   # ENV Variable: APP_LLM_SERVERURL
 
-  model_name: ensemble
+  model_name: Llama-2-13b-chat-hf
   # The name of the hosted model.
   # Type: str
   # ENV Variable: APP_LLM_MODELNAME
