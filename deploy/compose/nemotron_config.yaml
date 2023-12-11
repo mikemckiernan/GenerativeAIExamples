@@ -14,12 +14,12 @@ llm:
   # Type: str
   # ENV Variable: APP_LLM_SERVERURL
 
-  model_name: Llama-2-13b-chat-hf
+  model_name: "ensemble"
   # The name of the hosted model.
   # Type: str
   # ENV Variable: APP_LLM_MODELNAME
 
-  model_engine: nemo-infer
+  model_engine: "triton-trt-llm"
   # The backend name hosting the model. Right now only triton-trt-llm and nemo-infer is supported.
   # Type: str
   # ENV Variable: APP_LLM_MODELENGINE
