@@ -103,7 +103,7 @@ Modify ``compose.env`` in the ``deploy/compose`` directory to set your environme
     # [OPTIONAL] the config file for chain server
     APP_CONFIG_FILE=/dev/null
 
-
+Note: If you're using `NV-GPT-8B-base`, use [nemotron_config.yaml](../../deploy/compose/nemotron_config.yaml) as `APP_CONFIG_FILE` for proper response.
 ### Step 2: Start Containers
 - Run the following command to start containers.
     ```
