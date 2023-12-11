@@ -16,6 +16,7 @@
 """Utility functions for the LLM Chains."""
 import os
 import base64
+import logging
 from functools import lru_cache
 from typing import TYPE_CHECKING, List, Optional
 
@@ -38,6 +39,8 @@ if TYPE_CHECKING:
     from llama_index.indices.query.schema import QueryBundle
     from llama_index.schema import NodeWithScore
     from RetrievalAugmentedGeneration.common.configuration_wizard import ConfigWizard
+
+logger = logging.getLogger(__name__)
 
 DEFAULT_MAX_CONTEXT = 1500
 DEFAULT_NUM_TOKENS = 50
@@ -106,6 +109,7 @@ def get_llm() -> LangChainLLM:
     """Create the LLM connection."""
     settings = get_config()
 
+    logger.info(f"Using {settings.llm.model_engine} as model engine for llm")
     if settings.llm.model_engine == "triton-trt-llm":
         trtllm = TensorRTLLM(  # type: ignore
             server_url=settings.llm.server_url,
@@ -135,6 +139,7 @@ def get_embedding_model() -> LangchainEmbedding:
     encode_kwargs = {"normalize_embeddings": False}
     settings = get_config()
 
+    logger.info(f"Using {settings.embeddings.model_engine} as model engine for embeddings")
     if settings.embeddings.model_engine == "huggingface":
         hf_embeddings = HuggingFaceEmbeddings(
             model_name=settings.embeddings.model_name,
