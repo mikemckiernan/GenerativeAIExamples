@@ -37,7 +37,7 @@ Before proceeding with this guide, make sure you meet the following prerequisite
 - Docker and Docker-Compose are essential. Please follow the [installation instructions](https://docs.docker.com/engine/install/ubuntu/).
 
         Note:
-            Please do **not** use Docker that is packaged with Ubuntu as the newer version of Docker is required for proper Docker Compose support.
+            Please do not use Docker that is packaged with Ubuntu as the newer version of Docker is required for proper Docker Compose support.
 
             Make sure your user account is able to execute Docker commands.
 
@@ -71,7 +71,7 @@ Before proceeding with this guide, make sure you meet the following prerequisite
     ```
     3. Check `model-store` directory after unzipping in the same directory.
 
-    Note: List od supported model and their version are mentioned below. You might see inference failure when using other model version
+    Note: List of supported model and their version are mentioned below. You might see inference failure when using other model version
     | Model Name  | Model Version Supported |
     | ------------- |:-------------:|
     | [Llama-2-70b](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-70b)      | Llama-2-70b:LLAMA-2-70B-4K-FP16     |
@@ -103,7 +103,8 @@ Modify ``compose.env`` in the ``deploy/compose`` directory to set your environme
     # [OPTIONAL] the config file for chain server
     APP_CONFIG_FILE=/dev/null
 
-Note: If you're using `NV-GPT-8B-base`, use [nemotron_config.yaml](../../deploy/compose/nemotron_config.yaml) as `APP_CONFIG_FILE` for proper response.
+Note: If you're using `NV-GPT-8B-base`, use [nemotron_config.yaml](../../deploy/compose/nemotron_config.yaml) as `APP_CONFIG_FILE` in [compose.env](../../deploy/compose/compose.env) for proper response.
+
 ### Step 2: Start Containers
 - Run the following command to start containers.
     ```
