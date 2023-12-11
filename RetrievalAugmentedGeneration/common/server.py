@@ -17,6 +17,7 @@
 import base64
 import os
 import shutil
+import logging
 from pathlib import Path
 from typing import Any, Dict, List
 
@@ -26,6 +27,9 @@ from pydantic import BaseModel, Field
 
 from RetrievalAugmentedGeneration.common import utils
 from RetrievalAugmentedGeneration.examples.developer_rag import chains
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # create the FastAPI server
 app = FastAPI()
@@ -79,6 +83,7 @@ async def upload_document(file: UploadFile = File(...)) -> JSONResponse:
 async def generate_answer(prompt: Prompt) -> StreamingResponse:
     """Generate and stream the response to the provided prompt."""
     if prompt.use_knowledge_base:
+        logger.info("Knowledge base is enabled using rag chain for response generation")
         generator = chains.rag_chain(prompt.question, prompt.num_tokens)
         return StreamingResponse(generator, media_type="text/event-stream")
 

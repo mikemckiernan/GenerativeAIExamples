@@ -41,7 +41,6 @@ except ImportError:
     USE_LANGCHAIN = False
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
 
 STOP_WORDS = ["</s>"]
 RANDOM_SEED = 0
@@ -169,6 +168,8 @@ if USE_LANGCHAIN:
             text_callback: Optional[Callable[[str], None]],
         ) -> str:
             """Request a streaming inference session."""
+
+            logger.debug("Generating streaming response from llm")
             result_queue = self.client.request_streaming(
                 model_params["model_name"], request_id, **invocation_params
             )
