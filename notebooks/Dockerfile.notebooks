@@ -1,5 +1,5 @@
 # Use a base image with Python
-FROM python:3.10-slim
+FROM nvcr.io/nvidia/pytorch:23.08-py3
 
 # Set working directory
 WORKDIR /app
