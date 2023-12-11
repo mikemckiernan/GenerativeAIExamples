@@ -17,6 +17,24 @@ services:
             - driver: nvidia
               count: 1
               capabilities: [gpu]
+  
+  evaluation:
+    container_name: evaluation
+    image: evaluation:latest
+    build:
+      context: ../../
+      dockerfile: ./evaluation/Dockerfile.eval
+    ports:
+    - "8889:8889"
+    expose:
+    - "8889"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
 
   etcd:
     container_name: milvus-etcd
