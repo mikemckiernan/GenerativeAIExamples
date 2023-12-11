@@ -1,0 +1,16 @@
+images:
+  registry:
+    # The registry name must NOT contain a trailing slash
+    name: nvcr.io
+    ImagePullSecret:
+      # Leave blank, if no ImagePullSecret is needed.
+      name: nvcrio
+      # If set to false, the chart expects either a ImagePullSecret
+      # with the name configured above to be present on the cluster or that no
+      # credentials are needed.
+      create: true
+      username: '$oauthtoken'
+      password: 
+  
+  version: latest
+  imagePullPolicy: Always
