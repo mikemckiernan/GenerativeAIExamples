@@ -1,4 +1,4 @@
-FROM nvcr.io/nvidia/pytorch:23.08-py3
+FROM docker.io/library/python:3.11-slim
 
 COPY frontend /app/frontend
 COPY requirements.txt /app
