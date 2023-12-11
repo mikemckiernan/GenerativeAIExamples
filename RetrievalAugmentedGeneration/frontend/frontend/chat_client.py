@@ -49,10 +49,14 @@ class ChatClient:
         )
 
         with requests.post(url, headers=headers, json=data, timeout=30) as req:
-            response = req.json()
-            return typing.cast(
-                typing.List[typing.Dict[str, typing.Union[str, float]]], response
-            )
+            try:
+                req.raise_for_status()
+                response = req.json()
+                return typing.cast(
+                    typing.List[typing.Dict[str, typing.Union[str, float]]], response
+                )
+            except Exception as e:
+                _LOGGER.info(f"Failed to get response from query server due to {e}, refer query router logs for details")
 
     def predict(
         self, query: str, use_knowledge_base: bool, num_tokens: int
@@ -70,8 +74,13 @@ class ChatClient:
         )
 
         with requests.post(url, stream=True, json=data, timeout=10) as req:
-            for chunk in req.iter_content(16):
-                yield chunk.decode("UTF-8")
+            try:
+                req.raise_for_status()
+                for chunk in req.iter_content(16):
+                    yield chunk.decode("UTF-8")
+            except Exception as e:
+                _LOGGER.info(f"Failed to get response from query server due to {e}, refer query router logs for details")
+                yield "Failed to generate response"
 
     def upload_documents(self, file_paths: typing.List[str]) -> None:
         """Upload documents to the kb."""
