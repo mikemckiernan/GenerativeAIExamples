@@ -17,6 +17,4 @@ Using an existing knowledge base we can synthetically generate question|answer|c
 [RAGAS](https://github.com/explodinggradients/ragas) is an automated metrics tool for measuring performance of both the retriever and generator. We utilize the Nvidia AI Playground langchain wrapper to run RAGAS evaluation on our example RAG pipeline.
 
 ### LLM-as-a-Judge
-We can LLMs to provide human-like feedback and Likert evaluation scores for full end-to-end RAG pipelines. This tool uses Llama 2 70B as a judge LLM.
-
-Refer to the [RAG evaluation prerequisite](https://gitlab-master.nvidia.com/chat-labs/OpenSource/GenerativeAIExamples/-/tree/shenneman/eval-readme/RetrievalAugmentedGeneration?ref_type=heads#prerequisite) for getting started.
+We can use LLMs to provide human-like feedback and Likert evaluation scores for full end-to-end RAG pipelines. This tool uses Llama 2 70B as a judge LLM.
