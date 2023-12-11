@@ -54,11 +54,11 @@ prompts:
   # The configuration for the prompts used for response generation.
 
   chat_template:
-    <s>[INST] <<SYS>>You are a helpful, respectful and honest assistant.Always answer as helpfully as possible, while being safe.Please ensure that your responses are positive in nature.<</SYS>>[/INST] {context_str} </s><s>[INST] {query_str} [/INST]
+    "<extra_id_0>System You are a helpful, respectful and honest assistant.Always answer as helpfully as possible, while being safe.Please ensure that your responses are positive in nature.\n<extra_id_0>System {context_str} \n {query_str} Given context followed by query, you try to answer the query truthfully \n<extra_id_1>Assistant"
   # The chat prompt template guides the model to generate responses for queries.
   # Type: str
 
   rag_template:
-    "<s>[INST] <<SYS>>Use the following context to answer the user's question. If you don't know the answer,just say that you don't know, don't try to make up an answer.<</SYS>><s>[INST] Context: {context_str} Question: {query_str} Only return the helpful answer below and nothing else. Helpful answer:[/INST]"
+    "<extra_id_0>System Use the following context to answer the user's question. If you don't know the answer,just say that you don't know, don't try to make up an answer.\n<extra_id_0>System Context {context_str} Question {query_str} \n<extra_id_0>Only return the helpful answer below and nothing else. Helpful answer\n<extra_id_1>Assistant"
   # The RAG prompt template instructs the model to generate responses for queries while utilizing knowledge base.
   # Type: str
