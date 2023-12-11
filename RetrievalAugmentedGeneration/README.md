@@ -215,10 +215,12 @@ A sample chatbot web application is provided in the workflow. Requests to the ch
 #### Prerequisite
 Make sure the corps comm dataset is loaded into the vector database using the [Dataloader](../notebooks/05_dataloader.ipynb) notebook as part of step-3 of setup.
 
-This workflow include jupyter notebooks which allow you perform evaluation of your RAG application on the corps-comms-dataset and they can be extended to other datasets as well. After setting up the workflow. 
+This workflow include jupyter notebooks which allow you perform evaluation of your RAG application on the sample dataset and they can be extended to other datasets as well.
+Setup the workflow by building and starting the containers by following the steps [outlined here using docker compose.](#step-2-build-and-start-containers)
 
+After setting up the workflow follow these steps:
 
-- Using a web browser, type in the following URL to open Jupyter
+- Using a web browser, type in the following URL to open Jupyter Labs
 
     ``http://host-ip:8889``
 
