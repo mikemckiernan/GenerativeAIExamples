@@ -57,6 +57,10 @@ class ChatClient:
                 )
             except Exception as e:
                 _LOGGER.info(f"Failed to get response from query server due to {e}, refer query router logs for details")
+                return typing.cast(
+                    typing.List[typing.Dict[str, typing.Union[str, float]]], []
+                )
+
 
     def predict(
         self, query: str, use_knowledge_base: bool, num_tokens: int
