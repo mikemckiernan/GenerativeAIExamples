@@ -10,5 +10,7 @@ COPY integrations /opt/integrations
 RUN --mount=type=bind,source=RetrievalAugmentedGeneration/requirements.txt,target=/opt/requirements.txt \
     python3 -m pip install --no-cache-dir -r /opt/requirements.txt
 
+RUN apt-get remove python3-pip
+
 WORKDIR /opt
 ENTRYPOINT ["uvicorn", "RetrievalAugmentedGeneration.common.server:app"]
