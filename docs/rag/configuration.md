@@ -34,7 +34,7 @@ This section covers the settings for the Text Splitter component.
 The Embeddings section contains information required for generating embeddings.
 
     model_name: Indicate the name of the model used to generate embeddings.
-    model_engine: An enum specifying the backend name hosting the model. Right now only "huggingface" is supported.
+    model_engine: An enum specifying the backend name hosting the model, Currently huggingface and ai-playground are supported.
     dimensions: Integer value specifying the dimensions of the embedding search model from huggingface.
     Note: Any change in `model_name`` may also necessitate changes in the model's `dimensions`, which can be adjusted using this field.
 

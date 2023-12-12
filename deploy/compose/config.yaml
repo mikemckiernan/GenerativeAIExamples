@@ -42,7 +42,7 @@ embeddings:
   # The configuration embedding models.
 
   model_name: intfloat/e5-large-v2
-  # The name embedding search model from huggingface.
+  # The name embedding search model from huggingface or ai-playground.
   # Type: str
 
   dimensions: 1024
@@ -50,7 +50,7 @@ embeddings:
   # Type: int
 
   model_engine: huggingface
-  # The backend name hosting the model. Right now only huggingface is supported.
+  # The backend name hosting the model, huggingface and ai-playground are supported.
   # Type: str
 
 prompts:
