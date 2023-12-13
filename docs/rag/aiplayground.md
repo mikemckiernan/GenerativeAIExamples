@@ -47,8 +47,9 @@ Please follow the instruction below to get access to AI playground API key
     ```
     > ⚠️ **NOTE**: It will take a few minutes for the containers to come up. Adding the `-d` flag will have the services run in the background. ⚠️
 
-### Follow remaining steps from Quick start guide to interact with the pipeline [here](../../RetrievalAugmentedGeneration/README.md#step-3-experiment-with-rag-in-jupyterlab)
+### Follow remaining steps from Quick start guide to interact with the pipeline using UI [here](../../RetrievalAugmentedGeneration/README.md#step-3-experiment-with-rag-in-jupyterlab)
 
+- Example [notebook 6](../../notebooks/06_AI_playground.ipynb) showcases the usage of AI Playground LLM
 
 ### Using Nvdia Cloud based Embedding models
 
@@ -63,11 +64,12 @@ Please follow the instruction below to get access to AI playground API key
     export AI_PLAYGROUND_API_KEY="nvapi-*"
 
 #### Step 3: Update Config file
-    Update the embedding model name and model engine in [config.yaml](../../deploy/compose/config.yaml)
+- Update the embedding model name and model engine in [config.yaml](../../deploy/compose/config.yaml)
+
     ```
         embeddings:
           model_name: nvolve
           model_engine: ai-playground
     ```
 
-### Follow remaining steps from Quick start guide [here](../../RetrievalAugmentedGeneration/README.md#step-3-experiment-with-rag-in-jupyterlab) to build containers and start the pipeline.
+- Follow steps 3 and 4 from Quick start guide [here](../../RetrievalAugmentedGeneration/README.md#step-3-experiment-with-rag-in-jupyterlab) to build containers and start the pipeline.
