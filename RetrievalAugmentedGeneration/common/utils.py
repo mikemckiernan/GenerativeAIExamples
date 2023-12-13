@@ -32,6 +32,7 @@ from langchain.text_splitter import SentenceTransformersTokenTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
 from integrations.langchain.llms.triton_trt_llm import TensorRTLLM
 from integrations.langchain.llms.nv_aiplay import GeneralLLM
+from integrations.langchain.embeddings.nv_aiplay import NVAIPlayEmbeddings
 from RetrievalAugmentedGeneration.common import configuration
 
 if TYPE_CHECKING:
@@ -44,6 +45,7 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_MAX_CONTEXT = 1500
 DEFAULT_NUM_TOKENS = 150
+TEXT_SPLITTER_EMBEDDING_MODEL = "intfloat/e5-large-v2"
 
 
 class LimitRetrievedNodesLength(BaseNodePostprocessor):
@@ -149,6 +151,11 @@ def get_embedding_model() -> LangchainEmbedding:
         )
         # Load in a specific embedding model
         return LangchainEmbedding(hf_embeddings)
+    elif settings.embeddings.model_engine == "ai-playground":
+        if os.getenv('NVAPI_KEY') is None:
+            raise RuntimeError("AI PLayground key is not set")
+        embedding = NVAIPlayEmbeddings(model=settings.embeddings.model_name)
+        return LangchainEmbedding(embedding)
     else:
         raise RuntimeError("Unable to find any supported embedding model. Supported engine is huggingface.")
 
@@ -171,7 +178,7 @@ def is_base64_encoded(s: str) -> bool:
 def get_text_splitter() -> SentenceTransformersTokenTextSplitter:
     """Return the token text splitter instance from langchain."""
     return SentenceTransformersTokenTextSplitter(
-        model_name=get_config().embeddings.model_name,
+        model_name=TEXT_SPLITTER_EMBEDDING_MODEL,
         chunk_size=get_config().text_splitter.chunk_size,
         chunk_overlap=get_config().text_splitter.chunk_overlap,
     )
