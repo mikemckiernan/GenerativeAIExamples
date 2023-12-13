@@ -15,14 +15,14 @@ To convert Llama2 to TensorRT and host it on Triton Model Server for development
 ```
   cd deploy/
   source compose.env
-  docker compose build triton
+  docker compose build llm
 ```
 - Run the container which will start the triton server with TRT-LLM optimized Llama2 model
 ```
-  docker compose up triton
+  docker compose up llm
 ```
 
-- Once the optimized Llama2 is deployed in Triton Server, clients can send HTTP/REST or gRPC requests directly to Triton Server. Example implmentation of the client can be found [here](../llm-inference-server/model_server_client/trt_llm.py).
+- Once the optimized Llama2 is deployed in Triton Server, clients can send HTTP/REST or gRPC requests directly to Triton Server. Example implmentation of the client can be found [here](../../integrations/langchain/llms/triton_trt_llm.py).
 
 
 
