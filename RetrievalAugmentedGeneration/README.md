@@ -62,6 +62,8 @@ Before proceeding with this guide, make sure you meet the following prerequisite
 
         Meta will download two additional files, namely tokenizer.model and tokenizer_checklist.chk, outside of the model checkpoint directory. Ensure that you copy these files into the same directory as the model checkpoint directory.
 
+    **Note**:
+        Instead of deploying the models on-prem if you will like to use LLM models deployed from NVIDIA AI Playground then follow the instructions from [here](../docs/rag/aiplayground.md).
 
     **Note**:
 
@@ -72,68 +74,6 @@ Before proceeding with this guide, make sure you meet the following prerequisite
 
 
 ## Install Guide
-
-### Using Nvdia Cloud based LLM's
-
-**NVIDIA AI Playground** on NGC allows developers to experience state of the art LLMs accelerated on NVIDIA DGX Cloud with NVIDIA TensorRT and Triton Inference Server. Developers get **free credits for 10K requests** to any of the available models. Sign up process is easy. Follow the below steps from the root of this project to setup the RAG example.
-
-#### Step 1: Sign up to AI playground
-
-Follow the instructions [here](../docs/rag/aiplayground.md) to get access to an API key.
-
-#### Step 2: Set Environment Variables
-
-Modify ``compose.env`` in the ``deploy/compose`` directory to set your environment variables. The following variable is required.
-
-    # Fill this out if you dont have a GPU. Leave this empty if you have a local GPU
-    export AI_PLAYGROUND_API_KEY="nvapi-*"
-
-
-#### Step 3: Build and Start Containers
-- Pull lfs files. This will pull large files from repository.
-    ```
-        git lfs pull
-    ```
-- Run the following command to build containers.
-    ```
-        source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose-playground.yaml build
-    ```
-
-- Run the following command to start containers.
-    ```
-        source deploy/compose/compose.env; docker compose -f deploy/compose/docker-compose-playground.yaml up -d
-    ```
-    > ⚠️ **NOTE**: It will take a few minutes for the containers to come up. Adding the `-d` flag will have the services run in the background. ⚠️
-
-#### Step 4: Experiment with RAG in JupyterLab
-
-This AI Workflow includes Jupyter notebooks which allow you to experiment with RAG.
-
-- Using a web browser, type in the following URL to open Jupyter
-
-    ``http://host-ip:8888``
-
-- Locate the [AI Playground notebook](../notebooks/06_AI_playground.ipynb) which demonstrates how to stream responses from the LLM hosted in Nvidia AI Playground.
-
-#### Step 4: Run the Sample Web Application
-A sample chatbot web application is provided in the workflow. Requests to the chat system are wrapped in FastAPI calls.
-
-- Open the web application at ``http://host-ip:8090``.
-
-- Type in the following question without using a knowledge base: "How many cores are on the Nvidia Grace superchip?"
-
-    **Note:** the chatbot mentions the chip doesn't exist.
-
-- To use a knowledge base:
-
-    - Click the **Knowledge Base** tab and upload the file [dataset.zip](../notebooks/dataset.zip).
-
-- Return to **Converse** tab and check **[X] Use knowledge base**.
-
-- Retype the question:  "How many cores are on the Nvidia Grace superchip?"
-
-
-### Using on-prem LLM's
 
 NVIDIA TensorRT LLM providex state of the art performance for running LLM inference. Follow the below steps from the root of this project to setup the RAG example with TensorRT LLM and Triton deployed locally.
 
