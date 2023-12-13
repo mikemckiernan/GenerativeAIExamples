@@ -29,26 +29,6 @@ services:
       retries: 3
       start_period: 10m
 
-  jupyter-server:
-    container_name: notebook-server
-    image: nvcr.io/nvidian/generative-ai-examples:0.2.0-rc1-notebook-server-enterprise-rag
-    build:
-      context: ../../
-      dockerfile: ./notebooks/Dockerfile.notebooks
-    ports:
-    - "8888:8888"
-    expose:
-    - "8888"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
-    depends_on:
-      - "llm"
-
   etcd:
     container_name: milvus-etcd
     image: quay.io/coreos/etcd:v3.5.5
@@ -116,7 +96,7 @@ services:
 
   query:
     container_name: chain-server
-    image: nvcr.io/nvidian/generative-ai-examples:0.2.0-rc1-chain-server-enterprise-rag
+    image: nvcr.io/nemo-microservice/ea-rag-examples:0.2.0-chain-server-enterprise-rag
     build:
       context: ../../
       dockerfile: ./RetrievalAugmentedGeneration/Dockerfile
@@ -152,7 +132,7 @@ services:
 
   frontend:
     container_name: llm-playground
-    image: nvcr.io/nvidian/generative-ai-examples:0.2.0-rc1-llm-playground-enterprise-rag
+    image: nvcr.io/nemo-microservice/ea-rag-examples:0.2.0-llm-playground-enterprise-rag
     build:
       context: ../.././RetrievalAugmentedGeneration/frontend/
       dockerfile: Dockerfile

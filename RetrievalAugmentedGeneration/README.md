@@ -1,23 +1,19 @@
 # Retrieval Augmented Generation
 
-This document covers developer RAG workflow. If you're interested in enterprise version please follow [README.md](../docs/rag/enterprise-rag-README.md).
-
-Enterprise RAG uses Nemo Microservice Inference EA for scalable deployment of LLM models. Nemo Microservice Inference EA is currently under Early Access(EA) and to be able to access enterprise workflow you will need access to Nemo-Microservice NGC org.
-
 ## Project Details
-**Project Goal**: A reference Retrieval Augmented Generation(RAG) workflow for a chatbot to question answer off public press releases & tech blogs. It performs document ingestion & Q&A interface using open source models deployed on any cloud or customer datacenter, leverages the power of GPU-accelerated Milvus for efficient vector storage and retrieval, along with TRT-LLM, to achieve lightning-fast inference speeds with custom LangChain LLM wrapper.
+**Project Goal**: A optimized reference Retrieval Augmented Generation(RAG) workflow for a chatbot utilizing cutting-edge NVIDIA AI Enterprise Microservices. This workflow is using [Nemo Microservice Inference (EA)](nvcr.io/ohlfw0olaadg/ea-participants/nemollm-inference-ms:23.10) for LLM model deployment. In this example we will ingest a collection of NVIDIA press releases and blogs.
 
 ## Components
-- **LLM**: [Llama2](https://ai.meta.com/llama/) - 7b, 13b, and 70b all supported. 13b and 70b generate good responses.
-- **LLM Backend**: Nemo framework inference container with Triton inference server & TRT-LLM backend for speed.
+- **LLM**: [Llama2](https://ai.meta.com/llama/) - 7b, 13b, and 70b all supported. 13b and 70b generate good responses. `NeMo LLM`- NV-GPT-8B-base, NV-GPT-43B-chat
+- **LLM Backend**: [NeMo Microservice Inference (NMI)](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms) incorporates CUDA, TRT, TRT-LLM, and Triton, NMI brings state of the art GPU accelerated Large Language model serving.
 - **Vector DB**: Milvus because it's GPU accelerated.
 - **Embedding Model**: [e5-large-v2](https://huggingface.co/intfloat/e5-large-v2) since it is one of the best embedding model available at the moment.
 - **Framework(s)**: LangChain and LlamaIndex.
 
-This reference workflow uses a variety of components and services to customize and deploy the RAG based chatbot. The following diagram illustrates how they work together. Refer to the [detailed architecture guide](../docs/rag/architecture.md) to understand more about these components and how they are tied together.
+This reference workflow uses a variety of components and services to customize and deploy the RAG based chatbot. The following diagram illustrates how they work together. Refer to the [detailed architecture guide](architecture.md) to understand more about these components and how they are tied together.
 
 
-![Diagram](../docs/rag/images/image3.jpg)
+![Diagram](images/image3.jpg)
 
 *Note:*
 We've used [Llama2](https://ai.meta.com/llama/) and [e5-large-v2](https://huggingface.co/intfloat/e5-large-v2) models as example defaults in this workflow, you should ensure that both the LLM and embedding model are appropriate for your use case, and validate that they are secure and have not been tampered with prior to use.
@@ -34,12 +30,14 @@ Before proceeding with this guide, make sure you meet the following prerequisite
     - If you are running multiple GPUs they must all be set to the same mode (ie Compute vs. Display). You can check compute mode for each GPU using
     ``nvidia-smi -q -d compute``
 
+- You should have access to [NeMo Microservice Inference](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms) to download the container used for deploying the Large Language Model.
+
 ### Setup the following
 
 - Docker and Docker-Compose are essential. Please follow the [installation instructions](https://docs.docker.com/engine/install/ubuntu/).
 
         Note:
-            Please do **not** use Docker that is packaged with Ubuntu as the newer version of Docker is required for proper Docker Compose support.
+            Please do not use Docker that is packaged with Ubuntu as the newer version of Docker is required for proper Docker Compose support.
 
             Make sure your user account is able to execute Docker commands.
 
@@ -55,19 +53,34 @@ Before proceeding with this guide, make sure you meet the following prerequisite
         docker login nvcr.io
       ```
 
-- You can download Llama2 Chat Model Weights from [Meta](https://ai.meta.com/resources/models-and-libraries/llama-downloads/) or [HuggingFace](https://huggingface.co/meta-llama/Llama-2-13b-chat-hf/).
+- You can download the model from NGC.
 
-    **Note for checkpoint downloaded using Meta**:
+    1. Download the llama2 13b model from ngc
+    ```
+    ngc registry model download-version "ohlfw0olaadg/ea-participants/llama-2-13b-chat:LLAMA-2-13B-CHAT-4K-FP16"
+    ```
+    Note: You can check list of available models using
+    ```
+    ngc registry model list "ohlfw0olaadg/ea-participants/*"
+    ```
 
-        When downloading model weights from Meta, you can follow the instructions up to the point of downloading the models using ``download.sh``. There is no need to deploy the model using the steps mentioned in the repository. We will use Triton to deploy the model.
+    2. Move to the downloaded directory and unzip the model
+    ```
+    cd llama-2-13b-chat_vLLAMA-2-13B-CHAT-4K-FP16/
+    tar -xzf LLAMA-2-13B-CHAT-4K-FP16.tar.gz
+    ```
+    3. Check `model-store` directory after unzipping in the same directory.
 
-        Meta will download two additional files, namely tokenizer.model and tokenizer_checklist.chk, outside of the model checkpoint directory. Ensure that you copy these files into the same directory as the model checkpoint directory.
-
-
-    **Note**:
-
-        In this workflow, we will be leveraging a Llama2 (13B parameters) chat model, which requires 50 GB of GPU memory.  If you prefer to leverage 7B parameter model, this will require 38GB memory. The 70B parameter model initially requires 240GB memory.
-        IMPORTANT:  For this initial version of the workflow, A100 and H100 GPUs are supported.
+    Note: List of supported model and their version are mentioned below. You might see inference failure when using other model version
+    | Model Name  | Model Version Supported |
+    | ------------- |:-------------:|
+    | [Llama-2-70b](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-70b)      | Llama-2-70b:LLAMA-2-70B-4K-FP16     |
+    | [Llama-2-70b-Chat](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-70b-chat)      | Llama-2-70b-Chat:LLAMA-2-70B-CHAT-4K-FP16     |
+    | [Llama-2-13b](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-13b)      | Llama-2-13b:LLAMA-2-13B-4K-FP16 |
+    | [Llama-2-13b-Chat](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-13b-chat)      | Llama-2-13b-Chat:LLAMA-2-13B-CHAT-4K-FP16     |
+    | [Llama-2-7b](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-7b)      | Llama-2-7b:LLAMA-2-7B-4K-FP16 |
+    | [Llama-2-7b-Chat](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-7b-chat)      | Llama-2-7b-Chat:LLAMA-2-7B-CHAT-4K-FP16 |
+    | [NV-GPT-8B-base](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/nv-gpt-8b-base)      | NV-GPT-8B-base:NV-GPT-8B-base-4K-FP16-1 |
 
 
 ## Install Guide
@@ -76,9 +89,9 @@ Follow the below steps from the root of this project to setup the RAG example.
 
 ###  Step 1: Set Environment Variables
 
-Modify ``compose.env`` in the ``deploy/compose`` directory to set your environment variables. The following variables are required as shown below for using a llama based model.
+Modify ``compose.env`` in the ``deploy/compose`` directory to set your environment variables. The following variables are required.
 
-    # full path to the local copy of the model weights
+    # full path to the model store directory of downloaded model
     export MODEL_DIRECTORY="$HOME/src/Llama-2-13b-chat-hf"
 
     # the architecture of the model. eg: llama
@@ -90,47 +103,19 @@ Modify ``compose.env`` in the ``deploy/compose`` directory to set your environme
     # [OPTIONAL] the config file for chain server
     APP_CONFIG_FILE=/dev/null
 
+Note: If you're using `NV-GPT-8B-base`, use [nemotron_config.yaml](../../deploy/compose/nemotron_config.yaml) as `APP_CONFIG_FILE` in [compose.env](../../deploy/compose/compose.env) for proper response.
 
-### Step 2: Build and Start Containers
-- Pull lfs files. This will pull large files from repository.
-    ```
-        git lfs pull
-    ```
-- Run the following command to build containers.
-    ```
-        source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose.yaml build
-    ```
-
+### Step 2: Start Containers
 - Run the following command to start containers.
     ```
-        source deploy/compose/compose.env; docker compose -f deploy/compose/docker-compose.yaml up -d
+        source deploy/compose/compose.env; docker compose -f deploy/compose/docker-compose-enterprise.yaml up -d
     ```
-    > ⚠️ **NOTE**: It will take a few minutes for the containers to come up and may take up to 5 minutes for the Triton server to be ready. Adding the `-d` flag will have the services run in the background. ⚠️
 
 - Run ``docker ps -a``. When the containers are ready the output should look similar to the image below.
-    ![Docker Output](../docs/rag/images/docker-output.png "Docker Output Image")
+    ![Docker Output](./images/docker-output.png "Docker Output Image")
 
-### Step 3: Experiment with RAG in JupyterLab
 
-This AI Workflow includes Jupyter notebooks which allow you to experiment with RAG.
-
-- Using a web browser, type in the following URL to open Jupyter
-
-    ``http://host-ip:8888``
-
-- Locate the [LLM Streaming Client notebook](../notebooks/01-llm-streaming-client.ipynb) which demonstrates how to stream responses from the LLM.
-
-- Proceed with the next 4 notebooks:
-
-    - [Document Question-Answering with LangChain](../notebooks/02_langchain_simple.ipynb)
-
-    - [Document Question-Answering with LlamaIndex](../notebooks/03_llama_index_simple.ipynb)
-
-    - [Advanced Document Question-Answering with LlamaIndex](../notebooks/04_llamaindex_hier_node_parser.ipynb)
-
-    - [Interact with REST FastAPI Server](../notebooks/05_dataloader.ipynb)
-
-### Step 4: Run the Sample Web Application
+### Step 3: Run the Sample Web Application
 A sample chatbot web application is provided in the workflow. Requests to the chat system are wrapped in FastAPI calls.
 
 - Open the web application at ``http://host-ip:8090``.
@@ -147,13 +132,34 @@ A sample chatbot web application is provided in the workflow. Requests to the ch
 
 - Retype the question:  "How many cores are on the Nvidia Grace superchip?"
 
+## Chain Server
+The Chain server acts as the central component, coordinating interactions with the embedding model and Milvus vector store. It generates embeddings using the embedding model, ingests those embeddings into the Milvus vector store, retrieves relevant documents from Milvus, and forwards those documents along with user queries to the LLM for response generation orchestrated by llama index and langchain.
+
+Chain server's core logic resides in [developer_rag](../../RetrievalAugmentedGeneration/examples/developer_rag/) dir, llm integration is in [llm](../../integrations/langchain/llms/) and utility code is present in [common](../../RetrievalAugmentedGeneration/common/). You can modify this to change the behavior of pipeline as per your use case.
+
+### Building chain server container
+1. Remove existing chain server image
+    ```
+    docker rmi nvcr.io/nvidian/generative-ai-examples:v0.2.0-chain-server-enterprise-rag
+    ```
+2. Remove any stale layer for the image
+    ```
+    docker system prune -a
+    ```
+3. Build chain server image from scratch
+    ```
+    source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose-enterprise.yaml build query
+    ```
+4. You can deploy the e2e pipeline
+    ```
+    source deploy/compose/compose.env; docker compose -f deploy/compose/docker-compose-enterprise.yaml up -d
+    ```
 
 # Learn More
 1. [Architecture Guide](../docs/rag/architecture.md): Detailed explanation of different components and how they are tried up together.
 2. Component Guides: Component specific features are enlisted in these sections.
-   1. [Chain Server](../docs/rag/chat_server.md)
-   2. [NeMo Framework Inference Server](../docs/rag/llm_inference_server.md)
-   3. [Jupyter Server](../docs/rag/jupyter_server.md)
-   4. [Sample frontend](../docs/rag/frontend.md)
-3. [Configuration Guide](../docs/rag/configuration.md): This guide covers different configurations available for this workflow.
-4. [Support Matrix](../docs/rag/support_matrix.md): This covers GPU, CPU, Memory and Storage requirements for deploying this workflow.
+   1. [Chain Server](chat_server.md)
+   2. [NeMo Microservice Inference Server](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms)
+   3. [Sample frontend](frontend.md)
+3. [Configuration Guide](configuration.md): This guide covers different configurations available for this workflow.
+4. [Support Matrix](support_matrix.md): This covers GPU, CPU, Memory and Storage requirements for deploying this workflow.
