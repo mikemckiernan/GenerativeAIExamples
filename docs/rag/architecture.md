@@ -69,9 +69,9 @@ A sample chatbot web application is provided in the workflow so that you can tes
 An additional method of customization in the AI Workflow inference pipeline is via a prompt template. A prompt template is a pre-defined recipe for generating prompts for language models. They may contain instructions, few-shot examples, and context appropriate for a given task. In our example, we prompt our model to generate safe and polite responses.
 
 
-**Triton Inference Server**
+**LLM Inference Server**
 
-The Triton Inference Server uses models stored in a model repository, available locally to serve inference requests. Once they are available in Triton, inference requests are sent from a client application. Python and C++ libraries provide APIs to simplify communication. Clients send HTTP/REST requests directly to Triton using HTTP/REST or gRPC protocols.
+The LLM Inference Server uses models stored in a model repository, available locally to serve inference requests. Once they are available in Triton, inference requests are sent from a client application. Python and C++ libraries provide APIs to simplify communication. Clients send HTTP/REST requests directly to Triton using HTTP/REST or gRPC protocols.
 
 Within this workflow, the Llama2 LLM was optimized using NVIDIA TensorRT for LLMs (TRT-LLM) which accelerates and maximizes inference performance on the latest LLMs.
 

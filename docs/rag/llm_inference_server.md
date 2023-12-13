@@ -15,14 +15,14 @@ We use [NeMo Framework Inference Server](https://docs.nvidia.com/nemo-framework/
 ```
   cd deploy/
   source compose.env
-  docker compose build triton
+  docker compose build llm
 ```
 - Run the container which will start the triton server with TRT-LLM optimized Llama2 model
 ```
-  docker compose up triton
+  docker compose up llm
 ```
 
-- Once the optimized Llama2 is deployed in Triton Server, clients can send HTTP/REST or gRPC requests directly to Triton Server. Example implmentation of the client can be found [here](../llm-inference-server/model_server_client/trt_llm.py).
+- Once the optimized Llama2 is deployed in Triton Server, clients can send HTTP/REST or gRPC requests directly to Triton Server. Example implmentation of the client can be found [here](../../integrations/langchain/llms/triton_trt_llm.py).
 
 
 
@@ -30,10 +30,10 @@ We use [NeMo Framework Inference Server](https://docs.nvidia.com/nemo-framework/
 
 - Download Llama2 Chat Model Weights from [Meta](https://ai.meta.com/resources/models-and-libraries/llama-downloads/) or [HuggingFace](https://huggingface.co/meta-llama/Llama-2-13b-chat-hf/). You can check [support matrix](support_matrix.md) for GPU requirements for the deployment.
 
-- For quantization of the Llama2 model using AWQ, first clone the [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM/tree/release/0.5.0) repository separately and checkout release/v0.5.0. 
+- For quantization of the Llama2 model using AWQ, first clone the [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM/tree/release/0.5.0) repository separately and checkout release/v0.5.0.
 
    - Also copy the Llama2 model directory downloaded earlier to the TensorRT-LLM repo
-  
+
 ```
   git clone https://github.com/NVIDIA/TensorRT-LLM.git
   cp -r <path-to-Llama2-model-directory> TensorRT-LLM/
@@ -72,16 +72,16 @@ We use [NeMo Framework Inference Server](https://docs.nvidia.com/nemo-framework/
 ```
   cd deploy/
   source compose.env
-  docker compose build triton
+  docker compose build llm
 ```
 - Run the container which will start the triton server with TRT-LLM optimized Llama2 model
 ```
-  docker compose up triton
+  docker compose up llm
 ```
 
 - Alternatively you can also follow [quick start guide](../../RetrievalAugmentedGeneration/README.md) to deploy the model server along with the complete pipeline.
 
-- Once the optimized Llama2 is deployed in Triton Server, clients can send HTTP/REST or gRPC requests directly to Triton Server. Example implmentation of the client can be found [here](../llm-inference-server/model_server_client/trt_llm.py).
+- Once the optimized Llama2 is deployed in Triton Server, clients can send HTTP/REST or gRPC requests directly to Triton Server. Example implmentation of the client can be found [here](../../integrations/langchain/llms/triton_trt_llm.py).
 
 
 **Note for checkpoint downloaded using Meta**:
