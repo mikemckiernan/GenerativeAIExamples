@@ -43,13 +43,13 @@ def llm_chain(
 ) -> Generator[str, None, None]:
     """Execute a simple LLM chain using the components defined above."""
 
-    logger.debug("Using llm to generate response directly")
+    logger.info("Using llm to generate response directly without knowledge base.")
     set_service_context()
     prompt = get_config().prompts.chat_template.format(
         context_str=context, query_str=question
     )
 
-    logger.debug(f"Prompt used for response generation: {prompt}")
+    logger.info(f"Prompt used for response generation: {prompt}")
     response = get_llm().stream_complete(prompt, tokens=num_tokens)
     gen_response = (resp.delta for resp in response)
     return gen_response
@@ -58,15 +58,14 @@ def llm_chain(
 def rag_chain(prompt: str, num_tokens: int) -> Generator[str, None, None]:
     """Execute a Retrieval Augmented Generation chain using the components defined above."""
 
-    logger.debug("Using rag to generate response from document")
+    logger.info("Using rag to generate response from document")
 
     set_service_context()
     get_llm().llm.tokens = num_tokens  # type: ignore
     retriever = get_doc_retriever(num_nodes=4)
     qa_template = Prompt(get_config().prompts.rag_template)
 
-    logger.debug(f"Prompt used for response generation: {qa_template}")
-
+    logger.info(f"Prompt used for response generation: {qa_template}")
     query_engine = RetrieverQueryEngine.from_args(
         retriever,
         text_qa_template=qa_template,
@@ -79,8 +78,8 @@ def rag_chain(prompt: str, num_tokens: int) -> Generator[str, None, None]:
     if isinstance(response, StreamingResponse):
         return response.response_gen
 
-    logger.info("No response generated, make sure you've ingested document")
-    return StreamingResponse(iter([])).response_gen  # type: ignore
+    logger.warning("No response generated from LLM, make sure you've ingested document.")
+    return StreamingResponse(iter(["No response generated from LLM, make sure you have ingested document from the Knowledge Base Tab."])).response_gen  # type: ignore
 
 
 def ingest_docs(data_dir: str, filename: str) -> None:
@@ -89,21 +88,15 @@ def ingest_docs(data_dir: str, filename: str) -> None:
     logger.info(f"Ingesting {filename} in vectorDB")
     _, ext = os.path.splitext(filename)
 
-    try:
-        if ext.lower() == ".pdf":
-            PDFReader = download_loader("PDFReader")
-            loader = PDFReader()
-            documents = loader.load_data(file=Path(data_dir))
+    if ext.lower() == ".pdf":
+        PDFReader = download_loader("PDFReader")
+        loader = PDFReader()
+        documents = loader.load_data(file=Path(data_dir))
 
-        else:
-            unstruct_reader = download_loader("UnstructuredReader")
-            loader = unstruct_reader()
-            documents = loader.load_data(file=Path(data_dir), split_documents=False)
-
-    except Exception as e:
-        raise ValueError(
-            "Ingest of file: " + data_dir + " failed with error: " + str(e)
-        )
+    else:
+        unstruct_reader = download_loader("UnstructuredReader")
+        loader = unstruct_reader()
+        documents = loader.load_data(file=Path(data_dir), split_documents=False)
 
     encoded_filename = filename[:-4]
     if not is_base64_encoded(encoded_filename):
