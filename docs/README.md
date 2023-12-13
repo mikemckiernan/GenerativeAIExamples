@@ -21,7 +21,6 @@ This section will help you get started quickly with the sample RAG example.
 The user guides cover the core details of the provided example and how to configure and use different features to make your own chains.
 
 * [LLM Inference Server](./rag/llm_inference_server.md): Learn about the service which accelerates LLM inference time using TRT-LLM.
-* [Integration with Nvidia AI Playground](./rag/aiplayground.md): Understand how to access **NVIDIA AI Playground** on NGC which allows developers to experience state of the art LLMs accelerated on NVIDIA DGX Cloud with NVIDIA TensorRT nd Triton Inference Server.
 * [Configuration Guide](./rag/configuration.md): The complete guide to all the configuration options available in the `config.yaml` file.
 * [Frontend](./rag/frontend.md): Learn more about the sample playground provided as part of the workflow.
 * [Chat Server Guide](./rag/chat_server.md): Learn about the chat server which exposes core API's for end user.

@@ -21,7 +21,6 @@ LLM Inference server hosts the Large Language Model (LLM) with triton backend.
 
     model_engine: An enum specifying the backend name hosting the model. Options currently supported are:
     1. `triton-trt-llm` for using locally deployed LLM models. Follow steps [here](../../RetrievalAugmentedGeneration/README.md#local-llm-setup) to understand how to deploy and use on-prem deployed models.
-    2. `ai-playground` for using NV AI Playground based models. Follow steps [here](../../RetrievalAugmentedGeneration/README.md#using-nvdia-cloud-based-llm) to understand how to deploy and use TRT-LLM optimized playground models from cloud.
 
 #### Text Splitter Configuration
 This section covers the settings for the Text Splitter component.
@@ -72,7 +71,6 @@ The Query service is the core component responsible for interacting with the llm
     APP_LLM_MODELNAME: The model name used by the Triton server.
     APP_LLM_MODELENGINE: An enum specifying the backend name hosting the model. Options currently supported are:
     1. `triton-trt-llm` if you are using locally deployed LLM models.
-    2. `ai-playground` if you are using NV AI Playground based models.
     APP_CONFIG_FILE: Provides the path to the configuration file used by the Chain Server or this container. Defaults to /dev/null
 
 #### Frontend
