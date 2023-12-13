@@ -1,5 +1,5 @@
 ARG BASE_IMAGE_URL=nvcr.io/nvidia/pytorch
-ARG BASE_IMAGE_TAG=23.08-py3
+ARG BASE_IMAGE_TAG=23.11-py3
 
 
 FROM ${BASE_IMAGE_URL}:${BASE_IMAGE_TAG}
@@ -9,6 +9,8 @@ COPY RetrievalAugmentedGeneration/examples /opt/RetrievalAugmentedGeneration/exa
 COPY integrations /opt/integrations
 RUN --mount=type=bind,source=RetrievalAugmentedGeneration/requirements.txt,target=/opt/requirements.txt \
     python3 -m pip install --no-cache-dir -r /opt/requirements.txt
+
+RUN apt-get remove python3-pip
 
 WORKDIR /opt
 ENTRYPOINT ["uvicorn", "RetrievalAugmentedGeneration.common.server:app"]
