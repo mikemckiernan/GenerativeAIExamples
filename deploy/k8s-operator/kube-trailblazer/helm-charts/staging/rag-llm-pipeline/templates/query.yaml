@@ -14,6 +14,7 @@ spec:
       labels:
         app.kubernetes.io/name: query-router
     spec:
+
       imagePullSecrets:
         - name:   nvcrio
       volumes:
@@ -22,10 +23,11 @@ spec:
           medium: Memory
       containers:
       - name:  query-router
-        image:  nvcr.io/ea-botmaker/dev/generative-ai-examples:v0.1.0-chain-server
+        imagePullPolicy: IfNotPresent
+        image:  {{ .Values.query.image }}
         command:
         - uvicorn
-        - chain_server.server:app
+        - RetrievalAugmentedGeneration.common.server:app
         - --port
         - "8081"
         - --host
@@ -33,10 +35,14 @@ spec:
         env: 
         - name: APP_MILVUS_URL
           value: http://milvus:19530
-        - name: APP_TRITON_MODELNAME
+        - name: APP_LLM_SERVERURL
+          value: llm:8001
+        - name: APP_LLM_MODELNAME
           value: ensemble
-        - name: APP_TRITON_SERVERURL
-          value: triton:8001
+        - name: APP_LLM_MODELENGINE
+          value: triton-trt-llm
+#        - name: APP_CONFIG_FILE # THIS SHOULD BE A CONFIGMAP
+#         value: ""
         ports:  
         - containerPort: 8081
         volumeMounts:

@@ -45,7 +45,6 @@ spec:
                     with climbing shrubs or vines, also latin for tree
                   properties:
                     chartSpec:
-                      description: ChartSpec defines the values of a helm chart
                       properties:
                         atomic:
                           description: Atomic indicates whether to install resources
@@ -184,8 +183,6 @@ spec:
                           type: boolean
                       required:
                       - chart
-                      - namespace
-                      - release
                       type: object
                     chartValues:
                       description: TODO ChartValues json.RawMessage `json:"chartValues"`
@@ -217,7 +214,6 @@ spec:
                         username:
                           type: string
                       required:
-                      - name
                       - url
                       type: object
                   required:

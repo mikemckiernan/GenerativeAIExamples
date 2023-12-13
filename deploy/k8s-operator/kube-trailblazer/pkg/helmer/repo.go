@@ -2,7 +2,7 @@ package helmer
 
 import "helm.sh/helm/v3/pkg/repo"
 
-func (in *repoEntry) DeepCopyInto(out *repo.Entry) {
+func (in *repoEntry) DeepCopyInto(out *repo.Entry) *repo.Entry {
 	out.Name = in.Name
 	out.URL = in.URL
 	out.Username = in.Username
@@ -12,4 +12,6 @@ func (in *repoEntry) DeepCopyInto(out *repo.Entry) {
 	out.CAFile = in.CAFile
 	out.InsecureSkipTLSverify = in.InsecureSkipTLSverify
 	out.PassCredentialsAll = in.PassCredentialsAll
+
+	return out
 }

@@ -39,7 +39,6 @@ spec:
                   description: A shelter of vines or branches or of latticework covered with climbing shrubs or vines, also latin for tree
                   properties:
                     chartSpec:
-                      description: ChartSpec defines the values of a helm chart
                       properties:
                         atomic:
                           description: Atomic indicates whether to install resources atomically. 'Wait' will automatically be set to true when using Atomic.
@@ -153,8 +152,6 @@ spec:
                           type: boolean
                       required:
                       - chart
-                      - namespace
-                      - release
                       type: object
                     chartValues:
                       description: TODO ChartValues json.RawMessage `json:"chartValues"`
@@ -184,7 +181,6 @@ spec:
                         username:
                           type: string
                       required:
-                      - name
                       - url
                       type: object
                   required:

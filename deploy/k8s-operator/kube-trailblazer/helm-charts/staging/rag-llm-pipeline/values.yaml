@@ -6,6 +6,7 @@ triton:
   modelArchitecture: "llama"
   modelMaxInputLength: "3000"
   modelMaxOutputLength: "512"
+  image: localhost:5000/llm-inference-server
   gpu:
     # MIG slice
     #type: "nvidia.com/mig-3g.40gb"
@@ -21,6 +22,7 @@ milvus:
     count: 1
 
 jupyter:
+  image: localhost:5000/notebook-server
   gpu:
     # MIG slice
     # type: "nvidia.com/mig-1g.10gb"
@@ -28,6 +30,7 @@ jupyter:
     count: 1
 
 query:
+  image: localhost:5000/chain-server
   gpu:
     # MIG slice
     # type: "nvidia.com/mig-1g.10gb"
@@ -35,6 +38,7 @@ query:
     count: 1
 
 frontend: 
+  image: localhost:5000/llm-playground
   modelName: "Llama-2-13b-chat-hf"
 
 images:
@@ -47,6 +51,6 @@ images:
       # If set to false, the chart expects either a ImagePullSecret
       # with the name configured above to be present on the cluster or that no
       # credentials are needed.
-      create: true
+      create: false
       username: '$oauthtoken'
       password: 

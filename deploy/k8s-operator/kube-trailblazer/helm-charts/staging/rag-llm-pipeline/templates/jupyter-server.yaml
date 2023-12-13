@@ -18,7 +18,8 @@ spec:
         - name:   nvcrio
       containers:
       - name: jupyter-notebook-server
-        image: nvcr.io/ea-botmaker/dev/generative-ai-examples:v0.1.0-notebook-server
+        imagePullPolicy: IfNotPresent
+        image: {{ .Values.jupyter.image }}
         ports:
         - containerPort: 8888
         resources:

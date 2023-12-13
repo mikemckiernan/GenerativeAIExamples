@@ -12,6 +12,7 @@ import (
 
 	helmclient "github.com/mittwald/go-helm-client"
 	"github.com/nvidia/kube-trailblazer/pkg/clients"
+	"github.com/nvidia/kube-trailblazer/pkg/utils"
 	"github.com/pkg/errors"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart"
@@ -34,6 +35,7 @@ const (
 func (h *Helmer) GetClientsWithRestConf(restConf *rest.Config) error {
 
 	var err error
+
 	opt := &helmclient.RestConfClientOptions{
 		Options: &helmclient.Options{
 			Namespace:        h.Package.ChartSpec.Namespace, // Change this to the namespace you wish to install the chart in.
@@ -115,7 +117,7 @@ func New() (*Helmer, error) {
 	}
 
 	os.Setenv("HELM_DEBUG", "1")
-	os.Setenv("HELM_PLUGINS", "/tmp/.helmplugins")
+	//os.Setenv("HELM_PLUGINS", "/tmp/.helmplugins")
 
 	if debug := os.Getenv("HELMER_DEBUG"); debug == "1" {
 		h.Debug = true
@@ -130,10 +132,34 @@ func New() (*Helmer, error) {
 }
 
 // NewWithPackage creates a very simple Helmer object
-func NewWithPackage(arbor *HelmPackage) (*Helmer, error) {
+func NewWithPackage(pkg *HelmPackage) (*Helmer, error) {
 
 	h, _ := New()
-	h.Package = *arbor
+	h.Package = *pkg
+
+	// TODO: Is there a better place to have this logic? BEGIN
+	hash, err := utils.FNV64a(h.Package.RepoEntry.URL)
+	if err != nil {
+		return nil, errors.Wrapf(err, "[NewWithPackage] cannot create hash for repo ")
+	}
+
+	if h.Package.RepoEntry.Name == "" {
+		h.Package.RepoEntry.Name = hash
+	}
+
+	if h.Package.ChartSpec.Namespace == "" {
+		h.Package.ChartSpec.Namespace = h.Package.ChartSpec.ChartName
+		h.Package.ChartSpec.CreateNamespace = true
+	}
+
+	if h.Package.ChartSpec.ReleaseName == "" {
+		h.Package.ChartSpec.ReleaseName = h.Package.ChartSpec.ChartName + "-" + hash
+	}
+	// Replace the chart name with the full chart name
+	h.Package.ChartSpec.ChartName = h.Package.RepoEntry.Name + "/" + h.Package.ChartSpec.ChartName
+	// TODO: Is there a better place to have this logic? END
+
+	// This is needed for housekeeping between rootChart and childChart
 	h.Package.ReleaseName = h.Package.ChartSpec.ReleaseName
 
 	return h, nil
@@ -212,7 +238,9 @@ func (h *Helmer) InstallOrUpgradePackage() error {
 
 	// The graph chart values can override chart.Values
 	rootValues := h.Package.ChartValues
-	rootChart, err := h.GetChart(&h.Package.ChartSpec)
+
+	chartSpec := h.Package.ChartSpec.DeepCopy()
+	rootChart, err := h.GetChart(chartSpec)
 	if err != nil {
 		return errors.Wrapf(err, "\n[InstallOrUpgradePackage]\tcannot get Chart from Package %s", h.Package.ChartSpec.ReleaseName)
 	}
@@ -317,7 +345,8 @@ func (h *Helmer) install(rootChart *chart.Chart, rootValues *chartutil.Values) e
 
 	h.Package.ChartSpec.ValuesYaml = vals
 
-	chartRelease, err := h.Client.InstallOrUpgradeChart(context.TODO(), &h.Package.ChartSpec, &h.Options)
+	chartSpec := h.Package.ChartSpec.DeepCopy()
+	chartRelease, err := h.Client.InstallOrUpgradeChart(context.TODO(), chartSpec, &h.Options)
 	if err != nil {
 		return errors.Wrapf(err, "\n[Install]\tchart failed with %v", rootChart.Name())
 	}
@@ -404,7 +433,8 @@ func (h *Helmer) Upgrade() error {
 
 // Lint implement HelmHelper
 func (h *Helmer) Lint() error {
-	if err := h.Client.LintChart(&h.Package.ChartSpec); err != nil {
+	chartSpec := h.Package.ChartSpec.DeepCopy()
+	if err := h.Client.LintChart(chartSpec); err != nil {
 		return errors.Wrap(err, "[Lint] failed linting chart")
 	}
 	return nil
@@ -414,8 +444,8 @@ func (h *Helmer) Lint() error {
 func (h *Helmer) Template() error {
 	var err error
 	yamls := []byte{}
-
-	if yamls, err = h.Client.TemplateChart(&h.Package.ChartSpec, nil); err != nil {
+	chartSpec := h.Package.ChartSpec.DeepCopy()
+	if yamls, err = h.Client.TemplateChart(chartSpec, nil); err != nil {
 		return errors.Wrap(err, "[Template] templating failed")
 	}
 	if h.Debug {
@@ -429,10 +459,8 @@ func (h *Helmer) Template() error {
 func (h *Helmer) AddOrUpdateRepo() error {
 
 	var repoEntry repo.Entry
+
 	h.Package.RepoEntry.DeepCopyInto(&repoEntry)
-
-	klog.Info("[AddOrUpdateChartRepo]: ", repoEntry)
-
 	if err := h.Client.AddOrUpdateChartRepo(repoEntry); err != nil {
 		return errors.Wrapf(err, "[AddOrUpdateChartRepo] failed with repo entry %v", h.Package.RepoEntry)
 	}
@@ -445,11 +473,12 @@ func (h *Helmer) RunChartTests() (bool, error) {
 }
 
 func ReconcileDelete(pipeline Pipeline, restConf *rest.Config) error {
-	for _, arbor := range UpdatePipelineWithDefaultChartSpec(pipeline) {
+	for _, pkg := range UpdatePipelineWithDefaultChartSpec(pipeline) {
+
 		// For each chart we create an Helmer instance with its own settings
 		// this makes it easier to decouple each chart for processing and clients
 		// that do not interfere with each other.
-		h, err := NewWithPackage(&arbor)
+		h, err := NewWithPackage(&pkg)
 		if err != nil {
 			panic(err)
 		}
@@ -458,10 +487,10 @@ func ReconcileDelete(pipeline Pipeline, restConf *rest.Config) error {
 		if err != nil {
 			panic(err)
 		}
-
-		err = h.UninstallRelease(&arbor.ChartSpec)
+		chartSpec := h.Package.ChartSpec.DeepCopy()
+		err = h.UninstallRelease(chartSpec)
 		if err != nil {
-			return errors.Wrapf(err, "\n[ReconcileDelete]\tcannot uninstall release %s", arbor.ChartSpec.ReleaseName)
+			return errors.Wrapf(err, "\n[ReconcileDelete]\tcannot uninstall release %s", h.Package.ChartSpec.ReleaseName)
 		}
 	}
 	return nil
@@ -471,37 +500,32 @@ func ReconcileCreate(pipeline Pipeline, restConf *rest.Config) ([]*release.Relea
 
 	var releases []*release.Release
 
-	for _, arbor := range UpdatePipelineWithDefaultChartSpec(pipeline) {
+	for _, pkg := range UpdatePipelineWithDefaultChartSpec(pipeline) {
 		// For each chart we create an Helmer instance with its own settings
 		// this makes it easier to decouple each chart for processing and clients
 		// that do not interfere with each other.
-		h, err := NewWithPackage(&arbor)
+		h, err := NewWithPackage(&pkg)
 		if err != nil {
 			panic(err)
 		}
 
-		klog.Info("DEBUG: GetClientsWithRestConf")
 		err = h.GetClientsWithRestConf(restConf)
 		if err != nil {
 			panic(err)
 		}
-		klog.Info("DEBUG: AddOrUpdateRepo")
 		err = h.AddOrUpdateRepo()
 		if err != nil {
 			return nil, err
 		}
-		klog.Info("DEBUG: Lint")
+
 		err = h.Lint()
 		if err != nil {
 			return nil, err
 		}
-		klog.Info("DEBUG: InstallOrUpgradePackage")
 		err = h.InstallOrUpgradePackage()
 		if err != nil {
-			klog.Info("[InstallOrUPgradePackage]\terror:", err)
 			return nil, err
 		}
-		klog.Info("DEBUG: RunChartTests")
 		ok, err := h.RunChartTests()
 		if !ok {
 			klog.Infof("[Reconcile]\tchart tests failed for %s", h.Package.ChartSpec.ReleaseName)
@@ -511,9 +535,7 @@ func ReconcileCreate(pipeline Pipeline, restConf *rest.Config) ([]*release.Relea
 			klog.Infof("[Reconcile]\terror executing tests for %s", h.Package.ChartSpec.ReleaseName)
 
 		}
-
 		if err == nil {
-			klog.Info("DEBUG: ListDeployedReleases")
 			releases, err = h.ListDeployedReleases()
 			if err != nil {
 				return nil, err
@@ -526,33 +548,32 @@ func ReconcileCreate(pipeline Pipeline, restConf *rest.Config) ([]*release.Relea
 // UpdateGrapshWithDefaultChartSpec updates a HelmPackage with default ChartSpec values
 func UpdatePipelineWithDefaultChartSpec(in Pipeline) Pipeline {
 	var out Pipeline
-	for _, arbor := range in {
-		arbor.ChartSpec.CreateNamespace = true
-		arbor.ChartSpec.CreateNamespace = true
-		arbor.ChartSpec.DisableHooks = false
-		arbor.ChartSpec.Replace = true
-		arbor.ChartSpec.Wait = true
-		arbor.ChartSpec.WaitForJobs = true
-		arbor.ChartSpec.DependencyUpdate = false
-		arbor.ChartSpec.Timeout = 10000000000
-		arbor.ChartSpec.GenerateName = true
-		arbor.ChartSpec.NameTemplate = ""
-		arbor.ChartSpec.Atomic = false
-		arbor.ChartSpec.SkipCRDs = false
-		arbor.ChartSpec.UpgradeCRDs = true
-		arbor.ChartSpec.SubNotes = false
-		arbor.ChartSpec.Force = false
-		arbor.ChartSpec.ResetValues = false
-		arbor.ChartSpec.ReuseValues = false
-		arbor.ChartSpec.Recreate = false
+	for _, pkg := range in {
+		pkg.ChartSpec.CreateNamespace = true
+		pkg.ChartSpec.DisableHooks = false
+		pkg.ChartSpec.Replace = true
+		pkg.ChartSpec.Wait = true
+		pkg.ChartSpec.WaitForJobs = true
+		pkg.ChartSpec.DependencyUpdate = false
+		pkg.ChartSpec.Timeout = 10000000000
+		pkg.ChartSpec.GenerateName = false
+		pkg.ChartSpec.NameTemplate = ""
+		pkg.ChartSpec.Atomic = false
+		pkg.ChartSpec.SkipCRDs = false
+		pkg.ChartSpec.UpgradeCRDs = true
+		pkg.ChartSpec.SubNotes = false
+		pkg.ChartSpec.Force = false
+		pkg.ChartSpec.ResetValues = false
+		pkg.ChartSpec.ReuseValues = false
+		pkg.ChartSpec.Recreate = false
 		// Keep this at one, otherwise we will have a lot of
 		// incomplete releases because of reconciliation
-		arbor.ChartSpec.MaxHistory = 0
-		arbor.ChartSpec.CleanupOnFail = false
-		arbor.ChartSpec.DryRun = false
-		arbor.ChartSpec.Description = ""
-		arbor.ChartSpec.KeepHistory = false
-		out = append(out, arbor)
+		pkg.ChartSpec.MaxHistory = 0
+		pkg.ChartSpec.CleanupOnFail = false
+		pkg.ChartSpec.DryRun = false
+		pkg.ChartSpec.Description = ""
+		pkg.ChartSpec.KeepHistory = false
+		out = append(out, pkg)
 	}
 	return out
 }

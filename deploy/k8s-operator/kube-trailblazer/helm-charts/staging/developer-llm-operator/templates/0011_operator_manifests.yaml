@@ -69,7 +69,7 @@ spec:
         - --leader-elect
         command:
         - /manager
-        image: nvcr.io/ea-cnt/nv_only/kube-trailblazer:v0.0.1
+        image: nvcr.io/nvstaging/cloud-native/developer-llm-operator:v0.0.1
         imagePullPolicy: Always
         livenessProbe:
           httpGet:

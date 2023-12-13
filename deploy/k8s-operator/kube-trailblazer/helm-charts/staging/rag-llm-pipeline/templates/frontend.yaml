@@ -14,11 +14,13 @@ spec:
       labels:
         app.kubernetes.io/name: frontend
     spec:
+
       imagePullSecrets:
         - name:   nvcrio
       containers:
       - name: llm-playground
-        image: nvcr.io/ea-botmaker/dev/generative-ai-examples:v0.1.0-llm-playground
+        imagePullPolicy: IfNotPresent
+        image: {{ .Values.frontend.image }}
         command:
         - python3
         - -m
