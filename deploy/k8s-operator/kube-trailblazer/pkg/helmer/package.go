@@ -1,7 +1,6 @@
 package helmer
 
 import (
-	helmclient "github.com/mittwald/go-helm-client"
 	"github.com/mittwald/go-helm-client/values"
 )
 
@@ -10,7 +9,7 @@ import (
 func NewHelmPackageWithDefaultChartSpec() *HelmPackage {
 	pipeline := &HelmPackage{
 		RepoEntry: repoEntry{},
-		ChartSpec: helmclient.ChartSpec{
+		ChartSpec: chartSpec{
 			ReleaseName:      "",
 			ChartName:        "",
 			Namespace:        "",
@@ -23,7 +22,7 @@ func NewHelmPackageWithDefaultChartSpec() *HelmPackage {
 			Wait:             true,
 			WaitForJobs:      true,
 			DependencyUpdate: false,
-			Timeout:          10000000000,
+			Timeout:          90000000000,
 			GenerateName:     true,
 			NameTemplate:     "",
 			Atomic:           false,

@@ -18,8 +18,14 @@ COPY api/ api/
 COPY controllers/ controllers/
 COPY pkg/ pkg/
 COPY .kustomize/ /kustomize/
+COPY helm-charts/ helm-charts/
+COPY helm-plugins/ helm-plugins/
+COPY Makefile Makefile
+COPY Makefile.helm.mk Makefile.helm.mk
 
 RUN chown -R 65532:65532 /kustomize
+
+RUN ["make", "helm-repo-index"]
 # Build
 # the GOARCH has not a default value to allow the binary be built according to the host where the command
 # was called. For example, if we call make docker-build in a local env which has the Apple Silicon M1 SO
@@ -29,12 +35,20 @@ RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -a -o ma
 
 # Use distroless as minimal base image to package the manager binary
 # Refer to https://github.com/GoogleContainerTools/distroless for more details
-FROM gcr.io/distroless/static:nonroot
+#FROM gcr.io/distroless/static:nonroot
+FROM debian:bullseye-slim
+#FROM ubuntu:latest
+ENV HELM_PLUGINS /opt/helm-plugins
+
 WORKDIR /
 COPY --from=builder /workspace/manager .
+
 COPY --from=builder --chown=65532:65532 /kustomize /kustomize
+COPY --from=builder --chown=65532:65532 /workspace/build/helm-charts /helm-charts
+COPY --from=builder --chown=65532:65532 /workspace/helm-plugins /opt/helm-plugins
 
 COPY artifacts/kustomize /usr/local/bin/kustomize
+
 USER 65532:65532
 
 ENTRYPOINT ["/manager"]

@@ -6,7 +6,6 @@ replace github.com/mittwald/go-helm-client => /zvonkok/github.com/zvonkok/go-hel
 
 require (
 	github.com/golang/mock v1.6.0
-	github.com/mitchellh/hashstructure/v2 v2.0.2
 	github.com/mittwald/go-helm-client v0.9.0
 	github.com/onsi/ginkgo/v2 v2.11.0
 	github.com/onsi/gomega v1.27.10
@@ -101,6 +100,7 @@ require (
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
+	github.com/mitchellh/hashstructure/v2 v2.0.2 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/moby/locker v1.0.1 // indirect
 	github.com/moby/spdystream v0.2.0 // indirect

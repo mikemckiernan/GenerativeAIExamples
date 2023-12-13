@@ -102,6 +102,7 @@ func (r *HelmPipelineReconciler) Reconcile(ctx context.Context, req ctrl.Request
 	klog.Infof("[Reconcile] -- %s -- HelmPipeline %s:%s", r.Filter.GetMode(), tb.GetNamespace(), tb.GetName())
 	releases, err := helmer.ReconcileCreate(tb.Spec.Pipeline, r.RestConf)
 	if err != nil {
+		klog.Warning(err, "[Reconcile]\trequeue request due to error")
 		return ctrl.Result{Requeue: true}, nil
 	}
 
