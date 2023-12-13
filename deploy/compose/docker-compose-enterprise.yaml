@@ -96,7 +96,7 @@ services:
 
   query:
     container_name: chain-server
-    image: nvcr.io/nemo-microservice/ea-rag-examples/enterprise-rag:0.2.0-chain-server
+    image: nvcr.io/ohlfw0olaadg/ea-rag-examples/enterprise-rag:0.2.0-chain-server
     build:
       context: ../../
       dockerfile: ./RetrievalAugmentedGeneration/Dockerfile
@@ -132,7 +132,7 @@ services:
 
   frontend:
     container_name: llm-playground
-    image: nvcr.io/nemo-microservice/ea-rag-examples/enterprise-rag:0.2.0-llm-playground
+    image: nvcr.io/ohlfw0olaadg/ea-rag-examples/enterprise-rag:0.2.0-llm-playground
     build:
       context: ../.././RetrievalAugmentedGeneration/frontend/
       dockerfile: Dockerfile
