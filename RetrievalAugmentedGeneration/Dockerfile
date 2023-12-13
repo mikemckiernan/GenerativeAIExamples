@@ -8,9 +8,8 @@ COPY RetrievalAugmentedGeneration/common /opt/RetrievalAugmentedGeneration/commo
 COPY RetrievalAugmentedGeneration/examples /opt/RetrievalAugmentedGeneration/examples
 COPY integrations /opt/integrations
 RUN --mount=type=bind,source=RetrievalAugmentedGeneration/requirements.txt,target=/opt/requirements.txt \
-    python3 -m pip install --no-cache-dir -r /opt/requirements.txt
-
-RUN apt-get remove python3-pip
+    python3 -m pip install --no-cache-dir -r /opt/requirements.txt; \
+    apt-get clean
 
 WORKDIR /opt
 ENTRYPOINT ["uvicorn", "RetrievalAugmentedGeneration.common.server:app"]
