@@ -12,6 +12,7 @@ This notebook demonstrates how to use a client to stream responses from an LLM d
 If a JupyterLab server needs to be compiled and stood up manually for development purposes, run the following commands:
 - Build the container
 ```
+source deploy/compose/compose.env
 docker compose -f deploy/compose/docker-compose-enterprise.yaml build jupyter-server
 ```
 - Run the container which starts the notebook server

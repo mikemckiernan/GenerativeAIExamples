@@ -1,7 +1,8 @@
 FROM nvcr.io/nvidia/pytorch:23.11-py3
 
-COPY frontend /app/frontend
-COPY requirements.txt /app
+COPY frontend/frontend /app/frontend
+COPY LICENSES-3rd-party.txt /app
+COPY frontend/requirements.txt /app
 RUN apt-get update; \
     apt-get upgrade -y; \
     python3 -m pip --no-cache-dir install -r /app/requirements.txt; \

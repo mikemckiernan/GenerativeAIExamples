@@ -163,6 +163,7 @@ If the web frontend needs to be stood up manually for development purposes, run 
 
 - Build the web UI container from source
 ```
+  source deploy/compose/compose.env
   docker compose -f deploy/compose/docker-compose-enterprise.yaml build query
 ```
 - Run the container which will start the server

@@ -134,8 +134,8 @@ services:
     container_name: llm-playground
     image: nvcr.io/ohlfw0olaadg/ea-rag-examples/enterprise-rag:0.2.0-llm-playground
     build:
-      context: ../.././RetrievalAugmentedGeneration/frontend/
-      dockerfile: Dockerfile
+      context: ../../RetrievalAugmentedGeneration/
+      dockerfile: ./frontend/Dockerfile
     command: --port 8090
     environment:
       APP_SERVERURL: http://query
