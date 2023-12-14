@@ -3,23 +3,23 @@ For development and experimentation purposes, the Jupyter notebooks provide guid
 
 The following Jupyter notebooks are provided with the AI workflow:
 
-1. [**LLM Streaming Client**](../notebooks/01-llm-streaming-client.ipynb)
+1. [**LLM Streaming Client**](../../notebooks/01-llm-streaming-client.ipynb)
 
 This notebook demonstrates how to use a client to stream responses from an LLM deployed to NVIDIA Triton Inference Server with NVIDIA TensorRT-LLM (TRT-LLM). This deployment format optimizes the model for low latency and high throughput inference.
 
-2. [**Document Question-Answering with LangChain**](../notebooks/02_langchain_simple.ipynb)
+2. [**Document Question-Answering with LangChain**](../../notebooks/02_langchain_simple.ipynb)
 
 This notebook demonstrates how to use LangChain to build a chatbot that references a custom knowledge-base. LangChain provides a simple framework for connecting LLMs to your own data sources. It shows how to integrate a TensorRT-LLM to LangChain using a custom wrapper.
 
-3. [**Document Question-Answering with LlamaIndex**](../notebooks/03_llama_index_simple.ipynb)
+3. [**Document Question-Answering with LlamaIndex**](../../notebooks/03_llama_index_simple.ipynb)
 
 This notebook demonstrates how to use LlamaIndex to build a chatbot that references a custom knowledge-base. It contains the same functionality as the notebook before, but uses some LlamaIndex components instead of LangChain components. It also shows how the two frameworks can be used together.
 
-4. [**Advanced Document Question-Answering with LlamaIndex**](../notebooks/04_llamaindex_hier_node_parser.ipynb)
+4. [**Advanced Document Question-Answering with LlamaIndex**](../../notebooks/04_llamaindex_hier_node_parser.ipynb)
 
 This notebook demonstrates how to use LlamaIndex to build a more complex retrieval for a chatbot. The retrieval method shown in this notebook works well for code documentation; it retrieves more contiguous document blocks that preserve both code snippets and explanations of code.
 
-5. [**Interact with REST FastAPI Server**](../notebooks/05_dataloader.ipynb)
+5. [**Interact with REST FastAPI Server**](../../notebooks/05_dataloader.ipynb)
 
 This notebook demonstrates how to use the REST FastAPI server to upload the knowledge base and then ask a question without and with the knowledge base.
 
