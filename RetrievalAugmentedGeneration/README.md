@@ -10,10 +10,10 @@
 - **Embedding Model**: [e5-large-v2](https://huggingface.co/intfloat/e5-large-v2) since it is one of the best embedding model available at the moment.
 - **Framework(s)**: LangChain and LlamaIndex.
 
-This reference workflow uses a variety of components and services to customize and deploy the RAG based chatbot. The following diagram illustrates how they work together. Refer to the [detailed architecture guide](architecture.md) to understand more about these components and how they are tied together.
+This reference workflow uses a variety of components and services to customize and deploy the RAG based chatbot. The following diagram illustrates how they work together. Refer to the [detailed architecture guide](../docs/rag/architecture.md) to understand more about these components and how they are tied together.
 
 
-![Diagram](images/image3.jpg)
+![Diagram](../docs/rag/images/image3.jpg)
 
 *Note:*
 We've used [Llama2](https://ai.meta.com/llama/) and [e5-large-v2](https://huggingface.co/intfloat/e5-large-v2) models as example defaults in this workflow, you should ensure that both the LLM and embedding model are appropriate for your use case, and validate that they are secure and have not been tampered with prior to use.
@@ -71,7 +71,11 @@ Before proceeding with this guide, make sure you meet the following prerequisite
     ```
     3. Check `model-store` directory after unzipping in the same directory.
 
-    Note: List of supported model and their version are mentioned below. You might see inference failure when using other model version
+    **Note**: List of supported model and their version are mentioned below. Make sure you're using model version provided in the table and not the latest one. You will see **inference failure** when using other model version.
+
+    Nemotron model (`NV-GPT-8B-base`) is compiled for A100. To use this model on H100, you can refer [Nemo Inference Microservice(NIM)](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms) and generate engine.
+
+
     | Model Name  | Model Version Supported |
     | ------------- |:-------------:|
     | [Llama-2-70b](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-70b)      | Llama-2-70b:LLAMA-2-70B-4K-FP16     |
@@ -103,7 +107,8 @@ Modify ``compose.env`` in the ``deploy/compose`` directory to set your environme
     # [OPTIONAL] the config file for chain server
     APP_CONFIG_FILE=/dev/null
 
-Note: If you're using `NV-GPT-8B-base`, use [nemotron_config.yaml](../../deploy/compose/nemotron_config.yaml) as `APP_CONFIG_FILE` in [compose.env](../../deploy/compose/compose.env) for proper response.
+Note: If you're using `NV-GPT-8B-base`, use [nemotron_config.yaml](../deploy/compose/nemotron_config.yaml) as `APP_CONFIG_FILE` in [compose.env](../deploy/compose/compose.env) for proper response. Default prompts work well with **llama chat** model, if you're using **completion** model, prompts need to be finetuned accordingly.
+
 
 ### Step 2: Start Containers
 - Run the following command to start containers.
@@ -112,7 +117,7 @@ Note: If you're using `NV-GPT-8B-base`, use [nemotron_config.yaml](../../deploy/
     ```
 
 - Run ``docker ps -a``. When the containers are ready the output should look similar to the image below.
-    ![Docker Output](./images/docker-output.png "Docker Output Image")
+    ![Docker Output](../docs/rag/images/docker-output.png "Docker Output Image")
 
 
 ### Step 3: Run the Sample Web Application
@@ -132,15 +137,26 @@ A sample chatbot web application is provided in the workflow. Requests to the ch
 
 - Retype the question:  "How many cores are on the Nvidia Grace superchip?"
 
+### Step 4: Experiment with RAG in JupyterLab
+
+This AI Workflow includes Jupyter notebooks which shows inference with nemo microservice inference server.
+
+- Using a web browser, type in the following URL to open Jupyter
+
+    ``http://host-ip:8888``
+
+- Locate the [Nemo Inferense MS LLM Streaming Client notebook](../notebooks/01-nemo-inference-ms-llm-streaming-client.ipynb)
+
+
 ## Chain Server
 The Chain server acts as the central component, coordinating interactions with the embedding model and Milvus vector store. It generates embeddings using the embedding model, ingests those embeddings into the Milvus vector store, retrieves relevant documents from Milvus, and forwards those documents along with user queries to the LLM for response generation orchestrated by llama index and langchain.
 
-Chain server's core logic resides in [developer_rag](../../RetrievalAugmentedGeneration/examples/developer_rag/) dir, llm integration is in [llm](../../integrations/langchain/llms/) and utility code is present in [common](../../RetrievalAugmentedGeneration/common/). You can modify this to change the behavior of pipeline as per your use case.
+Chain server's core logic resides in [developer_rag](./examples/developer_rag/) dir, llm integration is in [llm](../integrations/langchain/llms/) and utility code is present in [common](./common/). You can modify this to change the behavior of pipeline as per your use case.
 
 ### Building chain server container
 1. Remove existing chain server image
     ```
-    docker rmi nvcr.io/nvidian/generative-ai-examples:v0.2.0-chain-server-enterprise-rag
+    docker rmi nvcr.io/ohlfw0olaadg/ea-rag-examples/enterprise-rag:0.2.0-chain-server
     ```
 2. Remove any stale layer for the image
     ```
@@ -158,8 +174,8 @@ Chain server's core logic resides in [developer_rag](../../RetrievalAugmentedGen
 # Learn More
 1. [Architecture Guide](../docs/rag/architecture.md): Detailed explanation of different components and how they are tried up together.
 2. Component Guides: Component specific features are enlisted in these sections.
-   1. [Chain Server](chat_server.md)
+   1. [Chain Server](../docs/rag/chat_server.md)
    2. [NeMo Microservice Inference Server](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms)
-   3. [Sample frontend](frontend.md)
-3. [Configuration Guide](configuration.md): This guide covers different configurations available for this workflow.
-4. [Support Matrix](support_matrix.md): This covers GPU, CPU, Memory and Storage requirements for deploying this workflow.
+   3. [Sample frontend](../docs/rag/frontend.md)
+3. [Configuration Guide](../docs/rag/configuration.md): This guide covers different configurations available for this workflow.
+4. [Support Matrix](../docs/rag/ssupport_matrix.md): This covers GPU, CPU, Memory and Storage requirements for deploying this workflow.
