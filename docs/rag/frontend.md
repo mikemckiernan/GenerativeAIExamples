@@ -16,13 +16,12 @@ If the web frontend needs to be stood up manually for development purposes, run 
 
 - Build the web UI container from source
 ```
-  cd deploy/
-  source compose.env
-  docker compose build frontend
+  docker compose -f deploy/compose/docker-compose-enterprise.yaml build frontend
 ```
 - Run the container which will start the server
 ```
-  docker compose up frontend
+  source deploy/compose/compose.env
+  docker compose -f deploy/compose/docker-compose-enterprise.yaml up frontend
 ```
 
 - Open the web application at ``http://host-ip:8090``
