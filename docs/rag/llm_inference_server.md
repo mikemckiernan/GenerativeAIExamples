@@ -13,13 +13,13 @@ We use [NeMo Framework Inference Server](https://docs.nvidia.com/nemo-framework/
 
 - Build the llm inference server container from source
 ```
-  cd deploy/
-  source compose.env
-  docker compose build llm
+  source deploy/compose/compose.env
+  docker compose -f deploy/compose/docker-compose.yaml build llm
 ```
 - Run the container which will start the triton server with TRT-LLM optimized Llama2 model
 ```
-  docker compose up llm
+  source deploy/compose/compose.env
+  docker compose -f deploy/compose/docker-compose.yaml up llm
 ```
 
 - Once the optimized Llama2 is deployed in Triton Server, clients can send HTTP/REST or gRPC requests directly to Triton Server. Example implmentation of the client can be found [here](../../integrations/langchain/llms/triton_trt_llm.py).
@@ -68,22 +68,6 @@ We use [NeMo Framework Inference Server](https://docs.nvidia.com/nemo-framework/
     export QUANTIZATION="int4_awq"
   ```
 
-- Build the llm inference server container from source
-```
-  cd deploy/
-  source compose.env
-  docker compose build llm
-```
-- Run the container which will start the triton server with TRT-LLM optimized Llama2 model
-```
-  docker compose up llm
-```
-
-- Alternatively you can also follow [quick start guide](../../RetrievalAugmentedGeneration/README.md) to deploy the model server along with the complete pipeline.
-
-- Once the optimized Llama2 is deployed in Triton Server, clients can send HTTP/REST or gRPC requests directly to Triton Server. Example implmentation of the client can be found [here](../../integrations/langchain/llms/triton_trt_llm.py).
-
-
 **Note for checkpoint downloaded using Meta**:
 
-*When downloading model weights from Meta, you can follow the instructions up to the point of downloading the models using ``download.sh``. Meta will download two additional files, namely tokenizer.model and tokenizer_checklist.chk, outside of the model checkpoint directory. Ensure that you copy these files into the same directory as the model checkpoint directory.*
+*When downloading model weights from Meta, you can follow the instructions up to the point of downloading the models using ``download.sh``. Meta will download two additional files, namely `tokenizer.model` and `tokenizer_checklist.chk`, outside of the model checkpoint directory. Ensure that you copy these files into the same directory as the model checkpoint directory.*
