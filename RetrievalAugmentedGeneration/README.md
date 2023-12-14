@@ -4,7 +4,7 @@
 **Project Goal**: A reference Retrieval Augmented Generation(RAG) workflow for a chatbot to question answer off public press releases & tech blogs. It performs document ingestion & Q&A interface using open source models deployed on any cloud or customer datacenter, leverages the power of GPU-accelerated Milvus for efficient vector storage and retrieval, along with TRT-LLM, to achieve lightning-fast inference speeds with custom LangChain LLM wrapper.
 
 ## Components
-- **LLM**: [Llama2](https://ai.meta.com/llama/) - 7b, 13b, and 70b all supported. 13b and 70b generate good responses.
+- **LLM**: [Llama2](https://ai.meta.com/llama/) - 7b-chat, 13b-chat, and 70b-chat all supported. 13b-chat and 70b-chat generate good responses.
 - **LLM Backend**: Nemo framework inference container with Triton inference server & TRT-LLM backend for speed.
 - **Vector DB**: Milvus because it's GPU accelerated.
 - **Embedding Model**: [e5-large-v2](https://huggingface.co/intfloat/e5-large-v2) since it is one of the best embedding model available at the moment.
@@ -113,6 +113,7 @@ Modify ``compose.env`` in the ``deploy/compose`` directory to set your environme
 - Run ``docker ps -a``. When the containers are ready the output should look similar to the image below.
     ![Docker Output](../docs/rag/images/docker-output.png "Docker Output Image")
 
+    **Note**: Default prompts are optimized for llama chat model if you're using completion model then prompts need to be finetuned accordingly.
 #### Step 3: Experiment with RAG in JupyterLab
 
 This AI Workflow includes Jupyter notebooks which allow you to experiment with RAG.
