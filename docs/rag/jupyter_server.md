@@ -27,13 +27,14 @@ This notebook demonstrates how to use the REST FastAPI server to upload the know
 If a JupyterLab server needs to be compiled and stood up manually for development purposes, run the following commands:
 - Build the container
 ```
-  cd deploy/
-  source compose.env
-  docker compose build jupyter-server
+  source deploy/compose/compose.env
+  docker compose -f deploy/compose/docker-compose.yaml build jupyter-server
+
 ```
 - Run the container which starts the notebook server
 ```
-  docker compose up jupyter-server
+  source deploy/compose/compose.env
+  docker compose -f deploy/compose/docker-compose.yaml up jupyter-server
 ```
 - Using a web browser, type in the following URL to access the notebooks.
 

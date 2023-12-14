@@ -52,23 +52,24 @@ Before proceeding with this guide, make sure you meet the following prerequisite
       ```
 
 - git-lfs
-    - Make sure you have [git-lfs](https://git-lfs.github.com) installed. 
+    - Make sure you have [git-lfs](https://git-lfs.github.com) installed.
 
 - You can download Llama2 Chat Model Weights from [Meta](https://ai.meta.com/resources/models-and-libraries/llama-downloads/) or [HuggingFace](https://huggingface.co/meta-llama/Llama-2-13b-chat-hf/). You can skip this step [if you are interested in using cloud based LLM's using Nvidia AI Playground](#using-nvdia-cloud-based-llm).
 
     **Note for checkpoint downloaded using Meta**:
 
-        When downloading model weights from Meta, you can follow the instructions up to the point of downloading the models using ``download.sh``. There is no need to deploy the model using the steps mentioned in the repository. We will use Triton to deploy the model.
+    - When downloading model weights from Meta, you can follow the instructions up to the point of downloading the models using ``download.sh``. There is no need to deploy the model using the steps mentioned in the repository. We will use Triton to deploy the model.
 
-        Meta will download two additional files, namely tokenizer.model and tokenizer_checklist.chk, outside of the model checkpoint directory. Ensure that you copy these files into the same directory as the model checkpoint directory.
+    - Meta will download two additional files, namely `tokenizer.model` and `tokenizer_checklist.chk`, outside of the model checkpoint directory. Ensure that you copy these files into the same directory as the model checkpoint directory.
 
-    **Note**:
-        Instead of deploying the models on-prem if you will like to use LLM models deployed from NVIDIA AI Playground then follow the instructions from [here](../docs/rag/aiplayground.md).
+    **Using Cloud based Nvidia AI Foundational models**:
 
-    **Note**:
+    - Instead of deploying the models on-prem if you will like to use LLM models deployed from NVIDIA AI Playground then follow the instructions from [here.](../docs/rag/aiplayground.md)
 
-        In this workflow, we will be leveraging a Llama2 (13B parameters) chat model, which requires 50 GB of GPU memory.  If you prefer to leverage 7B parameter model, this will require 38GB memory. The 70B parameter model initially requires 240GB memory.
-        IMPORTANT:  For this initial version of the workflow, A100 and H100 GPUs are supported.
+    **Using Quantized models**:
+
+    - In this workflow, we will be leveraging a Llama2 (13B parameters) chat model, which requires 50 GB of GPU memory.  If you prefer to leverage 7B parameter model, this will require 38GB memory. The 70B parameter model initially requires 240GB memory. <br>
+    IMPORTANT:  For this initial version of the workflow, A100 and H100 GPUs are supported.
 
     - We also support quantization of LLama2 model using AWQ, which changes model precision to INT4, thereby reducing memory usage. Checkout the steps [here](../docs/rag/llm_inference_server.md) to enable quantization.
 
@@ -77,7 +78,7 @@ Before proceeding with this guide, make sure you meet the following prerequisite
 
 NVIDIA TensorRT LLM providex state of the art performance for running LLM inference. Follow the below steps from the root of this project to setup the RAG example with TensorRT LLM and Triton deployed locally.
 
-####  Step 1: Set Environment Variables
+###  Step 1: Set Environment Variables
 
 Modify ``compose.env`` in the ``deploy/compose`` directory to set your environment variables. The following variables are required as shown below for using a llama based model.
 
@@ -94,7 +95,7 @@ Modify ``compose.env`` in the ``deploy/compose`` directory to set your environme
     APP_CONFIG_FILE=/dev/null
 
 
-#### Step 2: Build and Start Containers
+### Step 2: Build and Start Containers
 - Pull lfs files. This will pull large files from repository.
     ```
         git lfs pull
@@ -113,8 +114,25 @@ Modify ``compose.env`` in the ``deploy/compose`` directory to set your environme
 - Run ``docker ps -a``. When the containers are ready the output should look similar to the image below.
     ![Docker Output](../docs/rag/images/docker-output.png "Docker Output Image")
 
-    **Note**: Default prompts are optimized for llama chat model if you're using completion model then prompts need to be finetuned accordingly.
-#### Step 3: Experiment with RAG in JupyterLab
+    **Note**:
+    - Default prompts are optimized for llama chat model if you're using completion model then prompts need to be finetuned accordingly.
+
+#### Multi GPU deployment
+
+By default the LLM model will be deployed using all available GPU's of the system. To use some specific GPU's you can provide the GPU ID(s) in the [docker compose file](../deploy/compose/docker-compose.yaml) under `llm` service's `deploy` section:
+
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              # count: ${INFERENCE_GPU_COUNT:-all} # Comment this out
+              device_ids: ["0"] # Provide the device id of GPU. It can be found using `nvidia-smi` command
+              capabilities: [gpu]
+
+
+### Step 3: Experiment with RAG in JupyterLab
 
 This AI Workflow includes Jupyter notebooks which allow you to experiment with RAG.
 
@@ -134,7 +152,7 @@ This AI Workflow includes Jupyter notebooks which allow you to experiment with R
 
     - [Interact with REST FastAPI Server](../notebooks/05_dataloader.ipynb)
 
-#### Step 4: Run the Sample Web Application
+### Step 4: Run the Sample Web Application
 A sample chatbot web application is provided in the workflow. Requests to the chat system are wrapped in FastAPI calls.
 
 - Open the web application at ``http://host-ip:8090``.
@@ -151,9 +169,9 @@ A sample chatbot web application is provided in the workflow. Requests to the ch
 
 - Retype the question:  "How many cores are on the Nvidia Grace superchip?"
 
-### RAG Evaluation
+# RAG Evaluation
 
-#### Prerequisite
+## Prerequisites
 Make sure the corps comm dataset is loaded into the vector database using the [Dataloader](../notebooks/05_dataloader.ipynb) notebook as part of step-3 of setup.
 
 This workflow include jupyter notebooks which allow you perform evaluation of your RAG application on the sample dataset and they can be extended to other datasets as well.
