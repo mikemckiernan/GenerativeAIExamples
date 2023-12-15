@@ -36,24 +36,24 @@
     model_name: "ensemble"
     num_instances: 1
     trt_llm:
-    use: true
-    ckpt_type: "hf"
-    model_name: "trt_llm"
-    backend: "python"
-    num_gpus: 1
-    model_path: /engine_dir
-    max_queue_delay_microseconds: 10000
-    model_type: "llama"
-    max_batch_size: 8
-    max_input_len: 4096
-    max_output_len: 4096
-    max_beam_width: 1
-    tensor_para_size: 1
-    pipeline_para_size: 1
-    data_type: "float16"
-    int8_mode: 0
-    enable_custom_all_reduce: 0
-    per_column_scaling: false
+        use: true
+        ckpt_type: "hf"
+        model_name: "trt_llm"
+        backend: "python"
+        num_gpus: 1
+        model_path: /engine_dir
+        max_queue_delay_microseconds: 10000
+        model_type: "llama"
+        max_batch_size: 8
+        max_input_len: 4096
+        max_output_len: 4096
+        max_beam_width: 1
+        tensor_para_size: 1
+        pipeline_para_size: 1
+        data_type: "float16"
+        int8_mode: 0
+        enable_custom_all_reduce: 0
+        per_column_scaling: false
     ```
 
 3. Create a `model-store` directory keep it empty. Engine files will be generated here. You can create it in pwd.
