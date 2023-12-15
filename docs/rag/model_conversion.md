@@ -73,18 +73,22 @@
     export MODEL_DIRECTORY="/home/nvidia/model-store"
     ```
 
-6. You can now follow steps to deploy the pipeline
+6. [You can now follow steps to deploy the pipeline](../../RetrievalAugmentedGeneration/README.md#install-guide)
 
 ## Deploying other model architectures
-1. Download [nemotron](https://huggingface.co/nvidia/nemotron-3-8b-base-4k) or [llama](https://huggingface.co/meta-llama/Llama-2-7b) completion model from huggingface
+For deploying other models like nemotron or llama you will need to follow similar steps as the llama-chat model. Detailed instruction for deploying other models like nemotron can be found by following these steps:
+1. Download the required model like [nemotron](https://huggingface.co/nvidia/nemotron-3-8b-base-4k) or [llama-7b](https://huggingface.co/meta-llama/Llama-2-7b) completion model checkpoint from huggingface
 
-2. Follow the steps provided in [Nemo Inference Microservice] (https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms).
+2. Once you have the checkpoints downloaded, follow these steps from [Nemo Inference Microservice](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms) to access required documentation:
 
-3. To access the required documentation to create model stores for different model architectures provided by nemo inference ms, follow these steps:
-    ```
-    export DOCS_PORT=8999
-    export VERSION=23.10
-    docker run -p $DOCS_PORT:80 nvcr.io/ohlfw0olaadg/ea-participants/nemollm-inference-ms:docs-$VERSION
-    ```
 
-4. You'll be able to see stpes at `http://<workstation-ip>:8999/model-repo-generator.html#model-repo-generator`
+    - Launch container hosting the document:
+        ```
+        export DOCS_PORT=8999
+        export VERSION=23.10
+        docker run -p $DOCS_PORT:80 nvcr.io/ohlfw0olaadg/ea-participants/nemollm-inference-ms:docs-$VERSION
+        ```
+
+    -  Once the container is up, you will be able to see steps at `http://<workstation-ip>:8999/model-repo-generator.html#model-repo-generator`
+
+3. [You can now follow steps to deploy the pipeline](../../RetrievalAugmentedGeneration/README.md#install-guide)
