@@ -54,6 +54,21 @@ Before proceeding with this guide, make sure you meet the following prerequisite
       ```
 
 - You can download the model from NGC.
+    **Note**: List of supported model and their version are mentioned below. Make sure you're using model version provided in the table and not the latest one. You will see **inference failure** when using other model version.
+
+    The models mentioned below are compiled for A100 machine, if you're using any other GPU you need to manually create the system specific TRT-LLM plan files. To understand this workflow please refer [model_conversion.md](../docs/rag/model_conversion.md). Refer to  [Nemo Inference Microservice(NIM)](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms) to know more about this.
+
+
+    | Model Name  | Model Version Supported |
+    | ------------- |:-------------:|
+    | [Llama-2-70b](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-70b)      | Llama-2-70b:LLAMA-2-70B-4K-FP16     |
+    | [Llama-2-70b-Chat](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-70b-chat)      | Llama-2-70b-Chat:LLAMA-2-70B-CHAT-4K-FP16     |
+    | [Llama-2-13b](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-13b)      | Llama-2-13b:LLAMA-2-13B-4K-FP16 |
+    | [Llama-2-13b-Chat](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-13b-chat)      | Llama-2-13b-Chat:LLAMA-2-13B-CHAT-4K-FP16     |
+    | [Llama-2-7b](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-7b)      | Llama-2-7b:LLAMA-2-7B-4K-FP16 |
+    | [Llama-2-7b-Chat](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-7b-chat)      | Llama-2-7b-Chat:LLAMA-2-7B-CHAT-4K-FP16 |
+    | [NV-GPT-8B-base](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/nv-gpt-8b-base)      | NV-GPT-8B-base:NV-GPT-8B-base-4K-FP16-1 |
+
 
     1. Download the llama2 13b model from ngc
     ```
@@ -70,21 +85,6 @@ Before proceeding with this guide, make sure you meet the following prerequisite
     tar -xzf LLAMA-2-13B-CHAT-4K-FP16.tar.gz
     ```
     3. Check `model-store` directory after unzipping in the same directory.
-
-    **Note**: List of supported model and their version are mentioned below. Make sure you're using model version provided in the table and not the latest one. You will see **inference failure** when using other model version.
-
-    This models are compiled for A100 machine, if you're using any other machine you can refer [model_conversion.md](../docs/rag/model_conversion.md). Refer to  [Nemo Inference Microservice(NIM)](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms) to know more about this.
-
-
-    | Model Name  | Model Version Supported |
-    | ------------- |:-------------:|
-    | [Llama-2-70b](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-70b)      | Llama-2-70b:LLAMA-2-70B-4K-FP16     |
-    | [Llama-2-70b-Chat](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-70b-chat)      | Llama-2-70b-Chat:LLAMA-2-70B-CHAT-4K-FP16     |
-    | [Llama-2-13b](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-13b)      | Llama-2-13b:LLAMA-2-13B-4K-FP16 |
-    | [Llama-2-13b-Chat](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-13b-chat)      | Llama-2-13b-Chat:LLAMA-2-13B-CHAT-4K-FP16     |
-    | [Llama-2-7b](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-7b)      | Llama-2-7b:LLAMA-2-7B-4K-FP16 |
-    | [Llama-2-7b-Chat](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-7b-chat)      | Llama-2-7b-Chat:LLAMA-2-7B-CHAT-4K-FP16 |
-    | [NV-GPT-8B-base](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/nv-gpt-8b-base)      | NV-GPT-8B-base:NV-GPT-8B-base-4K-FP16-1 |
 
 
 ## Install Guide

@@ -75,12 +75,12 @@
 
 6. You can now follow steps to deploy the pipeline
 
-## Nemotron and llama completion model
+## Deploying other model architectures
 1. Download [nemotron](https://huggingface.co/nvidia/nemotron-3-8b-base-4k) or [llama](https://huggingface.co/meta-llama/Llama-2-7b) completion model from huggingface
 
 2. Follow the steps provided in [Nemo Inference Microservice] (https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms).
 
-3. You'll need to launch container for documentation
+3. To access the required documentation to create model stores for different model architectures provided by nemo inference ms, follow these steps:
     ```
     export DOCS_PORT=8999
     export VERSION=23.10
