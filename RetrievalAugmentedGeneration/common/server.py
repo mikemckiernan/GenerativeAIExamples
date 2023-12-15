@@ -75,10 +75,10 @@ async def upload_document(file: UploadFile = File(...)) -> JSONResponse:
         with open(file_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
 
-        status_message = chains.ingest_docs(file_path, upload_file)
+        chains.ingest_docs(file_path, upload_file)
 
         return JSONResponse(
-            content={"message": status_message}, status_code=200
+            content={"message": "File uploaded successfully"}, status_code=200
         )
 
     except Exception as e:
