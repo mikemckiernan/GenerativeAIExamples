@@ -73,7 +73,7 @@ Before proceeding with this guide, make sure you meet the following prerequisite
 
     **Note**: List of supported model and their version are mentioned below. Make sure you're using model version provided in the table and not the latest one. You will see **inference failure** when using other model version.
 
-    Nemotron model (`NV-GPT-8B-base`) is compiled for A100. To use this model on H100, you can refer [Nemo Inference Microservice(NIM)](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms) and generate engine.
+    This models are compiled for A100 machine, if you're using any other machine you can refer [model_conversion.md](../docs/rag/model_conversion.md). Refer to  [Nemo Inference Microservice(NIM)](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms) to know more about this.
 
 
     | Model Name  | Model Version Supported |
