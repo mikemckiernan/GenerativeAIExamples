@@ -1,4 +1,7 @@
-# Generating engine files
+# Generating model repositories for LLM models
+
+This guide explains the steps developers need to follow in order to convert huggingface checkpoints to TRT-LLM format which can be consumed and accelerated using [Nemo Inference Microservice](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms). You can skip these steps, if you are using an A100 GPU based system. You can use the [prebuilt model repositories available in NGC to deploy the pipeline.](../../RetrievalAugmentedGeneration/README.md#getting-started).
+
 ## llama-2 chat models
 1. Download llama2 model from [huggingface](https://huggingface.co/meta-llama/Llama-2-13b-chat-hf).
 
@@ -73,11 +76,11 @@ trt_llm:
     export MODEL_DIRECTORY="/home/nvidia/model-store"
     ```
 
-6. [You can now follow steps to deploy the pipeline](../../RetrievalAugmentedGeneration/README.md#install-guide)
+6. After you generate the model repository, [you can now follow these steps to deploy the end to end pipeline.](../../RetrievalAugmentedGeneration/README.md#install-guide)
 
 ## Deploying other model architectures
-For deploying other models like nemotron or llama you will need to follow similar steps as the llama-chat model. Detailed instruction for deploying other models like nemotron can be found by following these steps:
-1. Download the required model like [llama-7b](https://huggingface.co/meta-llama/Llama-2-7b) completion model checkpoint from huggingface
+For deploying other models like llama completion you will need to follow similar steps as the llama-chat model. Detailed instruction for deploying other models can be found by following these steps:
+1. Download the required model like [llama-7b](https://huggingface.co/meta-llama/Llama-2-7b) completion model checkpoint from huggingface.
 
 2. Once you have the checkpoints downloaded, follow these steps from [Nemo Inference Microservice](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms) to access required documentation:
 
@@ -91,6 +94,8 @@ For deploying other models like nemotron or llama you will need to follow simila
 
     -  Once the container is up, you will be able to see steps at `http://<workstation-ip>:8999/model-repo-generator.html#model-repo-generator`
 
-3. [You can now follow steps to deploy the pipeline](../../RetrievalAugmentedGeneration/README.md#install-guide)
+3. After you generate the model repository, [You can now follow these steps to deploy the end to end pipeline.](../../RetrievalAugmentedGeneration/README.md#install-guide)
 
-Note: Nemotron architecture is not supported
+**Note:**
+
+    Nemotron based checkpoints in huggingface are not supported in this flow. It can be deloyed only in A100 based systems using prebuilt model repositories in NGC.

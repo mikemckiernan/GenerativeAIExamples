@@ -32,4 +32,5 @@ This guide sheds more light on the infrastructure details and the execution flow
 ## Other
 
 * [Support Matrix](./rag/support_matrix.md)
+* [Generating model repository](./rag/model_conversion.md)
 * [Open API schema references](./rag/api_reference/openapi_schema.json)
