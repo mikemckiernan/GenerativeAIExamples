@@ -3,58 +3,58 @@
 1. Download llama2 model from [huggingface](https://huggingface.co/meta-llama/Llama-2-13b-chat-hf).
 
 2. Create a config file named `model_config.yaml` with the content below in working directory
-    ```
-    model_repo_path: "/model-store/"
-    use_ensemble: false
-    model_type: "LLAMA"
-    backend: "trt_llm"
-    base_model_id: "ensemble"
-    prompt_timer: 60
-    gateway_ip: "gateway-api"
-    server_port_internal: 9009
-    path_to_fastertransformer_ini_config:
-    customization_cache_capacity: 10000
-    logging_level: "INFO"
-    enable_chat: true
-    preprocessor:
-    enable_customization_fetching: true
-    chat_cfg:
-        roles:
-        system:
-            prefix: "[INST] <<SYS>>\n"
-            suffix: "\n<</SYS>>\n\n"
-        user:
-            prefix: ""
-            suffix: " [/INST] "
-        assistant:
-            prefix: ""
-            suffix: " </s><s>[INST] "
-        stop_words: ["</s>", "<s>", "[INST]", "[/INST]", "<<SYS>>", "<</SYS>>"]
-        rstrip_turn: true
-        turn_suffix: "\n"
-    pipeline:
-    model_name: "ensemble"
-    num_instances: 1
-    trt_llm:
-    use: true
-    ckpt_type: "hf"
-    model_name: "trt_llm"
-    backend: "python"
-    num_gpus: 1
-    model_path: /engine_dir
-    max_queue_delay_microseconds: 10000
-    model_type: "llama"
-    max_batch_size: 8
-    max_input_len: 4096
-    max_output_len: 4096
-    max_beam_width: 1
-    tensor_para_size: 1
-    pipeline_para_size: 1
-    data_type: "float16"
-    int8_mode: 0
-    enable_custom_all_reduce: 0
-    per_column_scaling: false
-    ```
+```
+model_repo_path: "/model-store/"
+use_ensemble: false
+model_type: "LLAMA"
+backend: "trt_llm"
+base_model_id: "ensemble"
+prompt_timer: 60
+gateway_ip: "gateway-api"
+server_port_internal: 9009
+path_to_fastertransformer_ini_config:
+customization_cache_capacity: 10000
+logging_level: "INFO"
+enable_chat: true
+preprocessor:
+  enable_customization_fetching: true
+  chat_cfg:
+    roles:
+      system:
+        prefix: "[INST] <<SYS>>\n"
+        suffix: "\n<</SYS>>\n\n"
+      user:
+        prefix: ""
+        suffix: " [/INST] "
+      assistant:
+        prefix: ""
+        suffix: " </s><s>[INST] "
+    stop_words: ["</s>", "<s>", "[INST]", "[/INST]", "<<SYS>>", "<</SYS>>"]
+    rstrip_turn: true
+    turn_suffix: "\n"
+pipeline:
+  model_name: "ensemble"
+  num_instances: 1
+trt_llm:
+  use: true
+  ckpt_type: "hf"
+  model_name: "trt_llm"
+  backend: "python"
+  num_gpus: 1
+  model_path: /engine_dir
+  max_queue_delay_microseconds: 10000
+  model_type: "llama"
+  max_batch_size: 8
+  max_input_len: 4096
+  max_output_len: 4096
+  max_beam_width: 1
+  tensor_para_size: 1
+  pipeline_para_size: 1
+  data_type: "float16"
+  int8_mode: 0
+  enable_custom_all_reduce: 0
+  per_column_scaling: false
+```
 
 3. Create a `model-store` directory keep it empty. Engine files will be generated here. You can create it in pwd.
     ```
@@ -77,7 +77,7 @@
 
 ## Deploying other model architectures
 For deploying other models like nemotron or llama you will need to follow similar steps as the llama-chat model. Detailed instruction for deploying other models like nemotron can be found by following these steps:
-1. Download the required model like [nemotron](https://huggingface.co/nvidia/nemotron-3-8b-base-4k) or [llama-7b](https://huggingface.co/meta-llama/Llama-2-7b) completion model checkpoint from huggingface
+1. Download the required model like [llama-7b](https://huggingface.co/meta-llama/Llama-2-7b) completion model checkpoint from huggingface
 
 2. Once you have the checkpoints downloaded, follow these steps from [Nemo Inference Microservice](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms) to access required documentation:
 
@@ -92,3 +92,5 @@ For deploying other models like nemotron or llama you will need to follow simila
     -  Once the container is up, you will be able to see steps at `http://<workstation-ip>:8999/model-repo-generator.html#model-repo-generator`
 
 3. [You can now follow steps to deploy the pipeline](../../RetrievalAugmentedGeneration/README.md#install-guide)
+
+Note: Nemotron architecture is not supported
