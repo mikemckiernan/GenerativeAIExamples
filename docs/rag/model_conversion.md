@@ -77,7 +77,7 @@ trt_llm:
 
 ## Deploying other model architectures
 For deploying other models like nemotron or llama you will need to follow similar steps as the llama-chat model. Detailed instruction for deploying other models like nemotron can be found by following these steps:
-1. Download the required model like [nemotron](https://huggingface.co/nvidia/nemotron-3-8b-base-4k) or [llama-7b](https://huggingface.co/meta-llama/Llama-2-7b) completion model checkpoint from huggingface
+1. Download the required model like [llama-7b](https://huggingface.co/meta-llama/Llama-2-7b) completion model checkpoint from huggingface
 
 2. Once you have the checkpoints downloaded, follow these steps from [Nemo Inference Microservice](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms) to access required documentation:
 
@@ -92,3 +92,5 @@ For deploying other models like nemotron or llama you will need to follow simila
     -  Once the container is up, you will be able to see steps at `http://<workstation-ip>:8999/model-repo-generator.html#model-repo-generator`
 
 3. [You can now follow steps to deploy the pipeline](../../RetrievalAugmentedGeneration/README.md#install-guide)
+
+Note: Nemotron architecture is not supported
