@@ -1,186 +1,350 @@
 # Retrieval Augmented Generation
 
-## Project Details
-**Project Goal**: A reference Retrieval Augmented Generation(RAG) workflow for a chatbot to question answer off public press releases & tech blogs. It performs document ingestion & Q&A interface using open source models deployed on any cloud or customer datacenter, leverages the power of GPU-accelerated Milvus for efficient vector storage and retrieval, along with TRT-LLM, to achieve lightning-fast inference speeds with custom LangChain LLM wrapper.
+Retrieval Augmented Generation (RAG) generates up-to-date and domain-specific answers by connecting a Large Language Model (LLM) to your enterprise data.
+
+## Developer RAG Examples
+
+1. [QA Chatbot -- NVIDIA AI Foundation Inference endpoint](#01-qa-chatbot----nvidia-ai-foundation-inference-endpoint)
+2. [QA Chatbot -- A100/H100/L40S](#02-qa-chatbot----a100h100l40s-gpu)
+3. [QA Chatbot -- Multi-GPU](#03-multi-gpu----a100h100l40s)
+
+<hr>
+
+### 01: QA Chatbot -- NVIDIA AI Foundation inference endpoint
+
+This example deploys a developer RAG pipeline for chat QA and serves inferencing via the NVIDIA AI Foundation endpoint.
+
+Developers get free credits for 10K requests to any of the available models.
+
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-6ydv">Model</th>
+    <th class="tg-6ydv">Embedding</th>
+    <th class="tg-6ydv">Framework</th>
+    <th class="tg-6ydv">Description</th>
+    <th class="tg-6ydv">Multi-GPU</th>
+    <th class="tg-6ydv">TRT-LLM</th>
+    <th class="tg-6ydv">NVIDIA AI Foundation</th>
+    <th class="tg-6ydv">Triton</th>
+    <th class="tg-6ydv">Vector Database</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-knyo">llama-2</td>
+    <td class="tg-knyo">e5-large-v2</td>
+    <td class="tg-knyo">Llamaindex</td>
+    <td class="tg-knyo">QA chatbot</td>
+    <td class="tg-knyo">NO</td>
+    <td class="tg-knyo">NO</td>
+    <td class="tg-knyo">YES</td>
+    <td class="tg-knyo">NO</td>
+    <td class="tg-knyo">Milvus</td>
+  </tr>
+</tbody>
+</table>
+
+#### 01 Prepare the environment
+
+This example uses NVIDIA AI Foundation inference endpoint. A GPU is still needed for local embeddings.
+
+1. Follow steps 1 - 5 in the ["Prepare the environment" section of example 02](#02-prepare-the-environment).
+
+#### 01 Deploy
+
+Follow [these instructions](https://github.com/NVIDIA/GenerativeAIExamples/blob/main/docs/rag/aiplayground.md) to sign up for an NVIDIA AI Foundation developer account and deploy this  example.
+
+<hr>
+
+### 02: QA Chatbot -- A100/H100/L40S GPU
+
+This example deploys a developer RAG pipeline for chat QA and serves inferencing via the NeMo Framework inference container.
+
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-6ydv">Model</th>
+    <th class="tg-6ydv">Embedding</th>
+    <th class="tg-6ydv">Framework</th>
+    <th class="tg-6ydv">Description</th>
+    <th class="tg-6ydv">Multi-GPU</th>
+    <th class="tg-6ydv">TRT-LLM</th>
+    <th class="tg-6ydv">NVIDIA AI Foundation</th>
+    <th class="tg-6ydv">Triton</th>
+    <th class="tg-6ydv">Vector Database</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-knyo">llama-2</td>
+    <td class="tg-knyo">e5-large-v2</td>
+    <td class="tg-knyo">Llamaindex</td>
+    <td class="tg-knyo">QA chatbot</td>
+    <td class="tg-knyo">NO</td>
+    <td class="tg-knyo">YES</td>
+    <td class="tg-knyo">NO</td>
+    <td class="tg-knyo">YES</td>
+    <td class="tg-knyo">Milvus</td>
+  </tr>
+</tbody>
+</table>
 
-## Components
-- **LLM**: [Llama2](https://ai.meta.com/llama/) - 7b, 13b, and 70b all supported. 13b and 70b generate good responses.
-- **LLM Backend**: Nemo framework inference container with Triton inference server & TRT-LLM backend for speed.
-- **Vector DB**: Milvus because it's GPU accelerated.
-- **Embedding Model**: [e5-large-v2](https://huggingface.co/intfloat/e5-large-v2) since it is one of the best embedding model available at the moment.
-- **Framework(s)**: LangChain and LlamaIndex.
 
-This reference workflow uses a variety of components and services to customize and deploy the RAG based chatbot. The following diagram illustrates how they work together. Refer to the [detailed architecture guide](../docs/rag/architecture.md) to understand more about these components and how they are tied together.
+#### 02 Prepare the environment
 
+1. Verify NVIDIA GPU driver version 535 or later is installed.
 
-![Diagram](../docs/rag/images/image3.jpg)
+> ⚠️ **NOTE**: This example requires an A100, H100, or L40S GPU. 
 
-*Note:*
-We've used [Llama2](https://ai.meta.com/llama/) and [e5-large-v2](https://huggingface.co/intfloat/e5-large-v2) models as example defaults in this workflow, you should ensure that both the LLM and embedding model are appropriate for your use case, and validate that they are secure and have not been tampered with prior to use.
+``` $ nvidia-smi --query-gpu=driver_version --format=csv,noheader
+535.129.03
 
-# Getting Started
-This section covers step by step guide to setup and try out this example workflow.
+$ nvidia-smi -q -d compute
 
-## Prerequisites
-Before proceeding with this guide, make sure you meet the following prerequisites:
+==============NVSMI LOG==============
 
-- You should have at least one NVIDIA GPU. For this guide, we used an A100 data center GPU.
+Timestamp                                 : Sun Nov 26 21:17:25 2023
+Driver Version                            : 535.129.03
+CUDA Version                              : 12.2
 
-    - NVIDIA driver version 535 or newer. To check the driver version run: ``nvidia-smi --query-gpu=driver_version --format=csv,noheader``.
-    - If you are running multiple GPUs they must all be set to the same mode (ie Compute vs. Display). You can check compute mode for each GPU using
-    ``nvidia-smi -q -d compute``
+Attached GPUs                             : 1
+GPU 00000000:CA:00.0
+    Compute Mode                          : Default
+```
+Reference: [NVIDIA Linux driver installation instructions](https://docs.nvidia.com/datacenter/tesla/tesla-installation-notes/index.html)
 
-### Setup the following
+2. Clone the Generative AI examples Git repository. 
 
-- Docker and Docker-Compose are essential. Please follow the [installation instructions](https://docs.docker.com/engine/install/ubuntu/).
+> ⚠️ **NOTE**: This example requires Git Large File Support (LFS)
 
-        Note:
-            Please do **not** use Docker that is packaged with Ubuntu as the newer version of Docker is required for proper Docker Compose support.
+```
+$ sudo apt -y install git-lfs
+$ git lfs pull
+$ git clone git@github.com:NVIDIA/GenerativeAIExamples.git
+Cloning into 'GenerativeAIExamples'...
+```
 
-            Make sure your user account is able to execute Docker commands.
+3. Install [Docker Engine and Docker Compose.](https://docs.docker.com/engine/install/ubuntu/)
 
+4. Verify the NVIDIA container toolkit is installed and configured as the default container runtime.
 
-- NVIDIA Container Toolkit is also required. Refer to the [installation instructions](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html).
+```
+$ cat /etc/docker/daemon.json
+{
+    "default-runtime": "nvidia",
+    "runtimes": {
+        "nvidia": {
+            "path": "/usr/bin/nvidia-container-runtime",
+            "runtimeArgs": []
+        }
+    }
+}
 
+$ sudo docker run --rm --runtime=nvidia --gpus all ubuntu nvidia-smi -L
+GPU 0: NVIDIA A100 80GB PCIe (UUID: GPU-d8ce95c1-12f7-3174-6395-e573163a2ace)
+```
 
-- NGC Account and API Key
+5. Create an NGC Account and API Key.
 
-    - Please refer to [instructions](https://docs.nvidia.com/ngc/gpu-cloud/ngc-overview/index.html) to create account and generate NGC API key.
-    - Docker login to `nvcr.io` using the following command:
-      ```
-        docker login nvcr.io
-      ```
+Please refer to [instructions](https://docs.nvidia.com/ngc/gpu-cloud/ngc-overview/index.html) to create account and generate NGC API key.
 
-- git-lfs
-    - Make sure you have [git-lfs](https://git-lfs.github.com) installed. 
+Login to `nvcr.io` using the following command:
 
-- You can download Llama2 Chat Model Weights from [Meta](https://ai.meta.com/resources/models-and-libraries/llama-downloads/) or [HuggingFace](https://huggingface.co/meta-llama/Llama-2-13b-chat-hf/). You can skip this step [if you are interested in using cloud based LLM's using Nvidia AI Playground](#using-nvdia-cloud-based-llm).
+```
+$ docker login nvcr.io
+```
 
-    **Note for checkpoint downloaded using Meta**:
+Reference:
+- [Docker installation instructions (Ubuntu)](https://docs.docker.com/engine/install/ubuntu/)
+- [NVIDIA Container Toolkit Installation instructions](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
 
-        When downloading model weights from Meta, you can follow the instructions up to the point of downloading the models using ``download.sh``. There is no need to deploy the model using the steps mentioned in the repository. We will use Triton to deploy the model.
+#### 02 Deploy
 
-        Meta will download two additional files, namely tokenizer.model and tokenizer_checklist.chk, outside of the model checkpoint directory. Ensure that you copy these files into the same directory as the model checkpoint directory.
+1. Clone the Llama Github.
 
-    **Note**:
-        Instead of deploying the models on-prem if you will like to use LLM models deployed from NVIDIA AI Playground then follow the instructions from [here](../docs/rag/aiplayground.md).
+```
+$ git clone git@github.com:facebookresearch/llama.git
+$ cd llama/
+```
 
-    **Note**:
+2. Fill out Meta's [Llama request access form](https://ai.meta.com/resources/models-and-libraries/llama-downloads/).
 
-        In this workflow, we will be leveraging a Llama2 (13B parameters) chat model, which requires 50 GB of GPU memory.  If you prefer to leverage 7B parameter model, this will require 38GB memory. The 70B parameter model initially requires 240GB memory.
-        IMPORTANT:  For this initial version of the workflow, A100 and H100 GPUs are supported.
+3. Download the model weights.
 
-    - We also support quantization of LLama2 model using AWQ, which changes model precision to INT4, thereby reducing memory usage. Checkout the steps [here](../docs/rag/llm_inference_server.md) to enable quantization.
+- Select the <b>Llama 2</b> and <b>Llama Chat</b> text boxes.
+- After verifying your email, Meta will email you a download link.
+- Download the llama-2-13b-chat model when prompted.
 
+```
+$ pip install -e .
+$ ./download.sh 
+Enter the URL from email: < https://download.llamameta.net/… etc>
 
-## Install Guide
+Enter the list of models to download without spaces (7B,13B,70B,7B-chat,13B-chat,70B-chat), or press Enter for all: 13B-chat
+```
 
-NVIDIA TensorRT LLM providex state of the art performance for running LLM inference. Follow the below steps from the root of this project to setup the RAG example with TensorRT LLM and Triton deployed locally.
+4. Copy the tokenizer to the model directory. 
 
-####  Step 1: Set Environment Variables
+```
+$ mv tokenizer* llama-2-13b-chat/
 
-Modify ``compose.env`` in the ``deploy/compose`` directory to set your environment variables. The following variables are required as shown below for using a llama based model.
+$ ls ~/git/llama/llama-2-13b-chat/
+checklist.chk  consolidated.00.pth  consolidated.01.pth  params.json  tokenizer.model  tokenizer_checklist.chk
+```
 
-    # full path to the local copy of the model weights
-    export MODEL_DIRECTORY="$HOME/src/Llama-2-13b-chat-hf"
+5. Set the absolute path to the model location in <i>compose.env</i>.
 
-    # the architecture of the model. eg: llama
-    export MODEL_ARCHITECTURE="llama"
+```
+$ cd ~/git/GenerativeAIExamples
 
-    # the name of the model being used - only for displaying on frontend
-    export MODEL_NAME="llama-2-13b-chat"
+$ grep MODEL deploy/compose/compose.env | grep -v \# 
+export MODEL_DIRECTORY="/home/nvidia/git/llama/llama-2-13b-chat/"
+export MODEL_ARCHITECTURE="llama"
+export MODEL_NAME="Llama-2-13b-chat"
+```
 
-    # [OPTIONAL] the config file for chain server
-    APP_CONFIG_FILE=/dev/null
+6. Deploy the developer RAG example via Docker compose.
 
+> ⚠️ **NOTE**: It may take up to 5 minutes for the Triton server to start. The `-d` flag starts the services in the background. 
 
-#### Step 2: Build and Start Containers
-- Pull lfs files. This will pull large files from repository.
-    ```
-        git lfs pull
-    ```
-- Run the following command to build containers.
-    ```
-        source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose.yaml build
-    ```
+```
+$ source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose.yaml build
 
-- Run the following command to start containers.
-    ```
-        source deploy/compose/compose.env; docker compose -f deploy/compose/docker-compose.yaml up -d
-    ```
-    > ⚠️ **NOTE**: It will take a few minutes for the containers to come up and may take up to 5 minutes for the Triton server to be ready. Adding the `-d` flag will have the services run in the background. ⚠️
+$ docker compose -f deploy/compose/docker-compose.yaml up -d
 
-- Run ``docker ps -a``. When the containers are ready the output should look similar to the image below.
-    ![Docker Output](../docs/rag/images/docker-output.png "Docker Output Image")
+$ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
+CONTAINER ID   NAMES                  STATUS
+256da0ecdb7b   llm-playground         Up 48 minutes
+2974aa4fb2ce   chain-server           Up 48 minutes
+4a8c4aebe4ad   notebook-server        Up 48 minutes
+0069c5e0b373   evaluation             Up 48 minutes
+5be2b57bb5c1   milvus-standalone      Up 48 minutes (healthy)
+ecf674c8139c   llm-inference-server   Up 48 minutes (healthy)
+a6609c22c171   milvus-minio           Up 48 minutes (healthy)
+b23c0858c4d4   milvus-etcd            Up 48 minutes (healthy)
+```
 
-#### Step 3: Experiment with RAG in JupyterLab
+Reference:
+- [Meta Llama README](https://github.com/facebookresearch/llama/blob/main/README.md)
+- [Meta Llama request access form](https://ai.meta.com/resources/models-and-libraries/llama-downloads/)
 
-This AI Workflow includes Jupyter notebooks which allow you to experiment with RAG.
+#### 02 Test
 
-- Using a web browser, type in the following URL to open Jupyter
+1. Connect to the sample web application at ``http://host-ip:8090``.
 
-    ``http://host-ip:8888``
+2. In the <B>Converse</B> tab, type "How many cores are on the Nvidia Grace superchip?" iin the chat box and press <B>Submit</B>.
 
-- Locate the [LLM Streaming Client notebook](../notebooks/01-llm-streaming-client.ipynb) which demonstrates how to stream responses from the LLM.
+![Grace query failure](../notebooks/imgs/grace_noanswer.png)
 
-- Proceed with the next 4 notebooks:
+3.  Upload the sample data set to the <B>Knowledge Base</B> tab.
 
-    - [Document Question-Answering with LangChain](../notebooks/02_langchain_simple.ipynb)
+> ⚠️ **NOTE**: ``dataset.zip`` is located in the ``notebooks`` directory. Unzip the archive and upload the PDFs.
 
-    - [Document Question-Answering with LlamaIndex](../notebooks/03_llama_index_simple.ipynb)
+4. Return to **Converse** tab and check **[X] Use knowledge base**.
 
-    - [Advanced Document Question-Answering with LlamaIndex](../notebooks/04_llamaindex_hier_node_parser.ipynb)
+5. Retype the question:  "How many cores are on the Nvidia Grace superchip?"
 
-    - [Interact with REST FastAPI Server](../notebooks/05_dataloader.ipynb)
+![Grace query success](../notebooks/imgs/grace_answer.png)
 
-#### Step 4: Run the Sample Web Application
-A sample chatbot web application is provided in the workflow. Requests to the chat system are wrapped in FastAPI calls.
+#### Learn More
 
-- Open the web application at ``http://host-ip:8090``.
+Execute the Jupyter notebooks to explore optional features.
 
-- Type in the following question without using a knowledge base: "How many cores are on the Nvidia Grace superchip?"
+1. In a web browser, open Jupyter at ``http://host-ip:8888``.
 
-    **Note:** the chatbot mentions the chip doesn't exist.
+2. Execute the notebooks in order:
 
-- To use a knowledge base:
+- [Enable streaming responses from the LLM](../notebooks/01-llm-streaming-client.ipynb)
+- [Document QA with LangChain](../notebooks/02_langchain_simple.ipynb)
+- [Document QA with LlamaIndex](../notebooks/03_llama_index_simple.ipynb)
+- [Advanced Document QA with LlamaIndex](../notebooks/04_llamaindex_hier_node_parser.ipynb)
+- [Document QA via REST FastAPI Server](../notebooks/05_dataloader.ipynb)
 
-    - Click the **Knowledge Base** tab and upload the file [dataset.zip](../notebooks/dataset.zip).
+#### 02 Uninstall
 
-- Return to **Converse** tab and check **[X] Use knowledge base**.
+To uninstall, stop and remove the running containers.
 
-- Retype the question:  "How many cores are on the Nvidia Grace superchip?"
+```
+$ cd deploy/compose
+$ source compose.env 
+$ docker compose stop
+$ docker compose rm
+$ docker compose ps -q
+```
 
-### RAG Evaluation
+<hr>
 
-#### Prerequisite
-Make sure the corps comm dataset is loaded into the vector database using the [Dataloader](../notebooks/05_dataloader.ipynb) notebook as part of step-3 of setup.
+### 03: QA Chatbot Multi-GPU -- A100/H100/L40S
 
-This workflow include jupyter notebooks which allow you perform evaluation of your RAG application on the sample dataset and they can be extended to other datasets as well.
-Setup the workflow by building and starting the containers by following the steps [outlined here using docker compose.](#step-2-build-and-start-containers)
+This example deploys a developer RAG pipeline for chat QA and serves inference via the NeMo Framework inference container across multiple GPUs.
 
-After setting up the workflow follow these steps:
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-6ydv">Model</th>
+    <th class="tg-6ydv">Embedding</th>
+    <th class="tg-6ydv">Framework</th>
+    <th class="tg-6ydv">Description</th>
+    <th class="tg-6ydv">Multi-GPU</th>
+    <th class="tg-6ydv">TRT-LLM</th>
+    <th class="tg-6ydv">NVIDIA AI Foundation</th>
+    <th class="tg-6ydv">Triton</th>
+    <th class="tg-6ydv">Vector Database</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-knyo">llama-2</td>
+    <td class="tg-knyo">e5-large-v2</td>
+    <td class="tg-knyo">Llamaindex</td>
+    <td class="tg-knyo">QA chatbot</td>
+    <td class="tg-knyo">YES</td>
+    <td class="tg-knyo">YES</td>
+    <td class="tg-knyo">NO</td>
+    <td class="tg-knyo">YES</td>
+    <td class="tg-knyo">Milvus</td>
+  </tr>
+</tbody>
+</table>
 
-- Using a web browser, type in the following URL to open Jupyter Labs
+#### 03 Prepare the environment
 
-    ``http://host-ip:8889``
+1. Follow steps 1 - 3 in the ["Prepare the environment" section of example 02](#02-prepare-the-environment).
 
-- Locate the [synthetic data generation](../evaluation/01_synthetic_data_generation.ipynb) which demonstrates how to generate synthetic data of question answer pairs for evaluation
+#### 03 Deploy
 
-- Proceed with the next 3 notebooks:
+1.  Follow steps 1 - 4 in the ["Deploy" section of example 02](#02-deploy) to stage the model weights.
 
-    - [Filling generated answers](../evaluation/02_filling_RAG_outputs_for_Evaluation.ipynb)
+2. Find the GPU device ID.
 
-    - [Ragas evaluation with NVIDIA AI playground](../evaluation/03_eval_ragas.ipynb)
+3. Assign LLM inference to specific GPUs by specifying the GPU ID(s) in the [docker compose file](../deploy/compose/docker-compose.yaml).
 
-    - [LLM as a Judge evaluation with NVIDIA AI playground](../evaluation/04_Human_Like_RAG_Evaluation-AIP.ipynb)
+```
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              # count: ${INFERENCE_GPU_COUNT:-all} # Comment this out
+              device_ids: ["0"]
+              capabilities: [gpu]
+```
 
+4. Follow step 6 in the ["Deploy" section of example 02](#02-deploy) to deploy via Docker compose.
 
-# Learn More
-1. [Architecture Guide](../docs/rag/architecture.md): Detailed explanation of different components and how they are tried up together.
-2. Component Guides: Component specific features are enlisted in these sections.
-   1. [Chain Server](../docs/rag/chat_server.md)
-   2. [NeMo Framework Inference Server](../docs/rag/llm_inference_server.md)
-   3. [Jupyter Server](../docs/rag/jupyter_server.md)
-   4. [Sample frontend](../docs/rag/frontend.md)
-3. [Configuration Guide](../docs/rag/configuration.md): This guide covers different configurations available for this workflow.
-4. [Support Matrix](../docs/rag/support_matrix.md): This covers GPU, CPU, Memory and Storage requirements for deploying this workflow.
+#### 03 Test
+
+1. Follow steps 1 - 5 in the ["Test" section of example 02](#02-test).
+
+2. Verify the correct GPU is serving the model.
+
+#### 03 Uninstall
+
+1. To unintstall, follow the ["Uninstall" steps in example 02"](#02-uninstall).
+
+<hr>
+
+### Additional 
+
+1. [NVIDIA RAG Chatbot Developer Guide](https://docs.nvidia.com/ai-enterprise/workflows-generative-ai/0.1.0/customized-development.html)
