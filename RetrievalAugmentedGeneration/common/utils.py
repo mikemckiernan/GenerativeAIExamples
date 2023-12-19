@@ -101,7 +101,6 @@ def get_vector_index() -> VectorStoreIndex:
 
     logger.info(f"Using {config.vector_store.name} as vector store")
     if config.vector_store.name == "pgvector":
-        # connection_string = "postgresql://postgres:password@pgvector:5432"
         connection_string = f"postgresql://{os.getenv('POSTGRES_USER', '')}:{os.getenv('POSTGRES_PASSWORD', '')}@{config.vector_store.url}"
         db_name = "vector_db"
 
