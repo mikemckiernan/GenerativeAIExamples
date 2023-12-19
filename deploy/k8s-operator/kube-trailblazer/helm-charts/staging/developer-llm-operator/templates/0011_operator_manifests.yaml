@@ -10,7 +10,7 @@ metadata:
     app.kubernetes.io/part-of: kube-trailblazer
     control-plane: controller-manager
   name: kube-trailblazer-controller-manager
-  namespace: kube-trailblazer-system
+  namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
@@ -69,8 +69,8 @@ spec:
         - --leader-elect
         command:
         - /manager
-        image: nvcr.io/nvstaging/cloud-native/developer-llm-operator:v0.0.1
-        imagePullPolicy: Always
+        image: {{ include "developer-llm-operator.fullimage" . }}
+        imagePullPolicy: {{ .Values.images.imagePullPolicy }}
         livenessProbe:
           httpGet:
             path: /healthz
@@ -96,8 +96,10 @@ spec:
           capabilities:
             drop:
             - ALL
+      {{- if .Values.images.registry.imagePullSecret.name }}
       imagePullSecrets:
-      - name: nvcrio
+      - name: {{ .Values.images.registry.imagePullSecret.name }}
+      {{- end }}
       securityContext:
         runAsNonRoot: true
       serviceAccountName: kube-trailblazer-controller-manager

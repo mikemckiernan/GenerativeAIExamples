@@ -16,4 +16,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: kube-trailblazer-controller-manager
-  namespace: kube-trailblazer-system
+  namespace: {{ .Release.Namespace }}
