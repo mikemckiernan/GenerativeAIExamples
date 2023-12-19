@@ -9,5 +9,9 @@ Create secret to access docker registry
 Full image name with tag
 */}}
 {{- define "developer-llm-operator.fullimage" -}}
-{{- .Values.images.name -}}:{{- .Values.images.version | default .Chart.AppVersion -}}
+{{- if .Values.images.version }}
+{{- .Values.images.name -}}:{{- .Values.images.version -}}
+{{- else }}
+{{- .Values.images.name -}}:v{{- .Chart.AppVersion -}}
+{{- end }}
 {{- end }}
