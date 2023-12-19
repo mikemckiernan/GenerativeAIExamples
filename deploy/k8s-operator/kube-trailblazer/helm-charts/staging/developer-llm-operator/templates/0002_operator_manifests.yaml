@@ -9,4 +9,4 @@ metadata:
     app.kubernetes.io/name: serviceaccount
     app.kubernetes.io/part-of: kube-trailblazer
   name: kube-trailblazer-controller-manager
-  namespace: kube-trailblazer-system
+  namespace: {{ .Release.Namespace }}
