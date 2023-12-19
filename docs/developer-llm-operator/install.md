@@ -129,13 +129,13 @@ in the NVIDIA GPU Operator documentation.
 1. Get the Helm chart for the Operator:
 
    ```console
-   $ helm fetch https://helm.ngc.nvidia.com/nvidia/cloud-native/charts/developer-llm-operator-0.1.0.tgz
+   $ helm fetch https://helm.ngc.nvidia.com/nvidia/cloud-native/charts/developer-llm-operator-v0.1.0.tgz
    ```
 
 1. Install the Operator:
 
    ```console
-   $ helm install --generate-name ./developer-llm-operator-0.1.0.tgz \
+   $ helm install --generate-name ./developer-llm-operator-v0.1.0.tgz \
        -n kube-trailblazer-system --create-namespace
    ```
 
