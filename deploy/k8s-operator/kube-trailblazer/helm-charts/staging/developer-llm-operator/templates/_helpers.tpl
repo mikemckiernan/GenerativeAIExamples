@@ -2,5 +2,12 @@
 Create secret to access docker registry
 */}}
 {{- define "imagePullSecret" }}
-{{- printf "{\"auths\": {\"%s\": {\"auth\": \"%s\"}}}" .Values.images.registry.name (printf "%s:%s" .Values.images.registry.ImagePullSecret.username .Values.images.registry.ImagePullSecret.password | b64enc) | b64enc }}
+{{- printf "{\"auths\": {\"%s\": {\"auth\": \"%s\"}}}" .Values.images.registry.name (printf "%s:%s" .Values.images.registry.imagePullSecret.username .Values.images.registry.imagePullSecret.password | b64enc) | b64enc }}
+{{- end }}
+
+{{/*
+Full image name with tag
+*/}}
+{{- define "developer-llm-operator.fullimage" -}}
+{{- .Values.images.name -}}:{{- .Values.images.version | default .Chart.AppVersion -}}
 {{- end }}
