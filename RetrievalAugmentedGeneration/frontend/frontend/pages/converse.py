@@ -211,4 +211,11 @@ def _stream_predict(
             chunks += chunk
             yield "", chat_history + [[question, chunks]], documents, ""
         else:
+<<<<<<< HEAD
             yield "", chat_history + [[question, chunks]], documents, chunks
+=======
+            _LOGGER.info("Got final")
+            yield "", chat_history + [[question, chunks]], documents, chunks
+
+    # return "", chat_history + [[question, chunks]], documents, chunks
+>>>>>>> Applied patches from Viraj Karandikar to fix the TTS integration
