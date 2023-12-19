@@ -214,14 +214,15 @@ $ source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-co
 $ docker compose -f deploy/compose/docker-compose.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
-CONTAINER ID   NAMES                     STATUS
-853b74f11e65   llm-playground            Up 15 minutes
-9964f1a797a3   query-router              Up 15 minutes
-e3e3d4871f1a   jupyter-notebook-server   Up 15 minutes
-09150764b74a   triton-inference-server   Up 15 minutes (unhealthy)
-2285b01dbe0c   milvus-standalone         Up 40 minutes (healthy)
-2c96084539ce   milvus-minio              Up 40 minutes (healthy)
-a839261973b8   milvus-etcd               Up 40 minutes (healthy)
+CONTAINER ID   NAMES                  STATUS
+256da0ecdb7b   llm-playground         Up 48 minutes
+2974aa4fb2ce   chain-server           Up 48 minutes
+4a8c4aebe4ad   notebook-server        Up 48 minutes
+0069c5e0b373   evaluation             Up 48 minutes
+5be2b57bb5c1   milvus-standalone      Up 48 minutes (healthy)
+ecf674c8139c   llm-inference-server   Up 48 minutes (healthy)
+a6609c22c171   milvus-minio           Up 48 minutes (healthy)
+b23c0858c4d4   milvus-etcd            Up 48 minutes (healthy)
 ```
 
 Reference:
@@ -346,4 +347,4 @@ This example deploys a developer RAG pipeline for chat QA and serves inference v
 
 ### Additional 
 
-1. [NVIDIA RAG Developer Guide](https://docs.nvidia.com/ai-enterprise/workflows-generative-ai/0.1.0/customized-development.html)
+1. [NVIDIA RAG Chatbot Developer Guide](https://docs.nvidia.com/ai-enterprise/workflows-generative-ai/0.1.0/customized-development.html)

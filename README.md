@@ -37,7 +37,7 @@ Enterprise RAG examples also support local and remote inference via [TensorRT-LL
 
 | Model         | Embedding           | Framework        | Description               | Multi-GPU | Multi-node | TRT-LLM | NVIDIA AI Foundation | Triton | Vector Database |
 |---------------|-----------------------|------------|--------|-------------------------|-----------|------------|-------------|---------|--------|
-| llama-2 | e5-large-v2 | Llamaindex | QA Chatbot  | YES        | YES |YES         | NO | YES     | Milvus|
+| llama-2 | e5-large-v2 | Llamaindex | QA Chatbot, Helm, k8s  | NO        | NO | [YES](./docs/developer-llm-operator/)         | NO | YES     | Milvus|
 
 ## Tools
 
