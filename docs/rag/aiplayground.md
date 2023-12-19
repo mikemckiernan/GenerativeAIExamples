@@ -1,75 +1,67 @@
-# NVIDIA AI Playground
+# NVIDIA AI Foundation
 
-**NVIDIA AI Playground** on NGC allows developers to experience state of the art LLMs accelerated on NVIDIA DGX Cloud with NVIDIA TensorRT nd Triton Inference Server. Developers get **free credits for 10K requests** to any of the available models. Sign up process is easy.
+**NVIDIA AI Foundation** lets developers to experience state of the art LLMs accelerated by NVIDIA. Developers get **free credits for 10K requests** to any of the available models. 
 
-**Setup**
+## Prepare the environment
 
-Please follow the instruction below to get access to AI playground API key
+1.  Navigate to https://catalog.ngc.nvidia.com/ai-foundation-models.
 
-* Navigate to https://catalog.ngc.nvidia.com/ai-foundation-models
-* Select any of the available models and click on learn more
+2. Find the <i>Llama 2 13B</i> model icon and click ``Learn More``.
 
 ![Diagram](./images/image5.png)
 
-* Select the ```API``` navigation bar and click on the ```Generate key``` option as shown below.
+3. Select the ```API``` navigation bar and click on the ```Generate key``` option..
 
 ![Diagram](./images/image6.png)
 
-* Copy the generated key over to a safe place.
+4. Save the generated API key.
 
+## Deploy
 
-### Using Nvdia Cloud based LLM's
+1.  Clone the Generative AI examples Git repository. 
 
-#### Step 1: Sign up to AI playground
+> ⚠️ **NOTE**: This example requires Git Large File Support (LFS)
 
-- Follow the [above](#nvidia-ai-playground) instructions to get access to an API key.
+```
+$ sudo apt -y install git-lfs
+$ git lfs pull
+$ git clone git@github.com:NVIDIA/GenerativeAIExamples.git
+Cloning into 'GenerativeAIExamples'...
+```
 
-#### Step 2: Set Environment Variables
+2. Add your NGC API key to <i>compose.env</i> to use the NVIDIA endpoint.
 
-- Modify ``compose.env`` in the ``deploy/compose`` directory to set your environment variables. The following variable is required.
+```
+$ cd GenerativeAIExamples
+ 
+$ grep AI deploy/compose/compose.env
+ export AI_PLAYGROUND_API_KEY="nvapi-*"
+```
+3. Deploy the developer RAG example via Docker compose.
 
-    export AI_PLAYGROUND_API_KEY="nvapi-*"
+```
+$ source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose-playground.yaml build
 
+$ docker compose -f deploy/compose/docker-compose-playground.yaml up -d
 
-#### Step 3: Build and Start Containers
-- Pull lfs files. This will pull large files from repository.
-    ```
-        git lfs pull
-    ```
-- Run the following command to build containers.
-    ```
-        source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose-playground.yaml build
-    ```
+$ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
+CONTAINER ID   NAMES               STATUS
+4cae4d242d12   llm-playground      Up 4 minutes
+1c8383b10866   chain-server        Up 4 minutes
+26c3d00367e4   milvus-standalone   Up 4 minutes (healthy)
+3a0a0d719d09   milvus-minio        Up 4 minutes (healthy)
+8e29db31f0de   notebook-server     Up 4 minutes
+a9711883dc50   evaluation          Up 4 minutes
+f2bee65460d0   milvus-etcd         Up 4 minutes (healthy)
+```
 
-- Run the following command to start containers.
-    ```
-        source deploy/compose/compose.env; docker compose -f deploy/compose/docker-compose-playground.yaml up -d
-    ```
-    > ⚠️ **NOTE**: It will take a few minutes for the containers to come up. Adding the `-d` flag will have the services run in the background. ⚠️
+## Test
 
-### Follow remaining steps from Quick start guide to interact with the pipeline using UI [here](../../RetrievalAugmentedGeneration/README.md#step-3-experiment-with-rag-in-jupyterlab)
+1. Follow steps 1 - 5 in the ["Test" section of example 02](../../RetrievalAugmentedGeneration/README.md#02-test).
 
-- Example [notebook 6](../../notebooks/06_AI_playground.ipynb) showcases the usage of AI Playground LLM
+## Learn more
 
-### Using Nvdia Cloud based Embedding models
+Example [notebook 6](../../notebooks/06_AI_playground.ipynb) showcases the usage of AI Playground based LLM. 
 
-#### Step 1: Sign up to AI playground
+1. Access the notebook server at `http://host-ip:8888` from your web browser.
 
-- Follow the [above](#nvidia-ai-playground) instructions to get access to an API key.
-
-#### Step 2: Set Environment Variables
-
-- Modify ``compose.env`` in the ``deploy/compose`` directory to set your environment variables. The following variable is required.
-
-    export AI_PLAYGROUND_API_KEY="nvapi-*"
-
-#### Step 3: Update Config file
-- Update the embedding model name and model engine in [config.yaml](../../deploy/compose/config.yaml)
-
-    ```
-        embeddings:
-          model_name: nvolve
-          model_engine: ai-playground
-    ```
-
-- Follow steps 3 and 4 from Quick start guide [here](../../RetrievalAugmentedGeneration/README.md#step-3-experiment-with-rag-in-jupyterlab) to build containers and start the pipeline.
