@@ -280,7 +280,7 @@ in the NVIDIA GPU Operator documentation.
    llm                        ClusterIP   10.107.213.112   <none>        8001/TCP         22h
    milvus                     ClusterIP   10.102.86.183    <none>        19530/TCP        22h
    milvus-etcd                ClusterIP   10.109.74.142    <none>        2379/TCP         22h
-   milvus-minio               ClusterIP   10.103.238.28    <none>        9000/TCP         22h
+   milvus-minio               ClusterIP   10.103.238.28    <none>        9010/TCP         22h
    query                      ClusterIP   10.110.199.69    <none>        8081/TCP         22h
    ```
 
