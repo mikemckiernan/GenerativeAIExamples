@@ -39,16 +39,6 @@ Enterprise RAG examples also support local and remote inference via [TensorRT-LL
 |---------------|-----------------------|------------|--------|-------------------------|-----------|------------|-------------|---------|--------|
 | llama-2 | e5-large-v2 | Llamaindex | QA Chatbot  | YES        | YES |YES         | NO | YES     | Milvus|
 
-## NVIDIA Large Language Models
-NVIDIA LLMs are optimized for building enterprise generative AI applications. All NVIDIA models are ready for commercial use, export compliant, and shared under the [NVIDIA AI Foundation Models Community License Agreement](https://developer.nvidia.com/downloads/nv-ai-foundation-models-license).
-
-| Name          | Description           | Type       | Context Length | Example |
-|---------------|-----------------------|------------|----------------|---------|
-| [nemotron-3-8b-qa-4k](https://huggingface.co/nvidia/nemotron-3-8b-qa-4k) | Q&A LLM customized on knowledge bases | Text Generation | 4096 | NO |  |
-| [nemotron-3-8b-chat-4k-steerlm](https://huggingface.co/nvidia/nemotron-3-8b-chat-4k-steerlm) | Best out-of-the-box chat model with flexible alignment at inference | Text Generation | 4096 | NO |
-| [nemotron-3-8b-chat-4k-rlhf](https://huggingface.co/nvidia/nemotron-3-8b-chat-4k-rlhf) | Best out-of-the-box chat model performance| Text Generation | 4096 | NO | 
-
-
 ## Tools
 
 Example tools and tutorials to enhance LLM development and productivity when using NVIDIA RAG pipelines.

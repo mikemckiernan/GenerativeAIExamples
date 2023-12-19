@@ -265,7 +265,7 @@ Execute the Jupyter notebooks to explore optional features.
 To uninstall, stop and remove the running containers.
 
 ```
-$ cd deploy/
+$ cd deploy/compose
 $ source compose.env 
 $ docker compose stop
 $ docker compose rm
@@ -344,18 +344,6 @@ This example deploys a developer RAG pipeline for chat QA and serves inference v
 
 <hr>
 
-### Additional Developer RAG Resources
+### Additional 
 
-1. Developer RAG [Architecture Guide](../docs/rag/architecture.md)
-2. Component Guides:
-   1. [Chain Server](../docs/rag/chat_server.md)
-   2. [NeMo Framework Inference Server](../docs/rag/llm_inference_server.md)
-   3. [Jupyter Server](../docs/rag/jupyter_server.md)
-   4. [Sample frontend](../docs/rag/frontend.md)
-3. Developer RAG [Configuration Guide](../docs/rag/configuration.md)
-4. Developer RAG [Support Matrix](../docs/rag/support_matrix.md)
-
-<hr>
-
-## Enterprise RAG Examples
-
+1. [NVIDIA RAG Developer Guide](https://docs.nvidia.com/ai-enterprise/workflows-generative-ai/0.1.0/customized-development.html)
