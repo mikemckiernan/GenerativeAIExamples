@@ -17,13 +17,13 @@ A RAG pipeline embeds multimodal data --  such as documents, images, and video -
 
 ### Developer RAG Examples
 
-The developer RAG examples run on a single VM. They demonstrate how to combine NVIDIA GPU acceleration with popular LLM programming frameworks using NVIDIA's [open source connectors](#open-source-integrations). The examples are easy to deploy via [Docker Compose](https://docs.docker.com/compose/) or [Ansible](https://www.ansible.com/). 
+The developer RAG examples run on a single VM. They demonstrate how to combine NVIDIA GPU acceleration with popular LLM programming frameworks using NVIDIA's [open source connectors](#open-source-integrations). The examples are easy to deploy via [Docker Compose](https://docs.docker.com/compose/) or [Ansible](https://www.ansible.com/).
 
-Examples support local and remote inference endpoints. If you have a GPU, you can inference locally via [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM). If you don't have a GPU, you can inference and embed remotely via [NVIDIA AI Foundations endpoints](https://www.nvidia.com/en-us/ai-data-science/foundation-models/). 
+Examples support local and remote inference endpoints. If you have a GPU, you can inference locally via [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM). If you don't have a GPU, you can inference and embed remotely via [NVIDIA AI Foundations endpoints](https://www.nvidia.com/en-us/ai-data-science/foundation-models/).
 
 | Model         | Embedding           | Framework        | Description               | Multi-GPU | TRT-LLM | NVIDIA AI Foundation | Triton | Vector Database |
 |---------------|-----------------------|------------|-------------------------|-----------|------------|-------------|---------|--------|
-| llama-2 | e5-large-v2 | Llamaindex | QA Chatbot  | [YES](RetrievalAugmentedGeneration/README.md#03-qa-chatbot-multi-gpu----a100h100l40s)        | [YES](RetrievalAugmentedGeneration/README.md#02-qa-chatbot----a100h100l40s-gpu)       | [YES](RetrievalAugmentedGeneration/README.md#01-qa-chatbot----nvidia-ai-foundation-inference-endpoint) | YES     | Milvus|
+| llama-2 | e5-large-v2 | Llamaindex | QA Chatbot  | [YES](RetrievalAugmentedGeneration/README.md#3-qa-chatbot-multi-gpu----a100h100l40s)        | [YES](RetrievalAugmentedGeneration/README.md#2-qa-chatbot----a100h100l40s-gpu)       | [YES](RetrievalAugmentedGeneration/README.md#1-qa-chatbot----nvidia-ai-foundation-inference-endpoint) | YES     | Milvus|
 | llama-2 | all-MiniLM-L6-v2 | Llama Index | QA Chatbot, GeForce, Windows | NO        | [YES](https://github.com/NVIDIA/trt-llm-rag-windows/tree/release/1.0)         | NO | NO     | FAISS |
 
 
@@ -33,7 +33,7 @@ The enterprise RAG examples run as microservies distributed across multiple VMs 
 
 Enterprise RAG examples include a [Kubernetes operator](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) for LLM lifecycle management. It is compatible with the [NVIDIA GPU operator](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/gpu-operator) that automates GPU discovery and lifecycle management in a Kubernetes cluster.
 
-Enterprise RAG examples also support local and remote inference via [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM) and [NVIDIA AI Foundations endpoints](https://www.nvidia.com/en-us/ai-data-science/foundation-models/). 
+Enterprise RAG examples also support local and remote inference via [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM) and [NVIDIA AI Foundations endpoints](https://www.nvidia.com/en-us/ai-data-science/foundation-models/).
 
 | Model         | Embedding           | Framework        | Description               | Multi-GPU | Multi-node | TRT-LLM | NVIDIA AI Foundation | Triton | Vector Database |
 |---------------|-----------------------|------------|--------|-------------------------|-----------|------------|-------------|---------|--------|
@@ -45,7 +45,7 @@ Example tools and tutorials to enhance LLM development and productivity when usi
 
 | Name | Description | Deployment | Tutorial |
 |------|-------------|------|--------|
-| Evaluation | Example open source RAG eval tool that uses synthetic data generation and LLM-as-a-judge |  [Docker file](https://github.com/NVIDIA/GenerativeAIExamples/tree/v0.2.0/evaluation) | [Jupyter Notebooks](https://github.com/NVIDIA/GenerativeAIExamples/blob/v0.2.0/evaluation/01_synthetic_data_generation.ipynb) |]
+| Evaluation | Example open source RAG eval tool that uses synthetic data generation and LLM-as-a-judge |  [Docker file](./evaluation/Dockerfile.eval) | [Jupyter Notebooks](./evaluation/01_synthetic_data_generation.ipynb) |]
 
 ## Open Source Integrations
 
