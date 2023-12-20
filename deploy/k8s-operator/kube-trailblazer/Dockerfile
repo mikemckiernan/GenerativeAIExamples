@@ -49,6 +49,8 @@ COPY --from=builder --chown=65532:65532 /workspace/helm-plugins /opt/helm-plugin
 
 COPY artifacts/kustomize /usr/local/bin/kustomize
 
+COPY NVIDIA_AI_Product_License_1Sept2023.pdf / 
+
 USER 65532:65532
 
 ENTRYPOINT ["/manager"]
