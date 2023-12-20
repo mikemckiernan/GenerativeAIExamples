@@ -95,7 +95,7 @@ This example deploys a developer RAG pipeline for chat QA and serves inferencing
 
 1. Verify NVIDIA GPU driver version 535 or later is installed.
 
-> ⚠️ **NOTE**: This example requires an A100, H100, or L40S GPU. 
+> ⚠️ **NOTE**: This example requires an A100, H100, or L40S GPU.
 
 ``` $ nvidia-smi --query-gpu=driver_version --format=csv,noheader
 535.129.03
@@ -114,7 +114,7 @@ GPU 00000000:CA:00.0
 ```
 Reference: [NVIDIA Linux driver installation instructions](https://docs.nvidia.com/datacenter/tesla/tesla-installation-notes/index.html)
 
-2. Clone the Generative AI examples Git repository. 
+2. Clone the Generative AI examples Git repository.
 
 > ⚠️ **NOTE**: This example requires Git Large File Support (LFS)
 
@@ -178,13 +178,13 @@ $ cd llama/
 
 ```
 $ pip install -e .
-$ ./download.sh 
+$ ./download.sh
 Enter the URL from email: < https://download.llamameta.net/… etc>
 
 Enter the list of models to download without spaces (7B,13B,70B,7B-chat,13B-chat,70B-chat), or press Enter for all: 13B-chat
 ```
 
-4. Copy the tokenizer to the model directory. 
+4. Copy the tokenizer to the model directory.
 
 ```
 $ mv tokenizer* llama-2-13b-chat/
@@ -198,7 +198,7 @@ checklist.chk  consolidated.00.pth  consolidated.01.pth  params.json  tokenizer.
 ```
 $ cd ~/git/GenerativeAIExamples
 
-$ grep MODEL deploy/compose/compose.env | grep -v \# 
+$ grep MODEL deploy/compose/compose.env | grep -v \#
 export MODEL_DIRECTORY="/home/nvidia/git/llama/llama-2-13b-chat/"
 export MODEL_ARCHITECTURE="llama"
 export MODEL_NAME="Llama-2-13b-chat"
@@ -206,7 +206,7 @@ export MODEL_NAME="Llama-2-13b-chat"
 
 6. Deploy the developer RAG example via Docker compose.
 
-> ⚠️ **NOTE**: It may take up to 5 minutes for the Triton server to start. The `-d` flag starts the services in the background. 
+> ⚠️ **NOTE**: It may take up to 5 minutes for the Triton server to start. The `-d` flag starts the services in the background.
 
 ```
 $ source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose.yaml build
@@ -267,7 +267,7 @@ To uninstall, stop and remove the running containers.
 
 ```
 $ cd deploy/compose
-$ source compose.env 
+$ source compose.env
 $ docker compose stop
 $ docker compose rm
 $ docker compose ps -q
@@ -345,6 +345,6 @@ This example deploys a developer RAG pipeline for chat QA and serves inference v
 
 <hr>
 
-### Additional 
+### Additional
 
 1. [NVIDIA RAG Chatbot Developer Guide](https://docs.nvidia.com/ai-enterprise/workflows-generative-ai/0.1.0/customized-development.html)

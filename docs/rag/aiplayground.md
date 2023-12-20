@@ -1,6 +1,6 @@
 # NVIDIA AI Foundation
 
-**NVIDIA AI Foundation** lets developers to experience state of the art LLMs accelerated by NVIDIA. Developers get **free credits for 10K requests** to any of the available models. 
+**NVIDIA AI Foundation** lets developers to experience state of the art LLMs accelerated by NVIDIA. Developers get **free credits for 10K requests** to any of the available models.
 
 ## Prepare the environment
 
@@ -18,7 +18,7 @@
 
 ## Deploy
 
-1.  Clone the Generative AI examples Git repository. 
+1.  Clone the Generative AI examples Git repository.
 
 > ⚠️ **NOTE**: This example requires Git Large File Support (LFS)
 
@@ -33,7 +33,7 @@ Cloning into 'GenerativeAIExamples'...
 
 ```
 $ cd GenerativeAIExamples
- 
+
 $ grep AI deploy/compose/compose.env
  export AI_PLAYGROUND_API_KEY="nvapi-*"
 ```
@@ -61,7 +61,7 @@ f2bee65460d0   milvus-etcd         Up 4 minutes (healthy)
 
 ## Learn more
 
-Example [notebook 6](../../notebooks/06_AI_playground.ipynb) showcases the usage of AI Playground based LLM. 
+Example [notebook 6](../../notebooks/06_AI_playground.ipynb) showcases the usage of AI Playground based LLM.
 
 1. Access the notebook server at `http://host-ip:8888` from your web browser.
 
