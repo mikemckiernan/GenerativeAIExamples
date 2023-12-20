@@ -61,6 +61,7 @@ Follow [these instructions](../docs/rag/aiplayground.md) to sign up for an NVIDI
 ### 2: QA Chatbot -- A100/H100/L40S GPU
 
 This example deploys a developer RAG pipeline for chat QA and serves inferencing via the NeMo Framework inference container.
+> ⚠️ **NOTE**: This example requires an A100, H100, or L40S GPU.
 
 <table class="tg">
 <thead>
@@ -96,8 +97,6 @@ This example deploys a developer RAG pipeline for chat QA and serves inferencing
 
 1. Verify NVIDIA GPU driver version 535 or later is installed.
 
-> ⚠️ **NOTE**: This example requires an A100, H100, or L40S GPU.
-
 ``` $ nvidia-smi --query-gpu=driver_version --format=csv,noheader
 535.129.03
 
@@ -120,10 +119,10 @@ Reference: [NVIDIA Linux driver installation instructions](https://docs.nvidia.c
 > ⚠️ **NOTE**: This example requires Git Large File Support (LFS)
 
 ```
-$ sudo apt -y install git-lfs
-$ git lfs pull
-$ git clone git@github.com:NVIDIA/GenerativeAIExamples.git
-Cloning into 'GenerativeAIExamples'...
+sudo apt -y install git-lfs
+git clone git@github.com:NVIDIA/GenerativeAIExamples.git
+cd GenerativeAIExamples/
+git lfs pull
 ```
 
 3. Install [Docker Engine and Docker Compose.](https://docs.docker.com/engine/install/ubuntu/)
@@ -153,7 +152,7 @@ Please refer to [instructions](https://docs.nvidia.com/ngc/gpu-cloud/ngc-overvie
 Login to `nvcr.io` using the following command:
 
 ```
-$ docker login nvcr.io
+docker login nvcr.io
 ```
 
 Reference:
@@ -166,8 +165,8 @@ Reference:
 1. Clone the Llama Github.
 
 ```
-$ git clone git@github.com:facebookresearch/llama.git
-$ cd llama/
+git clone git@github.com:facebookresearch/llama.git
+cd llama/
 ```
 
 2. Fill out Meta's [Llama request access form](https://ai.meta.com/resources/models-and-libraries/llama-downloads/).
@@ -179,7 +178,6 @@ $ cd llama/
 - Download the llama-2-13b-chat model when prompted.
 
 ```
-$ pip install -e .
 $ ./download.sh
 Enter the URL from email: < https://download.llamameta.net/… etc>
 
@@ -272,10 +270,10 @@ Execute the Jupyter notebooks to explore optional features.
 To uninstall, stop and remove the running containers.
 
 ```
-$ cd deploy/compose
-$ source compose.env
-$ docker compose down
-$ docker compose ps -q
+cd deploy/compose
+source compose.env
+docker compose down
+docker compose ps -q
 ```
 
 <hr>
@@ -459,7 +457,7 @@ b23c0858c4d4   milvus-etcd            Up 48 minutes (healthy)
 
 #### 4.4 Uninstall
 
-1. To unintstall, follow the ["Uninstall" steps in example 02"](#24-uninstall).
+1. To uninstall, follow the ["Uninstall" steps in example 02"](#24-uninstall).
 
 <hr>
 

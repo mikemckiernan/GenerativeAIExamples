@@ -24,9 +24,10 @@
 
 ```
 $ sudo apt -y install git-lfs
-$ git lfs pull
 $ git clone git@github.com:NVIDIA/GenerativeAIExamples.git
 Cloning into 'GenerativeAIExamples'...
+$ cd GenerativeAIExamples/
+$ git lfs pull
 ```
 
 2. Add your NGC API key to <i>compose.env</i> to use the NVIDIA endpoint.
@@ -57,7 +58,7 @@ f2bee65460d0   milvus-etcd         Up 4 minutes (healthy)
 
 ## Test
 
-1. Follow steps 1 - 5 in the ["Test" section of example 02](../../RetrievalAugmentedGeneration/README.md#02-test).
+1. Follow steps 1 - 5 in the ["Test" section of example 02](../../RetrievalAugmentedGeneration/README.md#23-test).
 
 ## Learn more
 
