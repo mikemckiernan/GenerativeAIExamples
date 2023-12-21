@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/name: rolebinding
     app.kubernetes.io/part-of: kube-trailblazer
   name: kube-trailblazer-leader-election-rolebinding
-  namespace: kube-trailblazer-system
+  namespace: {{ .Release.Namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -17,4 +17,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: kube-trailblazer-controller-manager
-  namespace: kube-trailblazer-system
+  namespace: {{ .Release.Namespace }}

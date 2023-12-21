@@ -10,7 +10,7 @@ metadata:
     app.kubernetes.io/part-of: kube-trailblazer
     control-plane: controller-manager
   name: kube-trailblazer-controller-manager-metrics-service
-  namespace: kube-trailblazer-system
+  namespace: {{ .Release.Namespace }}
 spec:
   ports:
   - name: https
