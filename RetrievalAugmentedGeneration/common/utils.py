@@ -179,6 +179,6 @@ def get_text_splitter() -> SentenceTransformersTokenTextSplitter:
     """Return the token text splitter instance from langchain."""
     return SentenceTransformersTokenTextSplitter(
         model_name=TEXT_SPLITTER_EMBEDDING_MODEL,
-        chunk_size=get_config().text_splitter.chunk_size,
+        tokens_per_chunk=get_config().text_splitter.chunk_size,
         chunk_overlap=get_config().text_splitter.chunk_overlap,
     )

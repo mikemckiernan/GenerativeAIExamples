@@ -60,7 +60,7 @@ class LLMConfig(ConfigWizard):
 class TextSplitterConfig(ConfigWizard):
     """Configuration class for the Text Splitter.
 
-    :cvar chunk_size: Chunk size for text splitter.
+    :cvar chunk_size: Chunk size for text splitter. Tokens per chunk in token-based splitters.
     :cvar chunk_overlap: Text overlap in text splitter.
     """
 
