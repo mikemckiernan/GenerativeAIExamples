@@ -1,18 +1,36 @@
 services:
 
-  pgvector:
-    container_name: pgvector
-    image: ankane/pgvector:v0.5.1
-    ports:  
-    - 5432:5432  
+  llm:
+    container_name: llm-inference-server
+    image: llm-inference-server:latest
+    build:
+      context: ../.././RetrievalAugmentedGeneration/llm-inference-server/
+      dockerfile: Dockerfile
+    volumes:
+    - ${MODEL_DIRECTORY:?please update the env file and source it before running}:/model
+    command: ${MODEL_ARCHITECTURE:?please update the env file and source it before running} --max-input-length ${MODEL_MAX_INPUT_LENGTH:-3000} --max-output-length ${MODEL_MAX_OUTPUT_LENGTH:-512} --quantization ${QUANTIZATION:-None}
+    ports:
+    - "8000:8000"
+    - "8001:8001"
+    - "8002:8002"
     expose:
-    - "5432"
-    volumes:  
-    - ./data:/var/lib/postgresql/data
-    environment:
-    - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
-    - POSTGRES_USER=${POSTGRES_USER:-postgres}
-    - POSTGRES_DB=${POSTGRES_DB:-api}
+      - "8000"
+      - "8001"
+      - "8002"
+    shm_size: 20gb
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: ${INFERENCE_GPU_COUNT:-all}
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/v2/health/ready"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+      start_period: 10m
 
   jupyter-server:
     container_name: notebook-server
@@ -31,7 +49,9 @@ services:
             - driver: nvidia
               count: 1
               capabilities: [gpu]
-  
+    depends_on:
+      - "llm"
+
   evaluation:
     container_name: evaluation
     image: evaluation:latest
@@ -49,6 +69,22 @@ services:
             - driver: nvidia
               count: 1
               capabilities: [gpu]
+    depends_on:
+      - "llm"
+
+  pgvector:
+    container_name: pgvector
+    image: ankane/pgvector:v0.5.1
+    ports:  
+    - 5432:5432  
+    expose:
+    - "5432"
+    volumes:  
+    - ./data:/var/lib/postgresql/data
+    environment:
+    - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+    - POSTGRES_USER=${POSTGRES_USER:-postgres}
+    - POSTGRES_DB=${POSTGRES_DB:-api}
 
   query:
     container_name: chain-server
@@ -60,8 +96,9 @@ services:
     environment:
       APP_VECTORSTORE_URL: "pgvector:5432"
       APP_VECTORSTORE_NAME: "pgvector"
-      APP_LLM_MODELNAME: "llama2_13b"
-      APP_LLM_MODELENGINE: "ai-playground"
+      APP_LLM_SERVERURL: "llm:8001"
+      APP_LLM_MODELNAME: "ensemble"
+      APP_LLM_MODELENGINE: "triton-trt-llm"
       APP_CONFIG_FILE: ${APP_CONFIG_FILE}
       NVAPI_KEY: ${AI_PLAYGROUND_API_KEY}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}  
@@ -83,6 +120,7 @@ services:
               capabilities: [gpu]
     depends_on:
       - "pgvector"
+      - "llm"
 
   frontend:
     container_name: llm-playground

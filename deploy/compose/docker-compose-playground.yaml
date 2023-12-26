@@ -109,7 +109,8 @@ services:
       dockerfile: ./RetrievalAugmentedGeneration/Dockerfile
     command: --port 8081 --host 0.0.0.0
     environment:
-      APP_MILVUS_URL: "http://milvus:19530"
+      APP_VECTORSTORE_URL: "http://milvus:19530"
+      APP_VECTORSTORE_NAME: "milvus"
       APP_LLM_MODELNAME: "llama2_13b"
       APP_LLM_MODELENGINE: "ai-playground"
       APP_CONFIG_FILE: ${APP_CONFIG_FILE}

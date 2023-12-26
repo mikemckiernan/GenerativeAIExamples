@@ -145,7 +145,8 @@ services:
       dockerfile: ./RetrievalAugmentedGeneration/Dockerfile
     command: --port 8081 --host 0.0.0.0
     environment:
-      APP_MILVUS_URL: "http://milvus:19530"
+      APP_VECTORSTORE_URL: "http://milvus:19530"
+      APP_VECTORSTORE_NAME: "milvus"
       APP_LLM_SERVERURL: "llm:8001"
       APP_LLM_MODELNAME: ensemble
       APP_LLM_MODELENGINE: triton-trt-llm
