@@ -62,30 +62,36 @@ class DocumentSearch(BaseModel):
 def import_example() -> None:
     """
     Import the example class from the specified example file.
-    The example directory is expected to have a file called chains.py where the example class is defined.
+    The example directory is expected to have a python file where the example class is defined.
     """
 
     name = os.getenv("RAG_EXAMPLE", "developer_rag")
-    example_path = os.path.join(EXAMPLE_DIR, name, "chains.py")
+    example_path = os.path.join(EXAMPLE_DIR, name)
     if not os.path.exists(example_path):
-        raise ValueError(f"Could not find file example file at {example_path}")
+        raise ValueError(f"Could not find example directory {example_path}")
 
-    # Import the specified file dynamically
-    spec = importlib.util.spec_from_file_location(name="example", location=os.path.join(EXAMPLE_DIR, name, "chains.py"))
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    for root, dirs, files in os.walk(example_path):
+        for file in files:
+            if not file.endswith(".py"):
+                continue
 
-    # Scan each class in the file to find one with the 3 implemented methods: ingest_docs, rag_chain and llm_chain
-    for name, _ in getmembers(module, isclass):
-        try:
-            cls = getattr(module, name)
-            if set(["ingest_docs", "llm_chain", "rag_chain"]).issubset(set(dir(cls))):
-                if name == "BaseExample":
-                    continue
-                app.example = cls()
-                return
-        except:
-            raise ValueError(f"Class {name} is not implemented and could not be instantiated.")
+            # Import the specified file dynamically
+            spec = importlib.util.spec_from_file_location(name="example", location=os.path.join(root, file))
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+
+            # Scan each class in the file to find one with the 3 implemented methods: ingest_docs, rag_chain and llm_chain
+            for name, _ in getmembers(module, isclass):
+                try:
+                    cls = getattr(module, name)
+                    if set(["ingest_docs", "llm_chain", "rag_chain"]).issubset(set(dir(cls))):
+                        if name == "BaseExample":
+                            continue
+                        example = cls()
+                        app.example = cls
+                        return
+                except:
+                    raise ValueError(f"Class {name} is not implemented and could not be instantiated.")
 
     raise NotImplementedError(f"Could not find a valid example class in {example_path}")
 
@@ -109,7 +115,7 @@ async def upload_document(file: UploadFile = File(...)) -> JSONResponse:
         with open(file_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
 
-        app.example.ingest_docs(file_path, upload_file)
+        app.example().ingest_docs(file_path, upload_file)
 
         return JSONResponse(
             content={"message": "File uploaded successfully"}, status_code=200
@@ -127,12 +133,13 @@ async def generate_answer(prompt: Prompt) -> StreamingResponse:
     """Generate and stream the response to the provided prompt."""
 
     try:
+        example = app.example()
         if prompt.use_knowledge_base:
             logger.info("Knowledge base is enabled. Using rag chain for response generation.")
-            generator = app.example.rag_chain(prompt.question, prompt.num_tokens)
+            generator = example.rag_chain(prompt.question, prompt.num_tokens)
             return StreamingResponse(generator, media_type="text/event-stream")
 
-        generator = app.example.llm_chain(prompt.context, prompt.question, prompt.num_tokens)
+        generator = example.llm_chain(prompt.context, prompt.question, prompt.num_tokens)
         return StreamingResponse(generator, media_type="text/event-stream")
 
     except (MilvusException, MilvusUnavailableException) as e:

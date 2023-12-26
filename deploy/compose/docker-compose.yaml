@@ -151,7 +151,7 @@ services:
       APP_LLM_MODELENGINE: triton-trt-llm
       APP_CONFIG_FILE: ${APP_CONFIG_FILE}
       NVAPI_KEY: ${AI_PLAYGROUND_API_KEY}
-      RAG_EXAMPLE: "developer_rag"
+      RAG_EXAMPLE: ${RAG_EXAMPLE}
     volumes:
       - ${APP_CONFIG_FILE}:${APP_CONFIG_FILE}
     ports:

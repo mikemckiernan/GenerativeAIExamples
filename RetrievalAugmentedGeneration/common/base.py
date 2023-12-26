@@ -21,7 +21,7 @@ from typing import Generator
 class BaseExample(ABC):
 
     @abstractmethod
-    def llm_chain(self, context: str, question: str, num_tokens: str) -> Generator[str, None, None]:
+    def llm_chain(self, context: str, question: str, num_tokens: int) -> Generator[str, None, None]:
         pass
 
     @abstractmethod

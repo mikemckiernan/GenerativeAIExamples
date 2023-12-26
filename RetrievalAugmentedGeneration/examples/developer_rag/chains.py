@@ -40,7 +40,7 @@ from RetrievalAugmentedGeneration.common.base import BaseExample
 
 logger = logging.getLogger(__name__)
 
-class Example(BaseExample):
+class QAChatbot(BaseExample):
     def ingest_docs(self, data_dir: str, filename: str):
         """Ingest documents to the VectorDB."""
 
@@ -72,7 +72,7 @@ class Example(BaseExample):
         index.insert_nodes(nodes)
         logger.info(f"Document {filename} ingested successfully")
 
-    def llm_chain(self, context: str, question: str, num_tokens: str) -> Generator[str, None, None]:
+    def llm_chain(self, context: str, question: str, num_tokens: int) -> Generator[str, None, None]:
         """Execute a simple LLM chain using the components defined above."""
 
         logger.info("Using llm to generate response directly without knowledge base.")
