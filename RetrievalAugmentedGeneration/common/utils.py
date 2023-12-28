@@ -21,10 +21,12 @@ from functools import lru_cache
 from typing import TYPE_CHECKING, List, Optional
 
 import torch
+import psycopg2
+from sqlalchemy import make_url
 from llama_index.postprocessor.types import BaseNodePostprocessor
 from llama_index.schema import MetadataMode
 from llama_index.utils import globals_helper
-from llama_index.vector_stores import MilvusVectorStore
+from llama_index.vector_stores import MilvusVectorStore, PGVectorStore
 from llama_index import VectorStoreIndex, ServiceContext, set_global_service_context
 from llama_index.llms import LangChainLLM
 from llama_index.embeddings import LangchainEmbedding
@@ -95,7 +97,35 @@ def get_config() -> "ConfigWizard":
 def get_vector_index() -> VectorStoreIndex:
     """Create the vector db index."""
     config = get_config()
-    vector_store = MilvusVectorStore(uri=config.milvus.url, dim=config.embeddings.dimensions, overwrite=False)
+    vector_store = None
+
+    logger.info(f"Using {config.vector_store.name} as vector store")
+    if config.vector_store.name == "pgvector":
+        connection_string = f"postgresql://{os.getenv('POSTGRES_USER', '')}:{os.getenv('POSTGRES_PASSWORD', '')}@{config.vector_store.url}"
+        db_name = "vector_db"
+
+        conn = psycopg2.connect(connection_string)
+        conn.autocommit = True
+
+        with conn.cursor() as c:
+            c.execute(f"DROP DATABASE IF EXISTS {db_name}")
+            c.execute(f"CREATE DATABASE {db_name}")
+
+        url = make_url(connection_string)
+
+        vector_store = PGVectorStore.from_params(
+            database=db_name,
+            host=url.host,
+            password=url.password,
+            port=url.port,
+            user=url.username,
+            table_name="document_store",
+            embed_dim=config.embeddings.dimensions,
+        )
+    elif config.vector_store.name == "milvus":
+        vector_store = MilvusVectorStore(uri=config.milvus.url, dim=config.embeddings.dimensions, overwrite=False)
+    else:
+        raise RuntimeError("Unable to find any supported Vector Store DB. Supported engines are milvus and pgvector.")
     return VectorStoreIndex.from_vector_store(vector_store)
 
 

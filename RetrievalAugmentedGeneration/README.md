@@ -90,6 +90,19 @@ This example deploys a developer RAG pipeline for chat QA and serves inferencing
     <td class="tg-knyo">Milvus</td>
   </tr>
 </tbody>
+<tbody>
+  <tr>
+    <td class="tg-knyo">llama-2</td>
+    <td class="tg-knyo">e5-large-v2</td>
+    <td class="tg-knyo">Llamaindex</td>
+    <td class="tg-knyo">QA chatbot</td>
+    <td class="tg-knyo">NO</td>
+    <td class="tg-knyo">YES</td>
+    <td class="tg-knyo">NO</td>
+    <td class="tg-knyo">YES</td>
+    <td class="tg-knyo">pgvector</td>
+  </tr>
+</tbody>
 </table>
 
 
@@ -206,7 +219,7 @@ export MODEL_ARCHITECTURE="llama"
 export MODEL_NAME="Llama-2-13b-chat"
 ```
 
-2. Deploy the developer RAG example via Docker compose.
+2. Deploy the developer RAG example via Docker compose using milvus vector store, steps to deploy RAG example with pgvector vector store is [here](#deploying-with-pgvector-vector-store).
 
 > ⚠️ **NOTE**: It may take up to 5 minutes for the Triton server to start. The `-d` flag starts the services in the background.
 
@@ -275,6 +288,28 @@ source compose.env
 docker compose down
 docker compose ps -q
 ```
+
+#### Deploying with [pgvector](https://github.com/pgvector/pgvector) vector store
+2. Deploy the developer RAG example via Docker compose.
+
+> ⚠️ **NOTE**: It may take up to 5 minutes for the Triton server to start. The `-d` flag starts the services in the background.
+
+```
+$ source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose-pgvector.yaml build
+
+$ docker compose -f deploy/compose/docker-compose-pgvector.yaml up -d
+
+$ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
+CONTAINER ID   NAMES                  STATUS
+0f6f091d892e   llm-playground         Up 22 hours
+8d0ab09fcb98   chain-server           Up 22 hours
+e3c467b93198   evaluation             Up 22 hours
+85bd98ba3b24   notebook-server        Up 22 hours
+22f0d405b38b   llm-inference-server   Up 22 hours (healthy)
+cbd3cf65ce7e   pgvector               Up 22 hours
+```
+
+After deployment is successful, you can follow steps from [Test](#23-test) to verify workflow.
 
 <hr>
 
