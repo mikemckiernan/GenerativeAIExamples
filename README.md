@@ -15,7 +15,14 @@ Sign up for a [free NGC developer account](https://ngc.nvidia.com/signin) to acc
 
 A RAG pipeline embeds multimodal data --  such as documents, images, and video -- into a database connected to a LLM.  RAG lets users chat with their data!
 
+<<<<<<< HEAD
 ### Developer RAG Examples
+=======
+| Name          | Description           | LLM        | Framework               | Multi-GPU | Multi-node | Embedding   | TRT-LLM | Triton | VectorDB | K8s |
+|---------------|-----------------------|------------|-------------------------|-----------|------------|-------------|---------|--------|----------|-----|
+| [Linux developer RAG](https://github.com/NVIDIA/GenerativeAIExamples/tree/main/RetrievalAugmentedGeneration) | Single VM, single GPU | llama2-13b | Langchain + Llama Index | No        | No         | NV-Embed-QA-003 | Yes     | Yes    | Milvus   | No  |
+| [Windows developer RAG](https://github.com/NVIDIA/trt-llm-rag-windows) | RAG on Windows | llama2-13b | Llama Index | No        | No         | NA | Yes     | No    | FAISS   | NA  |
+>>>>>>> 0dc0011... Nemo Embedding Microservice Integration
 
 The developer RAG examples run on a single VM. They demonstrate how to combine NVIDIA GPU acceleration with popular LLM programming frameworks using NVIDIA's [open source connectors](#open-source-integrations). The examples are easy to deploy via [Docker Compose](https://docs.docker.com/compose/).
 

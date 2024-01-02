@@ -159,6 +159,7 @@ services:
     depends_on:
       - "milvus"
       - "llm"
+      - "embeddings"
 
   frontend:
     container_name: llm-playground
