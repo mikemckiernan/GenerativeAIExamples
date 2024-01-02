@@ -29,6 +29,31 @@ services:
       retries: 3
       start_period: 10m
 
+  embeddings:
+    container_name: nemo-retriever-embedding-ms
+    image: nvcr.io/ohlfw0olaadg/ea-participants/nemo-retriever-embedding-microservice:23.12
+    volumes:
+    - ${EMBEDDING_MODEL_DIRECTORY:?please update the env file and source it before running}:/model-store
+    command: bin/web -m /model-store -p 9080
+    ports:
+    - "9080:9080"
+    expose:
+    - "9080"
+    shm_size: 8gb
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: ${INFERENCE_GPU_COUNT:-1}
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9080/v1/health/ready"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+      start_period: 10m
+
   etcd:
     container_name: milvus-etcd
     image: quay.io/coreos/etcd:v3.5.5
@@ -107,6 +132,9 @@ services:
       APP_LLM_MODELNAME: ${MODEL_NAME:?please update the env file and source it before running}
       APP_LLM_MODELENGINE: nemo-infer
       APP_CONFIG_FILE: ${APP_CONFIG_FILE}
+      APP_EMBEDDINGS_SERVERURL: "embeddings:9080"
+      APP_EMBEDDINGS_MODELNAME: ${EMBEDDING_MODEL_NAME:?please update the env file and source it before running}
+      APP_EMBEDDINGS_MODELENGINE: nemo-embed
     volumes:
       - ${APP_CONFIG_FILE}:${APP_CONFIG_FILE}
     ports:
@@ -129,6 +157,7 @@ services:
     depends_on:
       - "milvus"
       - "llm"
+      - "embeddings"
 
   frontend:
     container_name: llm-playground
@@ -167,6 +196,7 @@ services:
               capabilities: [gpu]
     depends_on:
       - "llm"
+      - "embeddings"
 
 networks:
   default:
