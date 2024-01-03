@@ -1,7 +1,7 @@
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
 python-multipart==0.0.6
-langchain==0.0.330
+langchain==0.0.334
 tritonclient[all]==2.39.0
 unstructured[all-docs]==0.11.2
 sentence-transformers==2.2.2
