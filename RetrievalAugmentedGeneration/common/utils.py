@@ -123,7 +123,13 @@ def get_vector_index() -> VectorStoreIndex:
             embed_dim=config.embeddings.dimensions,
         )
     elif config.vector_store.name == "milvus":
-        vector_store = MilvusVectorStore(uri=config.milvus.url, dim=config.embeddings.dimensions, overwrite=False)
+        vector_store = MilvusVectorStore(uri=config.milvus.url, 
+            dim=config.embeddings.dimensions, 
+            collection_name="document_store_ivfflat", 
+            similarity_metric="L2", 
+            index_config={"index_type": "GPU_IVF_FLAT", "nlist": config.vector_store.nlist}, 
+            search_config={"nprobe": config.vector_store.nprobe}, 
+            overwrite=False)
     else:
         raise RuntimeError("Unable to find any supported Vector Store DB. Supported engines are milvus and pgvector.")
     return VectorStoreIndex.from_vector_store(vector_store)
