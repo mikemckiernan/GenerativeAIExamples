@@ -380,6 +380,7 @@ This example deploys a developer RAG pipeline for chat QA and serves inference v
 #### 3.4 Uninstall
 
 1. To unintstall, follow the ["Uninstall" steps in example 02"](#24-uninstall).
+<<<<<<< HEAD
 
 <hr>
 
@@ -500,3 +501,126 @@ b23c0858c4d4   milvus-etcd            Up 48 minutes (healthy)
 ### Additional
 
 1. [NVIDIA RAG Chatbot Developer Guide](https://docs.nvidia.com/ai-enterprise/workflows-generative-ai/0.1.0/customized-development.html)
+=======
+
+<hr>
+
+
+### 4: QA Chatbot with Quantized LLM model -- A100/H100/L40S
+
+This example deploys a developer RAG pipeline for chat QA and serves inference via the NeMo Framework inference container across multiple GPUs using a quantized version of Llama-7b-chat model.
+
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-6ydv">Model</th>
+    <th class="tg-6ydv">Embedding</th>
+    <th class="tg-6ydv">Framework</th>
+    <th class="tg-6ydv">Description</th>
+    <th class="tg-6ydv">Multi-GPU</th>
+    <th class="tg-6ydv">TRT-LLM</th>
+    <th class="tg-6ydv">NVIDIA AI Foundation</th>
+    <th class="tg-6ydv">Triton</th>
+    <th class="tg-6ydv">Vector Database</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-knyo">llama-2-7b-chat</td>
+    <td class="tg-knyo">e5-large-v2</td>
+    <td class="tg-knyo">Llamaindex</td>
+    <td class="tg-knyo">QA chatbot</td>
+    <td class="tg-knyo">YES</td>
+    <td class="tg-knyo">YES</td>
+    <td class="tg-knyo">NO</td>
+    <td class="tg-knyo">YES</td>
+    <td class="tg-knyo">Milvus</td>
+  </tr>
+</tbody>
+</table>
+
+#### 4.1 Prepare the environment
+
+1. Follow the steps in the ["Prepare the environment" section of example 02](#21-prepare-the-environment).
+
+
+#### 4.2 Deploy
+1. Download Llama2-7b chat Chat Model Weights from [Meta by following steps 1-4 here](#downloading-the-model).
+
+> ⚠️ **NOTE**: For this initial version only 7B chat model is supported on A100/H100/L40 GPUs.
+
+
+1. For quantization of the Llama2 model using AWQ, first clone the [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM/tree/release/0.5.0) repository separately and checkout release/v0.5.0.
+
+   - Also copy the Llama2 model directory downloaded earlier to the TensorRT-LLM repo
+
+```
+  git clone https://github.com/NVIDIA/TensorRT-LLM.git
+  cp -r <path-to-Llama2-model-directory> TensorRT-LLM/
+  cd TensorRT-LLM/
+  git checkout release/0.5.0
+```
+
+3. Now setup the TensorRT-LLM repo seprately using steps [here](https://github.com/NVIDIA/TensorRT-LLM/blob/release/0.5.0/docs/source/installation.md)
+
+4. Once the model is downloaded and TensorRT-LLM repo is setup, we can quantize the model using the TensorRT-LLM container.
+
+  - Follow the steps from [here](https://github.com/NVIDIA/TensorRT-LLM/tree/v0.5.0/examples/llama#awq) to quantize using AWQ, run these commands inside the container.
+
+  - While running the quantization script, make sure to point `--model_dir` to your downloaded Llama2 model directory
+
+  - Once the quantization is completed, copy the generated PyTorch (.pt) file inside the model directory
+
+  ```
+   cp <quantized-checkpoint>.pt <model-dir>
+  ```
+
+5. Now, we will come back our repository, follow the steps below to deploy this quantized model using the inference server.
+
+  - Update [compose.env](../../deploy/compose/compose.env) with `MODEL_DIRECTORY` pointing to Llama2 model directory containing the quantized checkpoint.
+
+  - Make sure the qantized PyTorch model (.pt) file generated using above steps is present inside the MODEL_DIRECTORY.
+
+
+  - Uncomment the QUANTIZATION variable which specifies quantization as "int4_awq" inside the [compose.env](../../deploy/compose/compose.env).
+  ```
+    export QUANTIZATION="int4_awq"
+  ```
+
+6. Deploy the developer RAG example via Docker compose.
+
+> ⚠️ **NOTE**: It may take up to 5 minutes for the Triton server to start. The `-d` flag starts the services in the background.
+
+```
+$ source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose.yaml build
+
+$ docker compose -f deploy/compose/docker-compose.yaml up -d
+
+$ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
+CONTAINER ID   NAMES                  STATUS
+256da0ecdb7b   llm-playground         Up 48 minutes
+2974aa4fb2ce   chain-server           Up 48 minutes
+4a8c4aebe4ad   notebook-server        Up 48 minutes
+0069c5e0b373   evaluation             Up 48 minutes
+5be2b57bb5c1   milvus-standalone      Up 48 minutes (healthy)
+ecf674c8139c   llm-inference-server   Up 48 minutes (healthy)
+a6609c22c171   milvus-minio           Up 48 minutes (healthy)
+b23c0858c4d4   milvus-etcd            Up 48 minutes (healthy)
+```
+
+#### 4.3 Test
+
+1. Follow steps 1 - 5 in the ["Test" section of example 02](#23-test).
+
+#### 4.4 Uninstall
+
+1. To uninstall, follow the ["Uninstall" steps in example 02"](#24-uninstall).
+
+<hr>
+
+
+### Additional
+
+1. [NVIDIA RAG Chatbot Developer Guide](https://docs.nvidia.com/ai-enterprise/workflows-generative-ai/0.1.0/customized-development.html)
+
+>>>>>>> Added updates to the RAG README file from the main branch to my branch
