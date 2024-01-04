@@ -9,6 +9,7 @@ from langchain.vectorstores import FAISS
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_nvidia_ai_endpoints import ChatNVIDIA, NVIDIAEmbeddings
+from RetrievalAugmentedGeneration.common.utils import get_config
 from RetrievalAugmentedGeneration.common.base import BaseExample
 
 logger = logging.getLogger(__name__)
@@ -25,7 +26,7 @@ def get_llm() -> ChatNVIDIA:
     return llm
 
 
-class FiveMinuteRAG(BaseExample):
+class NvidiaAIFoundation(BaseExample):
     def ingest_docs(self, file_name: str, filename: str):
         """Ingest documents to the VectorDB."""
 
@@ -33,10 +34,11 @@ class FiveMinuteRAG(BaseExample):
         global vectorstore
         # Load raw documents from the directory
         # Data is copied to `DOCS_DIR` in common.server:upload_document
+        settings = get_config()
         raw_documents = DirectoryLoader(DOCS_DIR).load()
 
         if raw_documents:
-            text_splitter = CharacterTextSplitter(chunk_size=2000, chunk_overlap=200)
+            text_splitter = CharacterTextSplitter(chunk_size=settings.text_splitter.chunk_size, chunk_overlap=settings.text_splitter.chunk_overlap)
             documents = text_splitter.split_documents(raw_documents)
 
             vectorstore = FAISS.from_documents(documents, document_embedder)
