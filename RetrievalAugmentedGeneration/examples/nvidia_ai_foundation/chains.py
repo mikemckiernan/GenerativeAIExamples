@@ -3,20 +3,20 @@ import os
 from functools import lru_cache
 from typing import Generator
 
-from langchain.document_loaders import DirectoryLoader
+from langchain.document_loaders import UnstructuredFileLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import FAISS
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_nvidia_ai_endpoints import ChatNVIDIA, NVIDIAEmbeddings
-from RetrievalAugmentedGeneration.common.utils import get_config
 from RetrievalAugmentedGeneration.common.base import BaseExample
+from RetrievalAugmentedGeneration.common.utils import get_config
 
 logger = logging.getLogger(__name__)
 DOCS_DIR = os.path.abspath("./uploaded_files")
 vector_store_path = "vectorstore.pkl"
-vectorstore = None
 document_embedder = NVIDIAEmbeddings(model="nvolveqa_40k", model_type="passage")
+vectorstore = None
 
 
 @lru_cache
@@ -30,19 +30,23 @@ class NvidiaAIFoundation(BaseExample):
     def ingest_docs(self, file_name: str, filename: str):
         """Ingest documents to the VectorDB."""
 
+        # TODO: Load embedding created in older conversation, memory persistance
         # We initialize class in every call therefore it should be global
         global vectorstore
         # Load raw documents from the directory
         # Data is copied to `DOCS_DIR` in common.server:upload_document
         settings = get_config()
-        raw_documents = DirectoryLoader(DOCS_DIR).load()
+        _path = os.path.join(DOCS_DIR, filename)
+        raw_documents = UnstructuredFileLoader(_path).load()
 
         if raw_documents:
-            text_splitter = CharacterTextSplitter(chunk_size=settings.text_splitter.chunk_size, chunk_overlap=settings.text_splitter.chunk_overlap)
+            # text_splitter = CharacterTextSplitter(chunk_size=settings.text_splitter.chunk_size, chunk_overlap=settings.text_splitter.chunk_overlap)
+            text_splitter = CharacterTextSplitter(chunk_size=2000, chunk_overlap=200)
             documents = text_splitter.split_documents(raw_documents)
-
-            vectorstore = FAISS.from_documents(documents, document_embedder)
-
+            if vectorstore:
+                vectorstore.add_documents(documents)
+            else:
+                vectorstore = FAISS.from_documents(documents, document_embedder)
             logger.info("Vector store created and saved.")
         else:
             logger.warning("No documents available to process!")
