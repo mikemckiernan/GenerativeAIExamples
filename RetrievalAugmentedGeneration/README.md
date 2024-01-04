@@ -34,21 +34,21 @@ Developers get free credits for 10K requests to any of the available models.
 <tbody>
   <tr>
     <td class="tg-knyo">llama-2</td>
-    <td class="tg-knyo">e5-large-v2</td>
-    <td class="tg-knyo">Llamaindex</td>
+    <td class="tg-knyo">nvolveqa_40k</td>
+    <td class="tg-knyo">Langchain</td>
     <td class="tg-knyo">QA chatbot</td>
     <td class="tg-knyo">NO</td>
     <td class="tg-knyo">NO</td>
     <td class="tg-knyo">YES</td>
     <td class="tg-knyo">NO</td>
-    <td class="tg-knyo">Milvus</td>
+    <td class="tg-knyo">FAISS</td>
   </tr>
 </tbody>
 </table>
 
 #### 1.1 Prepare the environment
 
-This example uses NVIDIA AI Foundation inference endpoint. A GPU is still needed for local embeddings.
+This example uses NVIDIA AI Foundation inference endpoint.
 
 1. Follow steps 1 - 5 in the ["Prepare the environment" section of example 02](#21-prepare-the-environment).
 

@@ -35,13 +35,12 @@ class NvidiaAIFoundation(BaseExample):
         global vectorstore
         # Load raw documents from the directory
         # Data is copied to `DOCS_DIR` in common.server:upload_document
-        settings = get_config()
         _path = os.path.join(DOCS_DIR, filename)
         raw_documents = UnstructuredFileLoader(_path).load()
 
         if raw_documents:
-            # text_splitter = CharacterTextSplitter(chunk_size=settings.text_splitter.chunk_size, chunk_overlap=settings.text_splitter.chunk_overlap)
-            text_splitter = CharacterTextSplitter(chunk_size=2000, chunk_overlap=200)
+            settings = get_config()
+            text_splitter = CharacterTextSplitter(chunk_size=settings.text_splitter.chunk_size, chunk_overlap=settings.text_splitter.chunk_overlap)
             documents = text_splitter.split_documents(raw_documents)
             if vectorstore:
                 vectorstore.add_documents(documents)

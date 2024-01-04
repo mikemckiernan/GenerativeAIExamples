@@ -1,16 +1,5 @@
 services:
 
-  jupyter-server:
-    container_name: notebook-server
-    image: notebook-server:latest
-    build:
-      context: ../../
-      dockerfile: ./notebooks/Dockerfile.notebooks
-    ports:
-    - "8888:8888"
-    expose:
-    - "8888"
-
   evaluation:
     container_name: evaluation
     image: evalulation:latest
