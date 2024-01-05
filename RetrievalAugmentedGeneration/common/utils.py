@@ -32,6 +32,7 @@ from langchain.text_splitter import SentenceTransformersTokenTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
 from integrations.langchain.llms.triton_trt_llm import TensorRTLLM
 from integrations.langchain.llms.nemo_infer import NemoInfer
+from integrations.langchain.embeddings.nemo_embed import NemoEmbeddings
 from RetrievalAugmentedGeneration.common import configuration
 
 if TYPE_CHECKING:
@@ -148,6 +149,12 @@ def get_embedding_model() -> LangchainEmbedding:
         )
         # Load in a specific embedding model
         return LangchainEmbedding(hf_embeddings)
+    elif settings.embeddings.model_engine == "nemo-embed":
+        nemo_embed = NemoEmbeddings(
+            server_url=f"http://{settings.embeddings.server_url}/v1/embeddings",
+            model_name=settings.embeddings.model_name,
+        )
+        return LangchainEmbedding(nemo_embed)
     else:
         raise RuntimeError("Unable to find any supported embedding model. Supported engine is huggingface.")
 
@@ -170,7 +177,7 @@ def is_base64_encoded(s: str) -> bool:
 def get_text_splitter() -> SentenceTransformersTokenTextSplitter:
     """Return the token text splitter instance from langchain."""
     return SentenceTransformersTokenTextSplitter(
-        model_name=get_config().embeddings.model_name,
+        model_name="intfloat/e5-large-v2",
         chunk_size=get_config().text_splitter.chunk_size,
         chunk_overlap=get_config().text_splitter.chunk_overlap,
     )

@@ -20,7 +20,7 @@ A RAG pipeline embeds multimodal data --  such as documents, images, and video -
 
 | Name          | Description           | LLM        | Framework               | Multi-GPU | Multi-node | Embedding   | TRT-LLM | Triton | VectorDB | K8s |
 |---------------|-----------------------|------------|-------------------------|-----------|------------|-------------|---------|--------|----------|-----|
-| [Linux developer RAG](https://github.com/NVIDIA/GenerativeAIExamples/tree/main/RetrievalAugmentedGeneration) | Single VM, single GPU | llama2-13b | Langchain + Llama Index | No        | No         | e5-large-v2 | Yes     | Yes    | Milvus   | No  |
+| [Linux developer RAG](https://github.com/NVIDIA/GenerativeAIExamples/tree/main/RetrievalAugmentedGeneration) | Single VM, single GPU | llama2-13b | Langchain + Llama Index | No        | No         | NV-Embed-QA-003 | Yes     | Yes    | Milvus   | No  |
 | [Windows developer RAG](https://github.com/NVIDIA/trt-llm-rag-windows) | RAG on Windows | llama2-13b | Llama Index | No        | No         | NA | Yes     | No    | FAISS   | NA  |
 
 

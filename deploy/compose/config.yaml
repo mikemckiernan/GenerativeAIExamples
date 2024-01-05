@@ -38,17 +38,24 @@ text_splitter:
 embeddings:
   # The configuration embedding models.
 
-  model_name: intfloat/e5-large-v2
+  model_name: NV-Embed-QA-003
   # The name embedding search model from huggingface.
   # Type: str
+  # ENV Variable: APP_EMBEDDINGS_MODELNAME
 
   dimensions: 1024
   # The dimensions of the embedding search model from huggingface.
   # Type: int
 
-  model_engine: huggingface
+  model_engine: nemo-embed
   # The backend name hosting the model. Right now only huggingface is supported.
   # Type: str
+  # ENV Variable: APP_EMBEDDINGS_MODELENGINE
+
+  server_url: "embeddings:9080"
+  # The server url of nemo embedding microservice
+  # Type: str
+  # ENV Variable: APP_EMBEDDINGS_SERVERURL
 
 prompts:
   # The configuration for the prompts used for response generation.
