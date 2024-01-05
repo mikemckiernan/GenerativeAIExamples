@@ -52,34 +52,14 @@ services:
     depends_on:
       - "llm"
 
-  evaluation:
-    container_name: evaluation
-    image: evaluation:latest
-    build:
-      context: ../../
-      dockerfile: ./evaluation/Dockerfile.eval
-    ports:
-    - "8889:8889"
-    expose:
-    - "8889"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
-    depends_on:
-      - "llm"
-
   pgvector:
     container_name: pgvector
     image: ankane/pgvector:v0.5.1
-    ports:  
-    - 5432:5432  
+    ports:
+    - 5432:5432
     expose:
     - "5432"
-    volumes:  
+    volumes:
     - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/data:/var/lib/postgresql/data
     environment:
     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
@@ -101,7 +81,7 @@ services:
       APP_LLM_MODELENGINE: "triton-trt-llm"
       APP_CONFIG_FILE: ${APP_CONFIG_FILE}
       NVAPI_KEY: ${AI_PLAYGROUND_API_KEY}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}  
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-api}
     volumes:
