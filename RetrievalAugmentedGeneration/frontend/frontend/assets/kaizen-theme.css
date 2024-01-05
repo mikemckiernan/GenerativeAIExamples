@@ -11,3 +11,12 @@
   footer {
     visibility: hidden;
   }
+
+.record-button {
+  width: 35px !important;
+  overflow: hidden !important;
+}
+.record-button::before {
+  content: "🎤" !important;
+  background-color: var(--block-background-fill) !important;
+}
