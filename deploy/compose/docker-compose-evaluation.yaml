@@ -4,7 +4,7 @@ services:
     image: evalulation:latest
     build:
       context: ../../
-      dockerfile: ./evaluation/Dockerfile.eval
+      dockerfile: ./tools/evaluation/Dockerfile.eval
     ports:
     - "8889:8889"
     expose:

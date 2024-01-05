@@ -4,21 +4,21 @@ FROM python:3.10-slim
 WORKDIR /app
 
 #COPY notebooks
-COPY ./evaluation/*.ipynb .
+COPY ./tools/evaluation/*.ipynb .
 
 RUN mkdir -p /app/imgs
 
 COPY ./notebooks/dataset.zip .
 
-COPY ./evaluation/imgs/* imgs/
+COPY ./tools/evaluation/imgs/* imgs/
 
 COPY ./integrations/langchain/llms/triton_trt_llm.py .
 
 COPY ./integrations/langchain/llms/nv_aiplay.py .
 
-COPY ./evaluation/requirements.txt .
+COPY ./tools/evaluation/requirements.txt .
 
-COPY ./evaluation/qa_generation.json .
+COPY ./tools/evaluation/qa_generation.json .
 
 # Run pip dependencies
 RUN pip3 install -r requirements.txt

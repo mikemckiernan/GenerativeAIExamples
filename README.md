@@ -46,7 +46,8 @@ Example tools and tutorials to enhance LLM development and productivity when usi
 
 | Name | Description | Deployment | Tutorial |
 |------|-------------|------|--------|
-| Evaluation | Example open source RAG eval tool that uses synthetic data generation and LLM-as-a-judge |  [Docker file](./evaluation/Dockerfile.eval) | [Jupyter Notebooks](./evaluation/01_synthetic_data_generation.ipynb) |]
+| Evaluation | Example open source RAG eval tool that uses synthetic data generation and LLM-as-a-judge |  [Docker compose file](./deploy/compose/docker-compose-evaluation.yaml) | [README](./docs/rag/evaluation.md) |]
+| Observability | Observability serves as an efficient mechanism for both monitoring and debugging RAG pipelines. |  [Docker compose file](./deploy/compose/docker-compose-observability.yaml) | [README](./docs/rag/observability.md) |]
 
 ## Open Source Integrations
 

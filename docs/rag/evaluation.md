@@ -1,6 +1,6 @@
 # Evaluation Tool
 
-## Tool Details
+## Introduction
 Evaluation is crucial for retrieval augmented generation (RAG) pipelines as it ensures the accuracy and relevance of information retrieved as well as the generated content.
 
 There are 3 components needed for evaluating the performance of a RAG pipeline:
@@ -18,3 +18,16 @@ Using an existing knowledge base we can synthetically generate question|answer|c
 
 ### LLM-as-a-Judge
 We can use LLMs to provide human-like feedback and Likert evaluation scores for full end-to-end RAG pipelines. This tool uses Llama 2 70B as a judge LLM.
+
+## Deploy
+1. Follow steps 1 - 5 in the ["Prepare the environment" section of example 02](../../RetrievalAugmentedGeneration/README.md#21-prepare-the-environment).
+
+2. Deploy the developer RAG example via Docker compose by following [these steps](../../RetrievalAugmentedGeneration/README.md#22-deploy).
+
+3. Build and deploy the evaluation service
+```
+   $ docker compose -f deploy/compose/docker-compose-evaluation.yaml build
+   $ docker compose -f deploy/compose/docker-compose-evaluation.yaml up -d
+```
+
+4. Access the notebook server at `http://host-ip:8889` from your web browser and try out the notebooks sequentially starting from [Notebook 1: Synthetic Data Generation for RAG Evaluation](../../tools/evaluation/01_synthetic_data_generation.ipynb)
