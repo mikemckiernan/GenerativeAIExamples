@@ -122,7 +122,7 @@ def get_vector_index() -> VectorStoreIndex:
             embed_dim=config.embeddings.dimensions,
         )
     elif config.vector_store.name == "milvus":
-        vector_store = MilvusVectorStore(uri=config.milvus.url, dim=config.embeddings.dimensions, overwrite=False)
+        vector_store = MilvusVectorStore(uri=config.vector_store.url, dim=config.embeddings.dimensions, overwrite=False)
     else:
         raise RuntimeError("Unable to find any supported Vector Store DB. Supported engines are milvus and pgvector.")
     return VectorStoreIndex.from_vector_store(vector_store)
