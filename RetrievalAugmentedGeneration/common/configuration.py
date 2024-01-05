@@ -35,6 +35,16 @@ class VectorStoreConfig(ConfigWizard):
         default="http://localhost:19530", # for pgvector `pgvector:5432`
         help_txt="The host of the machine running Vector Store DB",
     )
+    nlist: int = configfield(
+        "nlist",
+        default=64, # IVF Flat milvus
+        help_txt="Number of cluster units",
+    )
+    nprobe: int = configfield(
+        "nprobe",
+        default=16, # IVF Flat milvus
+        help_txt="Number of units to query",
+    )
 
 
 @configclass
