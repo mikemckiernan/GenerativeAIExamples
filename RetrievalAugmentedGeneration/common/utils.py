@@ -126,7 +126,6 @@ def get_vector_index() -> VectorStoreIndex:
         vector_store = MilvusVectorStore(uri=config.milvus.url, 
             dim=config.embeddings.dimensions, 
             collection_name="document_store_ivfflat", 
-            similarity_metric="L2", 
             index_config={"index_type": "GPU_IVF_FLAT", "nlist": config.vector_store.nlist}, 
             search_config={"nprobe": config.vector_store.nprobe}, 
             overwrite=False)
