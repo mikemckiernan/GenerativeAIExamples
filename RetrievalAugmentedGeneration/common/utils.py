@@ -32,6 +32,7 @@ from llama_index.llms import LangChainLLM
 from llama_index.embeddings import LangchainEmbedding
 from langchain.text_splitter import SentenceTransformersTokenTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_nvidia_ai_endpoints import ChatNVIDIA, NVIDIAEmbeddings
 from integrations.langchain.llms.triton_trt_llm import TensorRTLLM
 from integrations.langchain.llms.nv_aiplay import GeneralLLM
 from integrations.langchain.embeddings.nv_aiplay import NVAIPlayEmbeddings
@@ -163,6 +164,8 @@ def get_llm() -> LangChainLLM:
                 streaming=True
         )
         return LangChainLLM(llm=aipl_llm)
+    elif settings.embeddings.model_engine == "nv-ai-foundation":
+        return ChatNVIDIA(model=settings.llm.model_name)
     else:
         raise RuntimeError("Unable to find any supported Large Language Model server. Supported engines are triton-trt-llm and nemo-infer.")
 
@@ -191,6 +194,8 @@ def get_embedding_model() -> LangchainEmbedding:
             raise RuntimeError("AI PLayground key is not set")
         embedding = NVAIPlayEmbeddings(model=settings.embeddings.model_name)
         return LangchainEmbedding(embedding)
+    elif settings.embeddings.model_engine == "nv-ai-foundation":
+        return NVIDIAEmbeddings(model=settings.embeddings.model_name, model_type="passage")
     else:
         raise RuntimeError("Unable to find any supported embedding model. Supported engine is huggingface.")
 

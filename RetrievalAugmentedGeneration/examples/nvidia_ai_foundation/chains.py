@@ -25,20 +25,14 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_nvidia_ai_endpoints import ChatNVIDIA, NVIDIAEmbeddings
 from RetrievalAugmentedGeneration.common.base import BaseExample
-from RetrievalAugmentedGeneration.common.utils import get_config
+from RetrievalAugmentedGeneration.common.utils import get_config, get_llm, get_embedding_model
 
 logger = logging.getLogger(__name__)
 DOCS_DIR = os.path.abspath("./uploaded_files")
 vector_store_path = "vectorstore.pkl"
-document_embedder = NVIDIAEmbeddings(model="nvolveqa_40k", model_type="passage")
+document_embedder = get_embedding_model()
 vectorstore = None
-
-
-@lru_cache
-def get_llm() -> ChatNVIDIA:
-    """Create the LLM connection."""
-    llm = ChatNVIDIA(model="mixtral_8x7b")
-    return llm
+settings = get_config()
 
 
 class NvidiaAIFoundation(BaseExample):
@@ -54,7 +48,6 @@ class NvidiaAIFoundation(BaseExample):
         raw_documents = UnstructuredFileLoader(_path).load()
 
         if raw_documents:
-            settings = get_config()
             text_splitter = CharacterTextSplitter(chunk_size=settings.text_splitter.chunk_size, chunk_overlap=settings.text_splitter.chunk_overlap)
             documents = text_splitter.split_documents(raw_documents)
             if vectorstore:
@@ -75,7 +68,7 @@ class NvidiaAIFoundation(BaseExample):
             [
                 (
                     "system",
-                    "You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. Please ensure that your responses are positive in nature.",
+                    settings.prompts.chat_template,
                 ),
                 ("user", "{input}"),
             ]
@@ -98,7 +91,7 @@ class NvidiaAIFoundation(BaseExample):
             [
                 (
                     "system",
-                    "You are a helpful AI assistant named Envie. You will reply to questions only based on the context that you are provided. If something is out of context, you will refrain from replying and politely decline to respond to the user.",
+                    settings.prompts.rag_template,
                 ),
                 ("user", "{input}"),
             ]
