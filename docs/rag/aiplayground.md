@@ -6,13 +6,13 @@
 
 1.  Navigate to https://catalog.ngc.nvidia.com/ai-foundation-models.
 
-2. Find the <i>Llama 2 13B</i> model icon and click ``Learn More``.
+2. Find the <i>Mixtral x7B</i> model icon and click ``Learn More``.
 
-![Diagram](./images/image5.png)
+![Diagram](./images/image7.png)
 
 3. Select the ```API``` navigation bar and click on the ```Generate key``` option..
 
-![Diagram](./images/image6.png)
+![Diagram](./images/image8.png)
 
 4. Save the generated API key.
 
@@ -35,34 +35,30 @@ $ git lfs pull
 ```
 $ cd GenerativeAIExamples
 
-$ grep AI deploy/compose/compose.env
- export AI_PLAYGROUND_API_KEY="nvapi-*"
+$ grep NVIDIA_API_KEY deploy/compose/compose.env 
+ export NVIDIA_API_KEY="nvapi-*"
 ```
-3. Deploy the developer RAG example via Docker compose.
+
+3. Set the nv-ai-foundation example to run
+```
+grep RAG_EXAMPLE deploy/compose/compose.env
+ export RAG_EXAMPLE="nvidia_ai_foundation"
+```
+4. Deploy the developer RAG example via Docker compose.
 
 ```
-$ source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose-playground.yaml build
+$ source deploy/compose/compose.env ; docker compose -f deploy/compose/docker-compose-nv-ai-foundation.yaml build
 
-$ docker compose -f deploy/compose/docker-compose-playground.yaml up -d
+$ docker compose -f deploy/compose/docker-compose-nv-ai-foundation.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
-CONTAINER ID   NAMES               STATUS
-4cae4d242d12   llm-playground      Up 4 minutes
-1c8383b10866   chain-server        Up 4 minutes
-26c3d00367e4   milvus-standalone   Up 4 minutes (healthy)
-3a0a0d719d09   milvus-minio        Up 4 minutes (healthy)
-8e29db31f0de   notebook-server     Up 4 minutes
-a9711883dc50   evaluation          Up 4 minutes
-f2bee65460d0   milvus-etcd         Up 4 minutes (healthy)
+CONTAINER ID   NAMES             STATUS
+70ef27ae4c91   llm-playground    Up 56 seconds
+4aacfbe89464   chain-server      Up 56 seconds
+42c5b628cd2b   evaluation        Up 56 seconds
 ```
 
 ## Test
 
 1. Follow steps 1 - 5 in the ["Test" section of example 02](../../RetrievalAugmentedGeneration/README.md#23-test).
-
-## Learn more
-
-Example [notebook 6](../../notebooks/06_AI_playground.ipynb) showcases the usage of AI Playground based LLM.
-
-1. Access the notebook server at `http://host-ip:8888` from your web browser.
 
