@@ -33,7 +33,7 @@ except Exception as e:
     logger.error(f"psycogp2 import failed with error: {e}")
 
 try:
-    from sqlalchemy import make_url
+    from sqlalchemy.engine.url import make_url
 except Exception as e:
     logger.error(f"SQLalchemy import failed with error: {e}")
 
