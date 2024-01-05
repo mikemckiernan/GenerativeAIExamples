@@ -6,13 +6,13 @@
 
 1.  Navigate to https://catalog.ngc.nvidia.com/ai-foundation-models.
 
-2. Find the <i>Llama 2 13B</i> model icon and click ``Learn More``.
+2. Find the <i>Mixtral x7B</i> model icon and click ``Learn More``.
 
-![Diagram](./images/image5.png)
+![Diagram](./images/image7.png)
 
 3. Select the ```API``` navigation bar and click on the ```Generate key``` option..
 
-![Diagram](./images/image6.png)
+![Diagram](./images/image8.png)
 
 4. Save the generated API key.
 
