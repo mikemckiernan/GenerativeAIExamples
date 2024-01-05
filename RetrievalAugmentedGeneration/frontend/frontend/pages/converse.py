@@ -204,7 +204,7 @@ def _stream_predict(
 
     documents: Union[None, List[Dict[str, Union[str, float]]]] = None
     if use_knowledge_base:
-        documents = client.search(question)
+        documents = client.search(prompt = question)
 
     for chunk in client.predict(question, use_knowledge_base, OUTPUT_TOKENS):
         if chunk:

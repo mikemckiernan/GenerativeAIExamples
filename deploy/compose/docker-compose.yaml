@@ -153,6 +153,9 @@ services:
       APP_CONFIG_FILE: ${APP_CONFIG_FILE}
       NVAPI_KEY: ${AI_PLAYGROUND_API_KEY}
       RAG_EXAMPLE: ${RAG_EXAMPLE}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      ENABLE_TRACING: false
     volumes:
       - ${APP_CONFIG_FILE}:${APP_CONFIG_FILE}
     ports:
@@ -187,8 +190,12 @@ services:
       APP_SERVERURL: http://query
       APP_SERVERPORT: 8081
       APP_MODELNAME: ${MODEL_NAME:-${MODEL_ARCHITECTURE}}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      ENABLE_TRACING: false
     env_file:
     - compose.env
+
     ports:
     - "8090:8090"
     expose:
