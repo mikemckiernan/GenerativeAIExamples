@@ -23,7 +23,7 @@ services:
         reservations:
           devices:
             - driver: nvidia
-              count: ${INFERENCE_GPU_COUNT:-all}
+              device_ids: ["0"]
               capabilities: [gpu]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/v2/health/ready"]
