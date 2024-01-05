@@ -49,6 +49,8 @@ services:
       APP_SERVERURL: http://query
       APP_SERVERPORT: 8081
       APP_MODELNAME: ${MODEL_NAME:-${MODEL_ARCHITECTURE}}
+    env_file:
+    - compose.env
     ports:
     - "8090:8090"
     expose:
