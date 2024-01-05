@@ -155,15 +155,6 @@ def get_llm() -> LangChainLLM:
             tokens=DEFAULT_NUM_TOKENS,
         )
         return LangChainLLM(llm=trtllm)
-    elif settings.llm.model_engine == "ai-playground":
-        if os.getenv('NVAPI_KEY') is None:
-            raise RuntimeError("AI PLayground key is not set")
-        aipl_llm = GeneralLLM(
-                model=settings.llm.model_name,
-                max_tokens=DEFAULT_NUM_TOKENS,
-                streaming=True
-        )
-        return LangChainLLM(llm=aipl_llm)
     elif settings.embeddings.model_engine == "nv-ai-foundation":
         return ChatNVIDIA(model=settings.llm.model_name)
     else:
@@ -189,11 +180,6 @@ def get_embedding_model() -> LangchainEmbedding:
         )
         # Load in a specific embedding model
         return LangchainEmbedding(hf_embeddings)
-    elif settings.embeddings.model_engine == "ai-playground":
-        if os.getenv('NVAPI_KEY') is None:
-            raise RuntimeError("AI PLayground key is not set")
-        embedding = NVAIPlayEmbeddings(model=settings.embeddings.model_name)
-        return LangchainEmbedding(embedding)
     elif settings.embeddings.model_engine == "nv-ai-foundation":
         return NVIDIAEmbeddings(model=settings.embeddings.model_name, model_type="passage")
     else:

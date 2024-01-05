@@ -33,7 +33,7 @@ Developers get free credits for 10K requests to any of the available models.
 </thead>
 <tbody>
   <tr>
-    <td class="tg-knyo">llama-2</td>
+    <td class="tg-knyo">mixtral_8x7b</td>
     <td class="tg-knyo">nvolveqa_40k</td>
     <td class="tg-knyo">Langchain</td>
     <td class="tg-knyo">QA chatbot</td>
