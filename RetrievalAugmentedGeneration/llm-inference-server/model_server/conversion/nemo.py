@@ -32,7 +32,7 @@ from . import ConversionOptions
 _LOGGER = logging.getLogger(__name__)
 
 
-def convert(model: Model, _: ConversionOptions) -> None:
+def convert(model: Model, opts: ConversionOptions) -> None:
     """Convert a .nemo formatted model."""
     # find the .nemo model file
     model_files = glob(os.path.join(model.model_dir, "*.nemo"))
@@ -68,4 +68,6 @@ def convert(model: Model, _: ConversionOptions) -> None:
         nemo_checkpoint_path=model_files[0],
         model_type=model.family,
         n_gpus=model.world_size,
+        max_input_token=opts.max_input_length,
+        max_output_token=opts.max_output_length
     )
