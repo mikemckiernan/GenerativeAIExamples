@@ -6,6 +6,7 @@ COPY RetrievalAugmentedGeneration/__init__.py /opt/RetrievalAugmentedGeneration/
 COPY RetrievalAugmentedGeneration/common /opt/RetrievalAugmentedGeneration/common
 COPY RetrievalAugmentedGeneration/examples /opt/RetrievalAugmentedGeneration/examples
 COPY integrations /opt/integrations
+COPY tools /opt/tools
 RUN apt-get update && apt-get install -y libpq-dev
 RUN --mount=type=bind,source=RetrievalAugmentedGeneration/requirements.txt,target=/opt/requirements.txt \
     python3 -m pip install --no-cache-dir -r /opt/requirements.txt

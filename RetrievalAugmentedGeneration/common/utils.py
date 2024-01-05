@@ -25,7 +25,7 @@ import psycopg2
 from sqlalchemy import make_url
 from llama_index.postprocessor.types import BaseNodePostprocessor
 from llama_index.schema import MetadataMode
-from llama_index.utils import globals_helper
+from llama_index.utils import globals_helper, get_tokenizer
 from llama_index.vector_stores import MilvusVectorStore, PGVectorStore
 from llama_index import VectorStoreIndex, ServiceContext, set_global_service_context
 from llama_index.llms import LangChainLLM
@@ -61,11 +61,12 @@ class LimitRetrievedNodesLength(BaseNodePostprocessor):
         included_nodes = []
         current_length = 0
         limit = DEFAULT_MAX_CONTEXT
+        tokenizer = get_tokenizer()
 
         for node in nodes:
             current_length += len(
-                globals_helper.tokenizer(
-                    node.node.get_content(metadata_mode=MetadataMode.LLM)
+                tokenizer(
+                    node.get_content(metadata_mode=MetadataMode.LLM)
                 )
             )
             if current_length > limit:
@@ -124,11 +125,11 @@ def get_vector_index() -> VectorStoreIndex:
             embed_dim=config.embeddings.dimensions,
         )
     elif config.vector_store.name == "milvus":
-        vector_store = MilvusVectorStore(uri=config.milvus.url, 
-            dim=config.embeddings.dimensions, 
-            collection_name="document_store_ivfflat", 
-            index_config={"index_type": "GPU_IVF_FLAT", "nlist": config.vector_store.nlist}, 
-            search_config={"nprobe": config.vector_store.nprobe}, 
+        vector_store = MilvusVectorStore(uri=config.vector_store.url,
+            dim=config.embeddings.dimensions,
+            collection_name="document_store_ivfflat",
+            index_config={"index_type": "GPU_IVF_FLAT", "nlist": config.vector_store.nlist},
+            search_config={"nprobe": config.vector_store.nprobe},
             overwrite=False)
     else:
         raise RuntimeError("Unable to find any supported Vector Store DB. Supported engines are milvus and pgvector.")

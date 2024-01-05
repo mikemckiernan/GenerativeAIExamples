@@ -23,12 +23,11 @@ from typing import Any, Dict, List
 import importlib
 from inspect import getmembers, isclass
 
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field
 from pymilvus.exceptions import MilvusException, MilvusUnavailableException
-
-from RetrievalAugmentedGeneration.common import utils
+from RetrievalAugmentedGeneration.common import utils, tracing
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -97,13 +96,13 @@ def import_example() -> None:
 
 
 @app.post("/uploadDocument")
-async def upload_document(file: UploadFile = File(...)) -> JSONResponse:
+@tracing.instrumentation_wrapper
+async def upload_document(request: Request, file: UploadFile = File(...)) -> JSONResponse:
     """Upload a document to the vector store."""
     if not file.filename:
         return JSONResponse(content={"message": "No files provided"}, status_code=200)
 
     try:
-
         upload_folder = "uploaded_files"
         upload_file = os.path.basename(file.filename)
         if not upload_file:
@@ -129,7 +128,8 @@ async def upload_document(file: UploadFile = File(...)) -> JSONResponse:
 
 
 @app.post("/generate")
-async def generate_answer(prompt: Prompt) -> StreamingResponse:
+@tracing.instrumentation_wrapper
+async def generate_answer(request: Request, prompt: Prompt) -> StreamingResponse:
     """Generate and stream the response to the provided prompt."""
 
     try:
@@ -152,7 +152,8 @@ async def generate_answer(prompt: Prompt) -> StreamingResponse:
 
 
 @app.post("/documentSearch")
-def document_search(data: DocumentSearch) -> List[Dict[str, Any]]:
+@tracing.instrumentation_wrapper
+async def document_search(request: Request,data: DocumentSearch) -> List[Dict[str, Any]]:
     """Search for the most relevant documents for the given search parameters."""
 
     try:
