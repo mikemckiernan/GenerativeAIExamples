@@ -72,7 +72,8 @@ def predict_instrumentation_wrapper(func):
         carrier = inject_context(span_ctx)
         constructed_response = ""
         for chunk in func(self, carrier, *args, **kwargs):
-            constructed_response += chunk
+            if chunk: 
+                constructed_response += chunk
             yield chunk
         span.set_attribute("response", constructed_response)
         span.end()

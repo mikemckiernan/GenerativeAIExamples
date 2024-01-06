@@ -93,6 +93,9 @@ class ChatClient:
             _LOGGER.error(f"Failed to get response from /generate endpoint of chain-server. Error details: {e}. Refer to chain-server logs for details.")
             yield str("Failed to get response from /generate endpoint of chain-server. Check if the fastapi server in chain-server is up. Refer to chain-server logs for details.")
 
+        # Send None to indicate end of response
+        yield None
+
 
     @tracing.instrumentation_wrapper
     def upload_documents(self, carrier, file_paths: typing.List[str]) -> None:
