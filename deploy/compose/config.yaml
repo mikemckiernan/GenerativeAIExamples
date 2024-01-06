@@ -1,10 +1,15 @@
-milvus:
-  # The configuration of the Milvus connection.
+vector_store:
+  # The configuration of the Vector Store connection.
+
+  name: milvus
+  # The name of vector store db.
+  # Type: str
+  # ENV Variable: APP_VECTORSTORE_NAME
 
   url: "http://milvus:19530"
-  # The location of the Milvus Server.
+  # The location of the VectorStore DB.
   # Type: str
-  # ENV Variable: APP_MILVUS_URL
+  # ENV Variable: APP_VECTORSTORE_URL
 
 llm:
   # The configuration for the server hosting the Large Language models.
