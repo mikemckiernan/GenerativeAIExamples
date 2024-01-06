@@ -266,7 +266,7 @@ Reference:
 
 2. In the <B>Converse</B> tab, type "How many cores does the Grace superchip contain?" in the chat box and press <B>Submit</B>. Alternatively, click on the microphone button to the right of the text box and ask your query verbally. 
 
-![Grace query failure](../notebooks/imgs/grace_noanswer.png)
+![Grace query failure](../notebooks/imgs/grace_noanswer_with_riva.png)
 
 3.  Upload the sample data set to the <B>Knowledge Base</B> tab.
 
@@ -278,7 +278,7 @@ Reference:
 
 6. Check **[X] Enable TTS output** to allow the web app to read the answers to your queries aloud.
 
-![Grace query success](../notebooks/imgs/grace_answer.png)
+![Grace query success](../notebooks/imgs/grace_answer_with_riva.png)
 
 > ⚠️ **NOTE**: Default prompts are optimized for llama chat model if you're using completion model then prompts need to be finetuned accordingly.
 
