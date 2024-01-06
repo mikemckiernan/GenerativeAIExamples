@@ -1,59 +1,120 @@
 # Retrieval Augmented Generation
 
-## Project Details
-**Project Goal**: A optimized reference Retrieval Augmented Generation(RAG) workflow for a chatbot utilizing cutting-edge NVIDIA AI Enterprise Microservices. This workflow is using [Nemo Microservice Inference (EA)](nvcr.io/ohlfw0olaadg/ea-participants/nemollm-inference-ms:23.10) for LLM model deployment. In this example we will ingest a collection of NVIDIA press releases and blogs.
-
-## Components
-- **LLM**: [Llama2](https://ai.meta.com/llama/) - 7b, 13b, and 70b all supported. 13b and 70b generate good responses. `NeMo LLM`- NV-GPT-8B-base, NV-GPT-43B-chat
-- **LLM Backend**: [NeMo Microservice Inference (NMI)](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms) incorporates CUDA, TRT, TRT-LLM, and Triton, NMI brings state of the art GPU accelerated Large Language model serving.
-- **Vector DB**: Milvus because it's GPU accelerated.
-- **Embedding Model**: [e5-large-v2](https://huggingface.co/intfloat/e5-large-v2) since it is one of the best embedding model available at the moment.
-- **Framework(s)**: LangChain and LlamaIndex.
-
-This reference workflow uses a variety of components and services to customize and deploy the RAG based chatbot. The following diagram illustrates how they work together. Refer to the [detailed architecture guide](../docs/rag/architecture.md) to understand more about these components and how they are tied together.
+Retrieval Augmented Generation (RAG) generates up-to-date and domain-specific answers by connecting a Large Language Model (LLM) to your enterprise data.
 
 
-![Diagram](../docs/rag/images/image3.jpg)
+## RAG Examples
+
+1. [QA Chatbot -- A100/H100/L40S](#1-qa-chatbot----a100h100l40s-gpu)
+
+<hr>
+
+
+### 1: QA Chatbot -- A100/H100/L40S GPU
+
+This example deploys a enterprise RAG pipeline for chat QA and serves inferencing via the using [Nemo Microservice Inference (EA)](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms) .
+> ⚠️ **NOTE**: This example requires an A100, H100, or L40S GPU.
+
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-6ydv">Model</th>
+    <th class="tg-6ydv">Embedding</th>
+    <th class="tg-6ydv">Framework</th>
+    <th class="tg-6ydv">Description</th>
+    <th class="tg-6ydv">Multi-GPU</th>
+    <th class="tg-6ydv">TRT-LLM</th>
+    <th class="tg-6ydv">NVIDIA AI Foundation</th>
+    <th class="tg-6ydv">Triton</th>
+    <th class="tg-6ydv">Vector Database</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-knyo">llama-2</td>
+    <td class="tg-knyo">NV-Embed-QA-003</td>
+    <td class="tg-knyo">Llamaindex</td>
+    <td class="tg-knyo">QA chatbot</td>
+    <td class="tg-knyo">NO</td>
+    <td class="tg-knyo">YES</td>
+    <td class="tg-knyo">NO</td>
+    <td class="tg-knyo">YES</td>
+    <td class="tg-knyo">Milvus/PGVector</td>
+  </tr>
+</tbody>
+</table>
+
 
 *Note:*
-We've used [Llama2](https://ai.meta.com/llama/) and [e5-large-v2](https://huggingface.co/intfloat/e5-large-v2) models as example defaults in this workflow, you should ensure that both the LLM and embedding model are appropriate for your use case, and validate that they are secure and have not been tampered with prior to use.
+We've used [Llama2](https://ai.meta.com/llama/) and NV-Embed-QA-003 models as example defaults in this workflow, you should ensure that both the LLM and embedding model are appropriate for your use case, and validate that they are secure and have not been tampered with prior to use.
 
-# Getting Started
-This section covers step by step guide to setup and try out this example workflow.
+#### 1.1 Prepare the environment
+1. Verify NVIDIA GPU driver version 535 or later is installed.
 
-## Prerequisites
-Before proceeding with this guide, make sure you meet the following prerequisites:
+```
+535.129.03
 
-- You should have at least one NVIDIA GPU. For this guide, we used an A100 data center GPU.
+$ nvidia-smi -q -d compute
 
-    - NVIDIA driver version 535 or newer. To check the driver version run: ``nvidia-smi --query-gpu=driver_version --format=csv,noheader``.
-    - If you are running multiple GPUs they must all be set to the same mode (ie Compute vs. Display). You can check compute mode for each GPU using
-    ``nvidia-smi -q -d compute``
+==============NVSMI LOG==============
 
-- You should have access to [NeMo Microservice Inference](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms) to download the container used for deploying the Large Language Model.
+Timestamp                                 : Sun Nov 26 21:17:25 2023
+Driver Version                            : 535.129.03
+CUDA Version                              : 12.2
 
-### Setup the following
+Attached GPUs                             : 1
+GPU 00000000:CA:00.0
+    Compute Mode                          : Default
 
-- Docker and Docker-Compose are essential. Please follow the [installation instructions](https://docs.docker.com/engine/install/ubuntu/).
+```
+Reference: [NVIDIA Linux driver installation instructions](https://docs.nvidia.com/datacenter/tesla/tesla-installation-notes/index.html)
 
-        Note:
-            Please do not use Docker that is packaged with Ubuntu as the newer version of Docker is required for proper Docker Compose support.
+2. Clone the Generative AI examples Git repository.
+> ⚠️ NOTE: This example requires Git Large File Support (LFS)
+```
+sudo apt -y install git-lfs
+git clone git@github.com:NVIDIA/GenerativeAIExamples.git
+cd GenerativeAIExamples/
+git lfs pull
+```
 
-            Make sure your user account is able to execute Docker commands.
+3. Install [Docker Engine and Docker Compose](https://docs.docker.com/engine/install/ubuntu/).
 
+4. Verify the NVIDIA container toolkit is installed and configured as the default container runtime.
 
-- NVIDIA Container Toolkit is also required. Refer to the [installation instructions](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html).
+```
+$ cat /etc/docker/daemon.json
+{
+    "default-runtime": "nvidia",
+    "runtimes": {
+        "nvidia": {
+            "path": "/usr/bin/nvidia-container-runtime",
+            "runtimeArgs": []
+        }
+    }
+}
 
+$ sudo docker run --rm --runtime=nvidia --gpus all ubuntu nvidia-smi -L
+GPU 0: NVIDIA A100 80GB PCIe (UUID: GPU-d8ce95c1-12f7-3174-6395-e573163a2ace)
+```
 
-- NGC Account and API Key
+5. Create an NGC Account and API Key.
 
-    - Please refer to [instructions](https://docs.nvidia.com/ngc/gpu-cloud/ngc-overview/index.html) to create account and generate NGC API key.
-    - Docker login to `nvcr.io` using the following command:
-      ```
-        docker login nvcr.io
-      ```
+Please refer to [instructions](https://docs.nvidia.com/ngc/gpu-cloud/ngc-overview/index.html) to create account and generate NGC API key.
 
-- You can download the model from NGC or generate model repository.
+Docker login to `nvcr.io` using the following command:
+```
+docker login nvcr.io
+```
+
+Reference
+- [Docker installation instructions (Ubuntu)](https://docs.docker.com/engine/install/ubuntu/)
+- [NVIDIA Container Toolkit Installation instructions](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
+
+#### 1.2 Deploy
+
+**Downloading the model**
+1. You can download the model from NGC or generate model repository.
 
     The models available in NGC are compiled for A100 machine, if you're using any other GPU you need to manually create the system specific TRT-LLM plan files. To understand this workflow please refer [model_conversion.md](../docs/rag/model_conversion.md). Refer to  [Nemo Inference Microservice(NIM)](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms) to know more about this.
     
@@ -87,12 +148,8 @@ Before proceeding with this guide, make sure you meet the following prerequisite
     ```
     3. Check `model-store` directory after unzipping in the same directory.
 
-
-## Install Guide
-
-Follow the below steps from the root of this project to setup the RAG example.
-
-###  Step 1: Set Environment Variables
+**Deploying the model**
+1. Set the absolute path to the model location in compose.env
 
 Modify ``compose.env`` in the ``deploy/compose`` directory to set your environment variables. The following variables are required.
 
@@ -105,48 +162,85 @@ Modify ``compose.env`` in the ``deploy/compose`` directory to set your environme
     # the name of the model being used - only for displaying on frontend
     export MODEL_NAME="llama-2-13b-chat"
 
-    # [OPTIONAL] the config file for chain server
+2. [OPTIONAL] the config file for chain server can be updated in compose.env
+    ```
     APP_CONFIG_FILE=/dev/null
-
-Note: If you're using `NV-GPT-8B-base`, use [nemotron_config.yaml](../deploy/compose/nemotron_config.yaml) as `APP_CONFIG_FILE` in [compose.env](../deploy/compose/compose.env) for proper response. Default prompts work well with **llama chat** model, if you're using **completion** model, prompts need to be finetuned accordingly.
-
-
-### Step 2: Start Containers
-- Run the following command to start containers.
-    ```
-        source deploy/compose/compose.env; docker compose -f deploy/compose/docker-compose-enterprise.yaml up -d
     ```
 
-- Run ``docker ps -a``. When the containers are ready the output should look similar to the image below.
-    ![Docker Output](../docs/rag/images/docker-output.png "Docker Output Image")
+    Note: If you're using `NV-GPT-8B-base`, use [nemotron_config.yaml](../deploy/compose/nemotron_config.yaml) as `APP_CONFIG_FILE` in [compose.env](../deploy/compose/compose.env) for proper response. Default prompts work well with **llama chat** model, if you're using **completion** model, prompts need to be finetuned accordingly.
 
+3. Deploy the enterprise RAG example via Docker compose using milvus vector store, steps to deploy RAG example with pgvector vector store is [here](#deploying-with-pgvector-vector-store).
 
-### Step 3: Run the Sample Web Application
-A sample chatbot web application is provided in the workflow. Requests to the chat system are wrapped in FastAPI calls.
+```
+$ source deploy/compose/compose.env; docker compose -f deploy/compose/docker-compose-enterprise.yaml up -d
 
-- Open the web application at ``http://host-ip:8090``.
+$ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
+$ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
+CONTAINER ID   NAMES                     STATUS
+256da0ecdb7b   llm-playground               Up 48 minutes
+2974aa4fb2ce   chain-server                 Up 48 minutes
+4a8c4aebe4ad   notebook-server              Up 48 minutes
+0069c5e0b373   nemollm-inference-ms         Up 48 minutes
+6044c2b8b421   nemo-retriever-embedding-ms  Up 48 minutes
+5be2b57bb5c1   milvus-standalone            Up 48 minutes (healthy)
+a6609c22c171   milvus-minio                 Up 48 minutes (healthy)
+b23c0858c4d4   milvus-etcd                  Up 48 minutes (healthy)
+```
 
-- Type in the following question without using a knowledge base: "How many cores are on the Nvidia Grace superchip?"
+#### 1.3 Test
 
-    **Note:** the chatbot mentions the chip doesn't exist.
+1. Connect to the sample web application at ``http://host-ip:8090``.
 
-- To use a knowledge base:
+2. In the <B>Converse</B> tab, type "How many cores are on the Nvidia Grace superchip?" iin the chat box and press <B>Submit</B>.
 
-    - Click the **Knowledge Base** tab and upload the file [dataset.zip](../notebooks/dataset.zip).
+![Grace query failure](../notebooks/imgs/grace_noanswer.png)
 
-- Return to **Converse** tab and check **[X] Use knowledge base**.
+3.  Upload the sample data set to the <B>Knowledge Base</B> tab.
 
-- Retype the question:  "How many cores are on the Nvidia Grace superchip?"
+> ⚠️ **NOTE**: ``dataset.zip`` is located in the ``notebooks`` directory. Unzip the archive and upload the PDFs.
 
-### Step 4: Experiment with RAG in JupyterLab
+4. Return to **Converse** tab and check **[X] Use knowledge base**.
 
-This AI Workflow includes Jupyter notebooks which shows inference with nemo microservice inference server.
+5. Retype the question:  "How many cores are on the Nvidia Grace superchip?"
 
-- Using a web browser, type in the following URL to open Jupyter
+![Grace query success](../notebooks/imgs/grace_answer.png)
 
-    ``http://host-ip:8888``
+> ⚠️ **NOTE**: Default prompts are optimized for llama chat model if you're using completion model then prompts need to be finetuned accordingly.
 
-- Locate the [Nemo Inferense MS LLM Streaming Client notebook](../notebooks/01-nemo-inference-ms-llm-streaming-client.ipynb)
+#### 1.4 Uninstall
+
+To uninstall, stop and remove the running containers.
+
+```
+cd deploy/compose
+source compose.env
+docker compose -f docker-compose-enterprise.yaml down
+docker compose ps -q
+```
+
+#### Deploying with [pgvector](https://github.com/pgvector/pgvector) vector store
+2. Deploy the developer RAG example via Docker compose.
+
+> ⚠️ **NOTE**: It may take up to 5 minutes for the Triton server to start. The `-d` flag starts the services in the background.
+
+```
+$ source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose-pgvector.yaml build
+
+$ docker compose -f deploy/compose/docker-compose-pgvector.yaml up -d
+
+$ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
+CONTAINER ID   NAMES                  STATUS
+0f6f091d892e   llm-playground               Up 22 hours
+8d0ab09fcb98   chain-server                 Up 22 hours
+0069c5e0b373   nemollm-inference-ms         Up 22 hours
+6044c2b8b421   nemo-retriever-embedding-ms  Up 22 hours
+85bd98ba3b24   notebook-server              Up 22 hours
+cbd3cf65ce7e   pgvector                     Up 22 hours
+```
+
+After deployment is successful, you can follow steps from [Test](#23-test) to verify workflow.
+
+<hr>
 
 
 ## Chain Server
@@ -172,11 +266,3 @@ Chain server's core logic resides in [developer_rag](./examples/developer_rag/) 
     source deploy/compose/compose.env; docker compose -f deploy/compose/docker-compose-enterprise.yaml up -d
     ```
 
-# Learn More
-1. [Architecture Guide](../docs/rag/architecture.md): Detailed explanation of different components and how they are tried up together.
-2. Component Guides: Component specific features are enlisted in these sections.
-   1. [Chain Server](../docs/rag/chat_server.md)
-   2. [NeMo Microservice Inference Server](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms)
-   3. [Sample frontend](../docs/rag/frontend.md)
-3. [Configuration Guide](../docs/rag/configuration.md): This guide covers different configurations available for this workflow.
-4. [Support Matrix](../docs/rag/ssupport_matrix.md): This covers GPU, CPU, Memory and Storage requirements for deploying this workflow.
