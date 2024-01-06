@@ -171,12 +171,17 @@ docker login nvcr.io
 6. Enable Riva ASR and TTS.
 
     a. To launch a Riva server locally, please refer to the instructions in the [Riva Quick Start Guide](https://docs.nvidia.com/deeplearning/riva/user-guide/docs/quick-start-guide.html). 
+        
         i. In the provided `config.sh` script, set `service_enabled_asr=true` and `service_enabled_tts=true`, and select the desired ASR and TTS languages by adding the appropriate language codes to `asr_language_code` and `tts_language_code`. 
+        
         ii. Once the server is running, assign its IP address (or hostname) and port (50051 by default) to `RIVA_SPEECH_API_URI` in `deploy/compose/compose.env`.
 
     b. Alternatively, with the appropriate access, you can use the Riva ASR and TTS services hosted on the NVIDIA Cloud Functions (NVCF) service (currently in staging rather than production). 
+        
         i. Obtain a run key by navigating to the Cloud Functions tab at `nvcf.stg.ngc.nvidia.com` and clicking on the "Generate Run Key" button. This will be in the format `nvapi-stg-*`.
+        
         ii. Obtain the Riva NVCF Function ID from the Cloud Functions tab at `nvcf.stg.ngc.nvidia.com`. 
+        
         iii. In `deploy/compose/compose.env`, make the following assignments: 
         ```
         export NVCF_RIVA_SPEECH_API_URI="stg.grpc.nvcf.nvidia.com:443"
