@@ -9,6 +9,7 @@ Retrieval Augmented Generation (RAG) generates up-to-date and domain-specific an
 3. [QA Chatbot -- Multi-GPU](#3-qa-chatbot-multi-gpu----a100h100l40s)
 4. [QA Chatbot -- Quantized LLM model](#4-qa-chatbot-with-quantized-llm-model----a100h100l40s)
 5. [QA Chatbot -- Task Decomposition](#5-qa-chatbot-task-decomposition----a100h100l40s)
+6. [QA Chatbot -- NemoTron Model](#6-qa-chatbot----nemotron-model)
 
 <hr>
 
@@ -177,14 +178,14 @@ docker login nvcr.io
 
     - Once the server is running, assign its IP address (or hostname) and port (50051 by default) to `RIVA_API_URI` in `deploy/compose/compose.env`.
 
-    b. Alternatively, you can use a hosted Riva API endpoint. You might need to obtain an API key and/or Function ID for access. 
+    b. Alternatively, you can use a hosted Riva API endpoint. You might need to obtain an API key and/or Function ID for access.
 
     - In `deploy/compose/compose.env`, make the following assignments as necessary:
     ```
     export RIVA_API_URI="<Riva API address/hostname>:<Port>"
     export RIVA_API_KEY="<Riva API key>"
     export RIVA_FUNCTION_ID="<Riva Function ID>"
-    ```    
+    ```
 
 Reference:
 - [Docker installation instructions (Ubuntu)](https://docs.docker.com/engine/install/ubuntu/)
@@ -624,6 +625,30 @@ CONTAINER ID   NAMES                  STATUS
 
 <hr>
 
+### 6: QA Chatbot -- NemoTron Model
+
+This example deploys a developer RAG pipeline for chat QA and serves inference via the NeMo Framework inference container using NeMoTron model
+
+1. Make sure the relative model path of nemotron-3-8b-chat-4k-sft model is updated in `/GenerativeAIExamples/deploy/compose/compose-nemotron.env`
+
+2. Build and deploy the nemotron workflow
+
+```
+source deploy/compose/compose-nemotron.env
+docker compose -f deploy/compose/docker-compose-nemotron.yaml build
+docker compose -f deploy/compose/docker-compose-nemotron.yaml up -d
+```
+3. Check the deployment status by printing logs of `llm-inference-server` container
+
+Successful TRT-LLM conversion and Triton Inference Server deployment logs will display the following message
+```
+I0107 03:03:38.638311 260 http_server.cc:3558] Started HTTPService at 0.0.0.0:8000
+I0107 03:03:38.679626 260 http_server.cc:187] Started Metrics Service at 0.0.0.0:8002
+```
+4. Run `02_langchain_simple.ipynb` for Document Question-Answering with LangChain based using NeMoTron model.
+
+[Optional] Run `00-llm-non-streaming-nemotron.ipynb` to send request to LLM.
+<hr>
 
 ### Additional
 
