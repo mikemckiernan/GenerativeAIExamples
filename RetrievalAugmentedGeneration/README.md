@@ -629,23 +629,29 @@ CONTAINER ID   NAMES                  STATUS
 
 This example deploys a developer RAG pipeline for chat QA and serves inference via the NeMo Framework inference container using NeMoTron model
 
-1. Make sure the relative model path of nemotron-3-8b-chat-4k-sft model is updated in `/GenerativeAIExamples/deploy/compose/compose-nemotron.env`
+1. Download [NeMoTron chat checkpoint](https://huggingface.co/nvidia/nemotron-3-8b-chat-4k-sft) from HuggingFace
 
-2. Build and deploy the nemotron workflow
+```
+git-lfs clone https://huggingface.co/nvidia/nemotron-3-8b-chat-4k-sft
+```
+
+2. Make sure the relative model path of nemotron-3-8b-chat-4k-sft model is updated in `/GenerativeAIExamples/deploy/compose/compose-nemotron.env`
+
+3. Build and deploy the nemotron workflow
 
 ```
 source deploy/compose/compose-nemotron.env
 docker compose -f deploy/compose/docker-compose-nemotron.yaml build
 docker compose -f deploy/compose/docker-compose-nemotron.yaml up -d
 ```
-3. Check the deployment status by printing logs of `llm-inference-server` container
+4. Check the deployment status by printing logs of `llm-inference-server` container
 
 Successful TRT-LLM conversion and Triton Inference Server deployment logs will display the following message
 ```
 I0107 03:03:38.638311 260 http_server.cc:3558] Started HTTPService at 0.0.0.0:8000
 I0107 03:03:38.679626 260 http_server.cc:187] Started Metrics Service at 0.0.0.0:8002
 ```
-4. Run `02_langchain_simple.ipynb` for Document Question-Answering with LangChain based using NeMoTron model.
+5. Run `02_langchain_simple.ipynb` for Document Question-Answering with LangChain based using NeMoTron model.
 
 [Optional] Run `00-llm-non-streaming-nemotron.ipynb` to send request to LLM.
 <hr>
