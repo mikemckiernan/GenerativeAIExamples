@@ -8,6 +8,7 @@ Retrieval Augmented Generation (RAG) generates up-to-date and domain-specific an
 2. [QA Chatbot -- A100/H100/L40S](#2-qa-chatbot----a100h100l40s-gpu)
 3. [QA Chatbot -- Multi-GPU](#3-qa-chatbot-multi-gpu----a100h100l40s)
 4. [QA Chatbot -- Quantized LLM model](#4-qa-chatbot-with-quantized-llm-model----a100h100l40s)
+5. [QA Chatbot -- Task Decomposition](#5-qa-chatbot-task-decomposition----a100h100l40s)
 
 <hr>
 
@@ -170,19 +171,19 @@ docker login nvcr.io
 
 6. Enable Riva ASR and TTS.
 
-    a. To launch a Riva server locally, please refer to the instructions in the [Riva Quick Start Guide](https://docs.nvidia.com/deeplearning/riva/user-guide/docs/quick-start-guide.html). 
-        
-    - In the provided `config.sh` script, set `service_enabled_asr=true` and `service_enabled_tts=true`, and select the desired ASR and TTS languages by adding the appropriate language codes to `asr_language_code` and `tts_language_code`. 
-        
+    a. To launch a Riva server locally, please refer to the instructions in the [Riva Quick Start Guide](https://docs.nvidia.com/deeplearning/riva/user-guide/docs/quick-start-guide.html).
+
+    - In the provided `config.sh` script, set `service_enabled_asr=true` and `service_enabled_tts=true`, and select the desired ASR and TTS languages by adding the appropriate language codes to `asr_language_code` and `tts_language_code`.
+
     - Once the server is running, assign its IP address (or hostname) and port (50051 by default) to `RIVA_SPEECH_API_URI` in `deploy/compose/compose.env`.
 
-    b. Alternatively, with the appropriate access, you can use the Riva ASR and TTS services hosted on the NVIDIA Cloud Functions (NVCF) service (currently in staging rather than production). 
-        
+    b. Alternatively, with the appropriate access, you can use the Riva ASR and TTS services hosted on the NVIDIA Cloud Functions (NVCF) service (currently in staging rather than production).
+
     - Obtain a run key by navigating to the Cloud Functions tab at `nvcf.stg.ngc.nvidia.com` and clicking on the "Generate Run Key" button. This will be in the format `nvapi-stg-*`.
-        
-    - Obtain the Riva NVCF Function ID from the Cloud Functions tab at `nvcf.stg.ngc.nvidia.com`. 
-        
-    - In `deploy/compose/compose.env`, make the following assignments: 
+
+    - Obtain the Riva NVCF Function ID from the Cloud Functions tab at `nvcf.stg.ngc.nvidia.com`.
+
+    - In `deploy/compose/compose.env`, make the following assignments:
     ```
     export NVCF_RIVA_SPEECH_API_URI="stg.grpc.nvcf.nvidia.com:443"
     export NVCF_RUN_KEY="nvapi-stg-<rest-of-your-run-key>"
@@ -268,7 +269,7 @@ Reference:
 
 1. Connect to the sample web application at ``http://host-ip:8090``.
 
-2. In the <B>Converse</B> tab, type "How many cores does the Grace superchip contain?" in the chat box and press <B>Submit</B>. Alternatively, click on the microphone button to the right of the text box and ask your query verbally. 
+2. In the <B>Converse</B> tab, type "How many cores does the Grace superchip contain?" in the chat box and press <B>Submit</B>. Alternatively, click on the microphone button to the right of the text box and ask your query verbally.
 
 ![Grace query failure](../notebooks/imgs/grace_noanswer_with_riva.png)
 
@@ -511,6 +512,131 @@ b23c0858c4d4   milvus-etcd            Up 48 minutes (healthy)
 1. Follow steps 1 - 5 in the ["Test" section of example 02](#23-test).
 
 #### 4.4 Uninstall
+
+1. To uninstall, follow the ["Uninstall" steps in example 02"](#24-uninstall).
+
+<hr>
+
+### 5: QA Chatbot with Task Decomposition example -- A100/H100/L40S
+
+This example deploys a recursive Task Decomposition example for chat QA. It uses OpenAI's GPT-4 model and the Llama-7b-chat model for inference.
+
+It showcases how to perform RAG when the agent needs to access information from several different files/chunks or perform some computation on the answers. It uses a custom langchain agent that recursively breaks down the user's questions into subquestions that it attempts to answer. It has access to 2 tools - search (which performs standard RAG on a subquestion) and math (which poses a math question to the LLM). The agent continues to break down the question into sub-questions until it has the answers it needs to formulate the final answer.
+
+This agent uses the GPT-4 chat model from OpenAI for query decomposition, the search tool and the math tool. It uses the Llama chat model for generation of the final answer from the sub-questions and sub-answers.
+
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-6ydv">Model</th>
+    <th class="tg-6ydv">Embedding</th>
+    <th class="tg-6ydv">Framework</th>
+    <th class="tg-6ydv">Description</th>
+    <th class="tg-6ydv">Multi-GPU</th>
+    <th class="tg-6ydv">TRT-LLM</th>
+    <th class="tg-6ydv">NVIDIA AI Foundation</th>
+    <th class="tg-6ydv">Triton</th>
+    <th class="tg-6ydv">Vector Database</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-knyo">llama-2-7b-chat</td>
+    <td class="tg-knyo">e5-large-v2</td>
+    <td class="tg-knyo">Langchain</td>
+    <td class="tg-knyo">QA chatbot</td>
+    <td class="tg-knyo">NO</td>
+    <td class="tg-knyo">YES</td>
+    <td class="tg-knyo">NO</td>
+    <td class="tg-knyo">YES</td>
+    <td class="tg-knyo">Milvus</td>
+  </tr>
+</tbody>
+</table>
+
+#### 5.1 Prepare the environment
+
+1. Follow the steps in the ["Prepare the environment" section of example 02](#21-prepare-the-environment).
+
+2. Add your OpenAI API key in `deploy/compose/compose.env`.
+    ```shell
+    export OPENAI_API_KEY=...
+    ```
+
+
+#### 5.2 Deploy
+
+1.  Follow steps 1 - 4 in the ["Deploy" section of example 02](#downloading-the-model) to stage the model weights.
+
+2. Find the GPU device ID. You can check this using `nvidia-smi` command.
+
+3. Assign LLM inference to specific GPUs by specifying the GPU ID(s) in the [docker compose file](../deploy/compose/docker-compose.yaml).
+
+```
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              # count: ${INFERENCE_GPU_COUNT:-all} # Comment this out
+              device_ids: ["0"]
+              capabilities: [gpu]
+```
+
+4. Follow steps in the ["Deploy the model" section of example 02](#deploying-the-model) to deploy via Docker compose.
+
+5. Change the RAG example in `deploy/compose/compose.env`.
+    ```shell
+    export RAG_EXAMPLE="query_decomposition_rag"
+    ```
+
+6. Add the Open AI API key to `deploy/compose/docker-compose.yaml`.
+    ```yaml
+    query:
+      container_name: chain-server
+      image: chain-server:latest
+      build:
+        context: ../../
+        dockerfile: ./RetrievalAugmentedGeneration/Dockerfile
+      command: --port 8081 --host 0.0.0.0
+      environment:
+        APP_VECTORSTORE_URL: "http://milvus:19530"
+        ...
+        OPENAI_API_KEY: ${OPENAI_API_KEY}
+    ```
+
+7. Deploy the developer RAG example via Docker compose.
+
+> ⚠️ **NOTE**: It may take up to 5 minutes for the Triton server to start. The `-d` flag starts the services in the background.
+
+```
+$ source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose.yaml build
+
+$ docker compose -f deploy/compose/docker-compose.yaml up -d
+
+$ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
+CONTAINER ID   NAMES                  STATUS
+256da0ecdb7b   llm-playground         Up 48 minutes
+2974aa4fb2ce   chain-server           Up 48 minutes
+4a8c4aebe4ad   notebook-server        Up 48 minutes
+0069c5e0b373   evaluation             Up 48 minutes
+5be2b57bb5c1   milvus-standalone      Up 48 minutes (healthy)
+ecf674c8139c   llm-inference-server   Up 48 minutes (healthy)
+a6609c22c171   milvus-minio           Up 48 minutes (healthy)
+b23c0858c4d4   milvus-etcd            Up 48 minutes (healthy)
+```
+
+#### 5.3 Test
+
+1. Connect to the sample web application at ``http://host-ip:8090``.
+
+2. Upload 2 text documents in the <B>Knowledge Base</B> tab. The documents can contain different information - for example, one document can contain a company's revenue analysis for Q3 2023 and the other can contain a similar analysis for Q4 2023.
+
+3. Return to the **Converse** tab and check **[X] Use knowledge base**.
+
+4. Enter the question: "Which is greater - NVIDIA's datacenter revenue for Q4 2023 or the sum of its datacenter and gaming revenues for Q3 2023?" and hit submit to get the answer.
+
+#### 5.4 Uninstall
 
 1. To uninstall, follow the ["Uninstall" steps in example 02"](#24-uninstall).
 

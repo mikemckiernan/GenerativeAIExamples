@@ -26,6 +26,7 @@ Examples support local and remote inference endpoints. If you have a GPU, you ca
 | llama-2 | e5-large-v2 | Llamaindex | QA Chatbot  | [YES](RetrievalAugmentedGeneration/README.md#3-qa-chatbot-multi-gpu----a100h100l40s)        | [YES](RetrievalAugmentedGeneration/README.md#2-qa-chatbot----a100h100l40s-gpu)       | No | YES     | Milvus/[PGVector]((RetrievalAugmentedGeneration/README.md#2-qa-chatbot----a100h100l40s-gpu))|
 | mixtral_8x7b | nvolveqa_40k | Langchain | Nvidia AI foundation based QA Chatbot  | No        | No       | [YES](RetrievalAugmentedGeneration/README.md#1-qa-chatbot----nvidia-ai-foundation-inference-endpoint) | YES     | FAISS|
 | llama-2 | all-MiniLM-L6-v2 | Llama Index | QA Chatbot, GeForce, Windows | NO        | [YES](https://github.com/NVIDIA/trt-llm-rag-windows/tree/release/1.0)         | NO | NO     | FAISS |
+| llama-2 | e5-large-v2 | Langchain | QA Chatbot, Task Decomposition Agent | No | [YES](RetrievalAugmentedGeneration/README.md#5-qa-chatbot-task-decomposition----a100h100l40s) | No | YES | Milvus |
 
 
 ### Enterprise RAG Examples
