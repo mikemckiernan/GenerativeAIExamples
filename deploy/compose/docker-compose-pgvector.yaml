@@ -45,7 +45,7 @@ services:
         reservations:
           devices:
             - driver: nvidia
-              count: ${INFERENCE_GPU_COUNT:-1}
+              count: ${INFERENCE_GPU_COUNT:-all}
               capabilities: [gpu]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9080/v1/health/ready"]
@@ -57,11 +57,11 @@ services:
   pgvector:
     container_name: pgvector
     image: ankane/pgvector:v0.5.1
-    ports:  
-    - 5432:5432  
+    ports:
+    - 5432:5432
     expose:
     - "5432"
-    volumes:  
+    volumes:
     - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/data:/var/lib/postgresql/data
     environment:
     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
@@ -70,7 +70,7 @@ services:
 
   query:
     container_name: chain-server
-    image: nvcr.io/ohlfw0olaadg/ea-rag-examples/enterprise-rag:0.2.0-chain-server
+    image: nvcr.io/nvidian/enterprise-rag:0.3.0-rc1-chain-server
     build:
       context: ../../
       dockerfile: ./RetrievalAugmentedGeneration/Dockerfile
@@ -86,7 +86,7 @@ services:
       APP_EMBEDDINGS_MODELENGINE: nemo-embed
       APP_CONFIG_FILE: ${APP_CONFIG_FILE}
       NVAPI_KEY: ${AI_PLAYGROUND_API_KEY}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}  
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-api}
     volumes:
@@ -110,7 +110,7 @@ services:
 
   frontend:
     container_name: llm-playground
-    image: nvcr.io/ohlfw0olaadg/ea-rag-examples/enterprise-rag:0.2.0-llm-playground
+    image: nvcr.io/nvidian/enterprise-rag:0.3.0-rc1-llm-playground
     build:
       context: ../.././RetrievalAugmentedGeneration/frontend/
       dockerfile: Dockerfile

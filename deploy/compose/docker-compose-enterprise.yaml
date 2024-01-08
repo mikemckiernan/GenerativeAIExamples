@@ -45,7 +45,7 @@ services:
         reservations:
           devices:
             - driver: nvidia
-              count: ${INFERENCE_GPU_COUNT:-1}
+              count: ${INFERENCE_GPU_COUNT:-all}
               capabilities: [gpu]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9080/v1/health/ready"]
@@ -121,7 +121,7 @@ services:
 
   query:
     container_name: chain-server
-    image: nvcr.io/ohlfw0olaadg/ea-rag-examples/enterprise-rag:0.2.0-chain-server
+    image: nvcr.io/nvidian/enterprise-rag:0.3.0-rc1-chain-server
     build:
       context: ../../
       dockerfile: ./RetrievalAugmentedGeneration/Dockerfile
@@ -162,7 +162,7 @@ services:
 
   frontend:
     container_name: llm-playground
-    image: nvcr.io/ohlfw0olaadg/ea-rag-examples/enterprise-rag:0.2.0-llm-playground
+    image: nvcr.io/nvidian/enterprise-rag:0.3.0-rc1-llm-playground
     build:
       context: ../../RetrievalAugmentedGeneration/
       dockerfile: ./frontend/Dockerfile
