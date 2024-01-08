@@ -1,4 +1,4 @@
-# RAG Observability
+# RAG Observability Tool
 ## Introduction
 Observability is a crucial aspect that facilitates the monitoring and comprehension of the internal state and behavior of a system or application. Applications based on RAG are intricate systems encompassing the interaction of numerous components. To enhance the performance of these RAG-based applications, observability serves as an efficient mechanism for both monitoring and debugging.
 
@@ -16,7 +16,7 @@ The observability stack adds following containers on top of the RAG app containe
 3. **Root Span**: The first span in a trace, denoting the beginning and end of the entire operation.
 4. **Span Attributes**: Key-value pairs a Span may consist of to provide additional context or metadata.
 5. **Collectors**: Components that process and export telemetry data from instrumented applications.
-6. **Context**: Signifies current location within the trace hierarchy. It determines whether a new span initiates a trace or connects to an existing parent span. 
+6. **Context**: Signifies current location within the trace hierarchy. It determines whether a new span initiates a trace or connects to an existing parent span.
 7. **Services**: Microservices that generates telemetry data
 
 Following diagram depicts a typical trace for user query from knowledge base in our RAG example.
@@ -37,8 +37,8 @@ $ git lfs pull
 2. Update the [OpenTelemetry collector configurations](../../deploy/compose/configs/otel-collector-config.yaml) and [jaeger configurations](../../deploy/compose/configs/jaeger.yaml).
 
 To know more about available configurations please refer to [OpenTelemetry Collector configurations](https://opentelemetry.io/docs/collector/configuration/) and [Jaeger configurtions](https://github.com/jaegertracing/documentation/blob/main/data/cli/1.52/jaeger-all-in-one-cassandra.yaml)
-     
-3. Update the [compose.env](../../deploy/compose/compose.env). 
+
+3. Update the [compose.env](../../deploy/compose/compose.env).
 
 4. For the frontend and query services, set the following environment variables in the [docker compose file](../../deploy/compose/docker-compose.yaml):
 ```
@@ -50,9 +50,9 @@ environment:
 
 5. Deploy the developer RAG example via Docker compose.
 ```
-$ source deploy/compose/compose.env;  docker compose build
+$ source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose.yaml build
 
-$ docker compose up -d
+$ docker compose -f deploy/compose/docker-compose.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES               STATUS
@@ -61,7 +61,6 @@ d11e35ee69f4   llm-playground      Up 5 minutes
 751dd4fd80ec   milvus-standalone   Up 5 minutes (healthy)
 b435006c95c1   milvus-minio        Up 6 minutes (healthy)
 9108253d058d   notebook-server     Up 6 minutes
-6887f99be0a1   evaluation          Up 6 minutes
 5315a9dc9eb4   milvus-etcd         Up 6 minutes (healthy)
 ```
 
@@ -80,7 +79,6 @@ d11e35ee69f4   llm-playground      Up 5 minutes
 751dd4fd80ec   milvus-standalone   Up 5 minutes (healthy)
 b435006c95c1   milvus-minio        Up 6 minutes (healthy)
 9108253d058d   notebook-server     Up 6 minutes
-6887f99be0a1   evaluation          Up 6 minutes
 5315a9dc9eb4   milvus-etcd         Up 6 minutes (healthy)
 d314a43074c8   otel-collector      Up 6 minutes
 ```
@@ -94,16 +92,16 @@ Below are the screenshots showcasing trace data from the Jaeger UI.
 ![user query using knowledge base](./images/image12.png)
 
 ## Implementation Details
-Currently 2 services viz. frontend and chain-server are instrumented. 
+Currently 2 services viz. frontend and chain-server are instrumented.
 ### frontend
 [tracing.py](../../RetrievalAugmentedGeneration/frontend/frontend/tracing.py) module in frontend application code is responsible for instrumentation. At high level it does the following:
 - Set up the OpenTelemetry configurations for resource name (i.e frontend), span processor and context propagator
-- Provides an instrumentation decorator functions(`instrumentation_wrapper` and `predict_instrumentation_wrapper`) for managing trace context across different services. This decorator function is used with the API functions in [chat_client.py](../../RetrievalAugmentedGeneration/frontend/frontend/chat_client.py) to create new span contexts (that can then be injected in the headers of the request made to the chain server) and log span attributes extracted from the API request.  
+- Provides an instrumentation decorator functions(`instrumentation_wrapper` and `predict_instrumentation_wrapper`) for managing trace context across different services. This decorator function is used with the API functions in [chat_client.py](../../RetrievalAugmentedGeneration/frontend/frontend/chat_client.py) to create new span contexts (that can then be injected in the headers of the request made to the chain server) and log span attributes extracted from the API request.
 
 ### chain-server
 [tracing.py](../../RetrievalAugmentedGeneration/common/tracing.py) module in the chain server application code is responsible for instrumentation. At high level it does the following:
 - Set up the OpenTelemetry configurations for resource name(i.e chain-server), span processor and context propagator
 - Initialize the [LlamaIndex OpenTelemetry callback handler](../../tools/observability/llamaindex/opentelemetry_callback.py) which uses [LlamaIndex callbacks](https://docs.llamaindex.ai/en/stable/module_guides/observability/callbacks/root.html) to track various events like llm calls, chunking, embedding etc
-- Provides an instrumentation decorator function (`instrumentation_wrapper`) for managing trace context across different services. This decorator function is used with the API functions in [server.py](../../RetrievalAugmentedGeneration/common/server.py) to extract the trace context present in requests from the frontend service and attach it in the new span created by chain-server. 
+- Provides an instrumentation decorator function (`instrumentation_wrapper`) for managing trace context across different services. This decorator function is used with the API functions in [server.py](../../RetrievalAugmentedGeneration/common/server.py) to extract the trace context present in requests from the frontend service and attach it in the new span created by chain-server.
 
 **NOTE**: Instrumentation decorator function (`instrumentation_wrapper`) can be used for instrumenting any LlamaIndex application as long as [LlamaIndex OpenTelemetry callback handler](../../tools/observability/llamaindex/opentelemetry_callback.py) is set as global handler in it.

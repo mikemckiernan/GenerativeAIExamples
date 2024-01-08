@@ -254,7 +254,6 @@ CONTAINER ID   NAMES                  STATUS
 256da0ecdb7b   llm-playground         Up 48 minutes
 2974aa4fb2ce   chain-server           Up 48 minutes
 4a8c4aebe4ad   notebook-server        Up 48 minutes
-0069c5e0b373   evaluation             Up 48 minutes
 5be2b57bb5c1   milvus-standalone      Up 48 minutes (healthy)
 ecf674c8139c   llm-inference-server   Up 48 minutes (healthy)
 a6609c22c171   milvus-minio           Up 48 minutes (healthy)
@@ -326,7 +325,6 @@ $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES                  STATUS
 0f6f091d892e   llm-playground         Up 22 hours
 8d0ab09fcb98   chain-server           Up 22 hours
-e3c467b93198   evaluation             Up 22 hours
 85bd98ba3b24   notebook-server        Up 22 hours
 22f0d405b38b   llm-inference-server   Up 22 hours (healthy)
 cbd3cf65ce7e   pgvector               Up 22 hours
@@ -502,7 +500,6 @@ CONTAINER ID   NAMES                  STATUS
 256da0ecdb7b   llm-playground         Up 48 minutes
 2974aa4fb2ce   chain-server           Up 48 minutes
 4a8c4aebe4ad   notebook-server        Up 48 minutes
-0069c5e0b373   evaluation             Up 48 minutes
 5be2b57bb5c1   milvus-standalone      Up 48 minutes (healthy)
 ecf674c8139c   llm-inference-server   Up 48 minutes (healthy)
 a6609c22c171   milvus-minio           Up 48 minutes (healthy)

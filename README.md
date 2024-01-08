@@ -23,8 +23,8 @@ Examples support local and remote inference endpoints. If you have a GPU, you ca
 
 | Model         | Embedding           | Framework        | Description               | Multi-GPU | TRT-LLM | NVIDIA AI Foundation | Triton | Vector Database |
 |---------------|-----------------------|------------|-------------------------|-----------|------------|-------------|---------|--------|
-| llama-2 | e5-large-v2 | Llamaindex | QA Chatbot  | [YES](RetrievalAugmentedGeneration/README.md#3-qa-chatbot-multi-gpu----a100h100l40s)        | [YES](RetrievalAugmentedGeneration/README.md#2-qa-chatbot----a100h100l40s-gpu)       | No | YES     | Milvus/[pgvector]((RetrievalAugmentedGeneration/README.md#2-qa-chatbot----a100h100l40s-gpu))|
-| mixtral_8x7b | nvolveqa_40k | Langchain | QA Chatbot  | No        | No       | [YES](RetrievalAugmentedGeneration/README.md#1-qa-chatbot----nvidia-ai-foundation-inference-endpoint) | YES     | FAISS|
+| llama-2 | e5-large-v2 | Llamaindex | QA Chatbot  | [YES](RetrievalAugmentedGeneration/README.md#3-qa-chatbot-multi-gpu----a100h100l40s)        | [YES](RetrievalAugmentedGeneration/README.md#2-qa-chatbot----a100h100l40s-gpu)       | No | YES     | Milvus/[PGVector]((RetrievalAugmentedGeneration/README.md#2-qa-chatbot----a100h100l40s-gpu))|
+| mixtral_8x7b | nvolveqa_40k | Langchain | Nvidia AI foundation based QA Chatbot  | No        | No       | [YES](RetrievalAugmentedGeneration/README.md#1-qa-chatbot----nvidia-ai-foundation-inference-endpoint) | YES     | FAISS|
 | llama-2 | all-MiniLM-L6-v2 | Llama Index | QA Chatbot, GeForce, Windows | NO        | [YES](https://github.com/NVIDIA/trt-llm-rag-windows/tree/release/1.0)         | NO | NO     | FAISS |
 
 
@@ -38,7 +38,7 @@ Enterprise RAG examples also support local and remote inference via [TensorRT-LL
 
 | Model         | Embedding           | Framework        | Description               | Multi-GPU | Multi-node | TRT-LLM | NVIDIA AI Foundation | Triton | Vector Database |
 |---------------|-----------------------|------------|--------|-------------------------|-----------|------------|-------------|---------|--------|
-| llama-2 | e5-large-v2 | Llamaindex | QA Chatbot, Helm, k8s  | NO        | NO | [YES](./docs/developer-llm-operator/)         | NO | YES     | Milvus|
+| llama-2 | NV-Embed-QA-003 | Llamaindex | QA Chatbot, Helm, k8s  | NO        | NO | [YES](./docs/developer-llm-operator/)         | NO | YES     | Milvus|
 
 ## Tools
 
@@ -46,7 +46,8 @@ Example tools and tutorials to enhance LLM development and productivity when usi
 
 | Name | Description | Deployment | Tutorial |
 |------|-------------|------|--------|
-| Evaluation | Example open source RAG eval tool that uses synthetic data generation and LLM-as-a-judge |  [Docker file](./evaluation/Dockerfile.eval) | [Jupyter Notebooks](./evaluation/01_synthetic_data_generation.ipynb) |]
+| Evaluation | Example open source RAG eval tool that uses synthetic data generation and LLM-as-a-judge |  [Docker compose file](./deploy/compose/docker-compose-evaluation.yaml) | [README](./docs/rag/evaluation.md) |]
+| Observability | Observability serves as an efficient mechanism for both monitoring and debugging RAG pipelines. |  [Docker compose file](./deploy/compose/docker-compose-observability.yaml) | [README](./docs/rag/observability.md) |]
 
 ## Open Source Integrations
 
