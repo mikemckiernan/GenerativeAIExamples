@@ -47,6 +47,10 @@ from RetrievalAugmentedGeneration.common.utils import (
 )
 from RetrievalAugmentedGeneration.common.base import BaseExample
 
+# prestage the embedding model
+_ = get_embedding_model()
+set_service_context()
+
 logger = logging.getLogger(__name__)
 
 FINAL_PROMPT_TEMPLATE = """<s>[INST] <<SYS>>

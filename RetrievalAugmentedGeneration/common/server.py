@@ -34,10 +34,6 @@ logger = logging.getLogger(__name__)
 
 # create the FastAPI server
 app = FastAPI()
-# prestage the embedding model
-_ = utils.get_embedding_model()
-# set the global service context for Llama Index
-utils.set_service_context()
 
 EXAMPLE_DIR = "RetrievalAugmentedGeneration/examples"
 
