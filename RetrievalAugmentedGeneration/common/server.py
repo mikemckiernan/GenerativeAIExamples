@@ -153,16 +153,10 @@ async def document_search(request: Request,data: DocumentSearch) -> List[Dict[st
     """Search for the most relevant documents for the given search parameters."""
 
     try:
-        retriever = utils.get_doc_retriever(num_nodes=data.num_docs)
-        nodes = retriever.retrieve(data.content)
-        output = []
-        for node in nodes:
-            file_name = nodes[0].metadata["filename"]
-            decoded_filename = base64.b64decode(file_name.encode("utf-8")).decode("utf-8")
-            entry = {"score": node.score, "source": decoded_filename, "content": node.text}
-            output.append(entry)
+        if "document_search" not in dir(app.example):
+            raise NotImplementedError("Example class has not implemented the document_search method.")
 
-        return output
+        return app.example().document_search(data.content, data.num_docs)
 
     except Exception as e:
         logger.error(f"Error from /documentSearch endpoint. Error details: {e}")

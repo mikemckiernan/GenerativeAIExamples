@@ -18,7 +18,7 @@ import base64
 import os
 import logging
 from pathlib import Path
-from typing import Generator
+from typing import Generator, List, Dict, Any
 
 from llama_index import Prompt, download_loader
 from llama_index.query_engine import RetrieverQueryEngine
@@ -119,3 +119,22 @@ class QAChatbot(BaseExample):
 
         logger.warning("No response generated from LLM, make sure you've ingested document.")
         return StreamingResponse(iter(["No response generated from LLM, make sure you have ingested document from the Knowledge Base Tab."])).response_gen  # type: ignore
+
+    def document_search(self, content: str, num_docs: int) -> List[Dict[str, Any]]:
+        """Search for the most relevant documents for the given search parameters."""
+
+        try:
+            retriever = get_doc_retriever(num_nodes=num_docs)
+            nodes = retriever.retrieve(content)
+            output = []
+            for node in nodes:
+                file_name = nodes[0].metadata["filename"]
+                decoded_filename = base64.b64decode(file_name.encode("utf-8")).decode("utf-8")
+                entry = {"score": node.score, "source": decoded_filename, "content": node.text}
+                output.append(entry)
+
+            return output
+
+        except Exception as e:
+            logger.error(f"Error from /documentSearch endpoint. Error details: {e}")
+            return []
