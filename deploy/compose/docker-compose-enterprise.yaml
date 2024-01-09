@@ -2,7 +2,7 @@ services:
 
   llm:
     container_name: nemollm-inference-ms
-    image: nvcr.io/ohlfw0olaadg/ea-participants/nemollm-inference-ms:23.10
+    image: nvcr.io/ohlfw0olaadg/ea-participants/nemollm-inference-ms:23.12
     volumes:
     - ${MODEL_DIRECTORY:?please update the env file and source it before running}:/model-store
     command: nemollm_inference_ms --model ${MODEL_NAME:?please update the env file and source it before running} --openai_port 9999 --nemo_port 9998 --num_gpus=1

@@ -123,18 +123,18 @@ Reference
     **Note**: List of supported model and their version are mentioned below. Make sure you're using model version provided in the table and not the latest one. You will see **inference failure** when using other model version.
     | Model Name  | Model Version Supported |
     | ------------- |:-------------:|
-    | [Llama-2-70b](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-70b)      | Llama-2-70b:LLAMA-2-70B-4K-FP16     |
-    | [Llama-2-70b-Chat](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-70b-chat)      | Llama-2-70b-Chat:LLAMA-2-70B-CHAT-4K-FP16     |
-    | [Llama-2-13b](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-13b)      | Llama-2-13b:LLAMA-2-13B-4K-FP16 |
-    | [Llama-2-13b-Chat](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-13b-chat)      | Llama-2-13b-Chat:LLAMA-2-13B-CHAT-4K-FP16     |
-    | [Llama-2-7b](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-7b)      | Llama-2-7b:LLAMA-2-7B-4K-FP16 |
-    | [Llama-2-7b-Chat](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-7b-chat)      | Llama-2-7b-Chat:LLAMA-2-7B-CHAT-4K-FP16 |
-    | [NV-GPT-8B-base](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/nv-gpt-8b-base)      | NV-GPT-8B-base:NV-GPT-8B-base-4K-FP16-1 |
+    | [Llama-2-70b](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-70b)      | ohlfw0olaadg/ea-participants/llama-2-70b:LLAMA-2-70B-4K-FP16.23.12     |
+    | [Llama-2-70b-Chat](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-70b-chat)      | ohlfw0olaadg/ea-participants/llama-2-70b-chat:LLAMA-2-70B-CHAT-4K-FP16.23.12     |
+    | [Llama-2-13b](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-13b)      | ohlfw0olaadg/ea-participants/llama-2-13b:LLAMA-2-13B-4K-FP16.23.12 |
+    | [Llama-2-13b-Chat](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-13b-chat)      | ohlfw0olaadg/ea-participants/llama-2-13b-chat:LLAMA-2-13B-CHAT-4K-FP16.23.12     |
+    | [Llama-2-7b](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-7b)      | ohlfw0olaadg/ea-participants/llama-2-7b:LLAMA-2-7B-4K-FP16.23.12 |
+    | [Llama-2-7b-Chat](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/llama-2-7b-chat)      | ohlfw0olaadg/ea-participants/llama-2-7b-chat:LLAMA-2-7B-CHAT-4K-FP16.23.12 |
+    | [NV-GPT-8B-base](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/nv-gpt-8b-base)      | ohlfw0olaadg/ea-participants/nv-gpt-8b-base:NV-GPT-8B-base-4K-FP16-1.23.12 |
 
 
     1. Download the llama2 13b model from ngc
     ```
-    ngc registry model download-version "ohlfw0olaadg/ea-participants/llama-2-13b-chat:LLAMA-2-13B-CHAT-4K-FP16"
+    ngc registry model download-version "ohlfw0olaadg/ea-participants/llama-2-13b-chat:LLAMA-2-13B-CHAT-4K-FP16.23.12"
     ```
     Note: You can check list of available models using
     ```
@@ -143,8 +143,8 @@ Reference
 
     2. Move to the downloaded directory and unzip the model
     ```
-    cd llama-2-13b-chat_vLLAMA-2-13B-CHAT-4K-FP16/
-    tar -xzf LLAMA-2-13B-CHAT-4K-FP16.tar.gz
+    cd llama-2-13b-chat_vLLAMA-2-13B-CHAT-4K-FP16.23.12/
+    tar -xzf LLAMA-2-13B-CHAT-4K-FP16.23.12.tar.gz
     ```
     3. Check `model-store` directory after unzipping in the same directory.
 
