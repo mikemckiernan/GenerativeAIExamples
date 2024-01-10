@@ -175,20 +175,16 @@ docker login nvcr.io
 
     - In the provided `config.sh` script, set `service_enabled_asr=true` and `service_enabled_tts=true`, and select the desired ASR and TTS languages by adding the appropriate language codes to `asr_language_code` and `tts_language_code`.
 
-    - Once the server is running, assign its IP address (or hostname) and port (50051 by default) to `RIVA_SPEECH_API_URI` in `deploy/compose/compose.env`.
+    - Once the server is running, assign its IP address (or hostname) and port (50051 by default) to `RIVA_API_URI` in `deploy/compose/compose.env`.
 
-    b. Alternatively, with the appropriate access, you can use the Riva ASR and TTS services hosted on the NVIDIA Cloud Functions (NVCF) service (currently in staging rather than production).
+    b. Alternatively, you can use a hosted Riva API endpoint. You might need to obtain an API key and/or Function ID for access. 
 
-    - Obtain a run key by navigating to the Cloud Functions tab at `nvcf.stg.ngc.nvidia.com` and clicking on the "Generate Run Key" button. This will be in the format `nvapi-stg-*`.
-
-    - Obtain the Riva NVCF Function ID from the Cloud Functions tab at `nvcf.stg.ngc.nvidia.com`.
-
-    - In `deploy/compose/compose.env`, make the following assignments:
+    - In `deploy/compose/compose.env`, make the following assignments as necessary:
     ```
-    export NVCF_RIVA_SPEECH_API_URI="stg.grpc.nvcf.nvidia.com:443"
-    export NVCF_RUN_KEY="nvapi-stg-<rest-of-your-run-key>"
-    export NVCF_RIVA_FUNCTION_ID="<NVCF Riva Function ID>"
-    ```
+    export RIVA_API_URI="<Riva API address/hostname>:<Port>"
+    export RIVA_API_KEY="<Riva API key>"
+    export RIVA_FUNCTION_ID="<Riva Function ID>"
+    ```    
 
 Reference:
 - [Docker installation instructions (Ubuntu)](https://docs.docker.com/engine/install/ubuntu/)
@@ -269,19 +265,21 @@ Reference:
 
 1. Connect to the sample web application at ``http://host-ip:8090``.
 
-2. In the <B>Converse</B> tab, type "How many cores does the Grace superchip contain?" in the chat box and press <B>Submit</B>. Alternatively, click on the microphone button to the right of the text box and ask your query verbally.
+2. Check **[X] Enable TTS output** to allow the web app to read the answers to your queries aloud.
+
+3. Select the desired ASR language (`English (en-US)` for this test), TTS language (`English (en-US)` for this test) and TTS voice from the dropdown menus below the checkboxes to utilize the web app's voice-to-voice interaction capabilities.
+
+4. In the <B>Converse</B> tab, type "How many cores does the Grace superchip contain?" in the chat box and press <B>Submit</B>. Alternatively, click on the microphone button to the right of the text box and ask your query verbally.
 
 ![Grace query failure](../notebooks/imgs/grace_noanswer_with_riva.png)
 
-3.  Upload the sample data set to the <B>Knowledge Base</B> tab.
+5.  Upload the sample data set to the <B>Knowledge Base</B> tab.
 
 > ⚠️ **NOTE**: ``dataset.zip`` is located in the ``notebooks`` directory. Unzip the archive and upload the PDFs.
 
-4. Return to **Converse** tab and check **[X] Use knowledge base**.
+6. Return to **Converse** tab and check **[X] Use knowledge base**.
 
-5. Retype (or re-transcribe) the question: "How many cores are on the Nvidia Grace superchip?"
-
-6. Check **[X] Enable TTS output** to allow the web app to read the answers to your queries aloud.
+7. Retype (or re-transcribe) the question: "How many cores does the Grace superchip contain?"
 
 ![Grace query success](../notebooks/imgs/grace_answer_with_riva.png)
 

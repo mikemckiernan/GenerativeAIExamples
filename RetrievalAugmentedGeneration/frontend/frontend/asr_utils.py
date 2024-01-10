@@ -1,10 +1,25 @@
+# SPDX-FileCopyrightText: Copyright (c) 2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import queue
 from threading import Thread
 
 import os
-import re
 import logging
 import grpc
+import pycountry
 import numpy as np
 import riva.client
 import riva.client.proto.riva_asr_pb2 as riva_asr
@@ -22,77 +37,43 @@ class ASRSession:
 _LOGGER = logging.getLogger(__name__)
 
 # Extract environmental variables
-RIVA_SPEECH_API_URI = os.getenv("RIVA_SPEECH_API_URI", None)
-NVCF_RIVA_SPEECH_API_URI = os.getenv("NVCF_RIVA_SPEECH_API_URI", None)
-NVCF_RUN_KEY = os.getenv("NVCF_RUN_KEY", None)
-NVCF_RIVA_FUNCTION_ID = os.getenv("NVCF_RIVA_FUNCTION_ID", None)
-if ((RIVA_SPEECH_API_URI is None or RIVA_SPEECH_API_URI == "") and 
-    (NVCF_RIVA_SPEECH_API_URI is None or NVCF_RIVA_SPEECH_API_URI == "")):
-    _LOGGER.info('At least one of RIVA_SPEECH_API_URI and NVCF_RIVA_SPEECH_API_URI must be set')
-if ((NVCF_RIVA_SPEECH_API_URI is not None and NVCF_RIVA_SPEECH_API_URI != "") and
-    ((NVCF_RUN_KEY is None or NVCF_RUN_KEY == "") or 
-        (NVCF_RIVA_FUNCTION_ID is None or NVCF_RIVA_FUNCTION_ID == ""))):
-    _LOGGER.info('If NVCF_RIVA_SPEECH_API_URI is set, NVCF_RUN_KEY and NVCF_RIVA_FUNCTION_ID must also be set')
-
-asr_language_code_keys = [
-    key for key, value in os.environ.items() 
-    if re.compile(r'ASR_LANGUAGE_CODE_\w+').match(key)
-]
-asr_language_code_keys.sort()
-asr_language_codes = [os.environ[key] for key in asr_language_code_keys]
-
-asr_acoustic_model = os.environ["ASR_ACOUSTIC_MODEL"]
-
-# Full selection of supported ASR language codes (as of Riva 2.14.0)  
-# and their corresponding names
-supported_asr_languages = {
-    "asr_language_code": "asr_language_name",
-    "ar-AR": "Armenian", 
-    "en-US": "English (US)", 
-    "en-GB": "English (UK)", 
-    "de-DE": "German", 
-    "es-ES": "Spanish (Spain)", 
-    "es-US": "Spanish (LatAm)", 
-    "fr-FR": "French", 
-    "hi-IN": "Hindi",
-    "it-IT": "Italian",
-    "ja-JP": "Japanese",
-    "ru-RU": "Russian",
-    "ko-KR": "Korean",
-    "pt-BR": "Portuguese (Brazil)",
-    "zh-CN": "Mandarin (China)",
-    "es-en-US": "Bilingual Spanish-English (US)",
-    "ja-en-JP": "Bilingual Japanese-English (Japan)",
-}
-
-# Generate a configuration object containing the human-readable language name and 
-# streaming ASR model name associated with each user-specified ASR language code
-asr_config = [
-    {
-        "asr_language_code": lang_code, 
-        "asr_language_name": supported_asr_languages[lang_code], 
-        "asr_streaming_model_name": f"{asr_acoustic_model}-{lang_code}-asr-streaming"
-    }
-    for lang_code in asr_language_codes
-]
+RIVA_API_URI = os.getenv("RIVA_API_URI", None)
+RIVA_API_KEY = os.getenv("RIVA_API_KEY", None)
+RIVA_FUNCTION_ID = os.getenv("RIVA_FUNCTION_ID", None)
 
 # Establish a connection to the Riva server
 try:
-    if NVCF_RIVA_SPEECH_API_URI is not None and NVCF_RIVA_SPEECH_API_URI != "":
-        metadata = [
-            ("authorization", "Bearer " + NVCF_RUN_KEY), 
-            ("function-id", NVCF_RIVA_FUNCTION_ID)
-        ]
-        auth = riva.client.Auth(
-            None, use_ssl=True, 
-            uri=NVCF_RIVA_SPEECH_API_URI, 
-            metadata_args=metadata
-        )
-    else:
-        auth = riva.client.Auth(uri=RIVA_SPEECH_API_URI)
+    use_ssl = False
+    metadata = []
+    if RIVA_API_KEY:
+        use_ssl = True
+        metadata.append(("authorization", "Bearer " + RIVA_API_KEY))
+    if RIVA_FUNCTION_ID: 
+        use_ssl = True
+        metadata.append(("function-id", RIVA_FUNCTION_ID))
+    auth = riva.client.Auth(
+        None, use_ssl=use_ssl, 
+        uri=RIVA_API_URI, 
+        metadata_args=metadata
+    )
     _LOGGER.info('Created riva.client.Auth success')
 except:
     _LOGGER.info('Error creating riva.client.Auth')
+
+# Obtain the ASR languages available on the Riva server
+ASR_LANGS = dict()
+
+_LOGGER.info("Available ASR languages")
+asr_client = riva.client.ASRService(auth)
+config_response = asr_client.stub.GetRivaSpeechRecognitionConfig(riva_asr.RivaSpeechRecognitionConfigRequest())
+for model_config in config_response.model_config:
+    if model_config.parameters["decoder_type"] and model_config.model_name.endswith("streaming"):
+        language_code = model_config.parameters['language_code']
+        language_name = f"{pycountry.languages.get(alpha_2=language_code[:2]).name} ({language_code})"
+        _LOGGER.info(f"{language_name} {model_config.model_name}")
+        ASR_LANGS[language_name] = {"language_code": language_code, "model": model_config.model_name}
+
+ASR_LANGS = dict(sorted(ASR_LANGS.items()))
 
 def print_streaming_response(asr_session):
     asr_session.transcript = ""
@@ -120,8 +101,6 @@ def print_streaming_response(asr_session):
         asr_session.transcript = rpc_error.details()
         return
 
-# For now, remove second output for 
-# protobuf text box
 def start_recording(audio, language, asr_session):
     _LOGGER.info('start_recording')
     asr_session.is_first_buffer = True
@@ -134,7 +113,7 @@ def stop_recording(asr_session):
     asr_session.response_thread.join()
     return asr_session
 
-def transcribe_streaming(audio, language, asr_session):
+def transcribe_streaming(audio, language, asr_session, auth=auth):
     _LOGGER.info('transcribe_streaming')
     rate, data = audio
     if len(data.shape) > 1:
@@ -144,12 +123,11 @@ def transcribe_streaming(audio, language, asr_session):
         return asr_session.transcript, asr_session
 
     if asr_session.is_first_buffer:
-        asr_dict = next((d for d in asr_config if d['asr_language_name'] == language), None)
 
         streaming_config = riva.client.StreamingRecognitionConfig(
             config=riva.client.RecognitionConfig(
                 encoding=riva.client.AudioEncoding.LINEAR_PCM,
-                language_code=asr_dict['asr_language_code'],
+                language_code=ASR_LANGS[language]['language_code'],
                 max_alternatives=1,
                 profanity_filter=False,
                 enable_automatic_punctuation=True,
@@ -157,7 +135,7 @@ def transcribe_streaming(audio, language, asr_session):
                 sample_rate_hertz=rate,
                 audio_channel_count=1,
                 enable_word_time_offsets=True,
-                model=asr_dict['asr_streaming_model_name'],
+                model=ASR_LANGS[language]['model'],
             ),
             interim_results=True,
         )
@@ -182,7 +160,7 @@ def transcribe_streaming(audio, language, asr_session):
 
     return asr_session.transcript, asr_session
 
-def transcribe_offline(audio, language, diarization):
+def transcribe_offline(audio, language, diarization, auth=auth):
     _LOGGER.info('transcribe_offline')
     rate, data = audio
     if len(data.shape) > 1:
@@ -198,7 +176,7 @@ def transcribe_offline(audio, language, diarization):
         encoding=riva.client.AudioEncoding.LINEAR_PCM,
         sample_rate_hertz=rate,
         audio_channel_count=1,
-        language_code=asr_dict['asr_language_code'],
+        language_code=ASR_LANGS[language]['language_code'],
         max_alternatives=1,
         profanity_filter=False,
         enable_automatic_punctuation=True,

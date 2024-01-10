@@ -85,17 +85,25 @@ def build_page(client: chat_client.ChatClient) -> gr.Blocks:
         # dropdowns
         with gr.Accordion("ASR and TTS Settings"):
             with gr.Row():
-                asr_language_list = [asr_lang_dict['asr_language_name'] for asr_lang_dict in asr_utils.asr_config]
+                asr_language_list = list(asr_utils.ASR_LANGS)
                 asr_language_dropdown = gr.components.Dropdown(
                     label="ASR Language",
                     choices=asr_language_list,
                     value=asr_language_list[0],
                 )
-                tts_voice_list = [tts_lang_dict['tts_voice'] for tts_lang_dict in tts_utils.tts_config]
+                tts_language_list = list(tts_utils.TTS_MODELS)
+                tts_language_dropdown = gr.components.Dropdown(
+                    label="TTS Language",
+                    choices=tts_language_list,
+                    value=tts_language_list[0],
+                )
+                all_voices = []
+                for model in tts_utils.TTS_MODELS:
+                    all_voices.extend(tts_utils.TTS_MODELS[model]['voices'])
                 tts_voice_dropdown = gr.components.Dropdown(
                     label="TTS Voice",
-                    choices=tts_voice_list,
-                    value=tts_voice_list[0],
+                    choices=all_voices,
+                    value=tts_utils.TTS_MODELS[tts_language_list[0]]['voices'][0],
                 )
 
         # audio and text input boxes
@@ -158,6 +166,13 @@ def build_page(client: chat_client.ChatClient) -> gr.Blocks:
             _my_build_stream, [kb_checkbox, msg, chatbot], [msg, chatbot, context, latest_response]
         )
 
+        tts_language_dropdown.change(
+            tts_utils.update_voice_dropdown, 
+            [tts_language_dropdown], 
+            [tts_voice_dropdown], 
+            api_name=False
+        )
+
         audio_mic.start_recording(
             asr_utils.start_recording,
             [audio_mic, asr_language_dropdown, state],
@@ -179,7 +194,7 @@ def build_page(client: chat_client.ChatClient) -> gr.Blocks:
 
         latest_response.change(
             tts_utils.text_to_speech,
-            [latest_response, tts_voice_dropdown, tts_checkbox],
+            [latest_response, tts_language_dropdown, tts_voice_dropdown, tts_checkbox],
             [output_audio],
             api_name=False
         )

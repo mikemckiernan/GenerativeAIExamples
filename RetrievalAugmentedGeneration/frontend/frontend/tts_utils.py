@@ -1,7 +1,23 @@
+# SPDX-FileCopyrightText: Copyright (c) 2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import os
-import re
 import time
+import json
 import logging
+import pycountry
 from pathlib import Path
 from threading import Thread
 from typing import TYPE_CHECKING, Any, List
@@ -12,75 +28,65 @@ import riva.client
 _LOGGER = logging.getLogger(__name__)
 
 # Extract environmental variables
-RIVA_SPEECH_API_URI = os.getenv("RIVA_SPEECH_API_URI", None)
-NVCF_RIVA_SPEECH_API_URI = os.getenv("NVCF_RIVA_SPEECH_API_URI", None)
-NVCF_RUN_KEY = os.getenv("NVCF_RUN_KEY", None)
-NVCF_RIVA_FUNCTION_ID = os.getenv("NVCF_RIVA_FUNCTION_ID", None)
-if ((RIVA_SPEECH_API_URI is None or RIVA_SPEECH_API_URI == "") and 
-    (NVCF_RIVA_SPEECH_API_URI is None or NVCF_RIVA_SPEECH_API_URI == "")):
-    _LOGGER.info('At least one of RIVA_SPEECH_API_URI and NVCF_RIVA_SPEECH_API_URI must be set')
-if ((NVCF_RIVA_SPEECH_API_URI is not None and NVCF_RIVA_SPEECH_API_URI != "") and
-    ((NVCF_RUN_KEY is None or NVCF_RUN_KEY == "") or 
-        (NVCF_RIVA_FUNCTION_ID is None or NVCF_RIVA_FUNCTION_ID == ""))):
-    _LOGGER.info('If NVCF_RIVA_SPEECH_API_URI is set, NVCF_RUN_KEY and NVCF_RIVA_FUNCTION_ID must also be set')
+RIVA_API_URI = os.getenv("RIVA_API_URI", None)
+RIVA_API_KEY = os.getenv("RIVA_API_KEY", None)
+RIVA_FUNCTION_ID = os.getenv("RIVA_FUNCTION_ID", None)
+tts_sample_rate = int(os.getenv("TTS_SAMPLE_RATE", 48000))
 
-tts_language_code_keys = [
-    key for key, value in os.environ.items()
-    if re.compile(r'TTS_LANGUAGE_CODE_\w+').match(key)
-]
-tts_language_code_keys.sort()
-tts_language_codes = [os.environ[key] for key in tts_language_code_keys]
+# Establish a connection to the Riva server
+try:
+    use_ssl = False
+    metadata = []
+    if RIVA_API_KEY:
+        use_ssl = True
+        metadata.append(("authorization", "Bearer " + RIVA_API_KEY))
+    if RIVA_FUNCTION_ID: 
+        use_ssl = True
+        metadata.append(("function-id", RIVA_FUNCTION_ID))
+    auth = riva.client.Auth(
+        None, use_ssl=use_ssl, 
+        uri=RIVA_API_URI, 
+        metadata_args=metadata
+    )
+    _LOGGER.info('Created riva.client.Auth success')
+except:
+    _LOGGER.info('Error creating riva.client.Auth')
 
-tts_sample_rate = int(os.environ["TTS_SAMPLE_RATE"])
+# Obtain the TTS languages and voices available on the Riva server
+TTS_MODELS = dict()
+tts_client = riva.client.SpeechSynthesisService(auth)
 
-# Full selection of supported TTS language codes (as of Riva 2.14.0)
-# and their corresponding names
-supported_tts_languages = {
-    "tts_language_code": "tts_language_name",
-    "en-US": "English",
-    "es-ES": "Spanish",
-    "es-US": "Spanish",
-    "it-IT": "Italian",
-    "de-DE": "German",
-    "zh-CN": "Mandarin",
-}
+config_response = tts_client.stub.GetRivaSynthesisConfig(
+    riva.client.proto.riva_tts_pb2.RivaSynthesisConfigRequest()
+)
+for model_config in config_response.model_config:
+    language_code = model_config.parameters['language_code']
+    language_name = f"{pycountry.languages.get(alpha_2=language_code[:2]).name} ({language_code})"
+    voice_name = model_config.parameters['voice_name']
+    subvoices = [voice.split(':')[0] for voice in model_config.parameters['subvoices'].split(',')]
+    full_voice_names = [voice_name + "." + subvoice for subvoice in subvoices]
 
-# Generate a configuration object containing the TTS language code and associated voice names.
-# As of Riva 2.14.0, there is only a male TTS voice available for German TTS.
-# Otherwise, the code below could easily be implemented with a list comprehension.
-
-tts_config = []
-
-for lang_code in tts_language_codes:
-    if lang_code == "de-DE":
-        tts_config.append(
-            {
-                "tts_language_code": lang_code,
-                "tts_voice": f'{supported_tts_languages[lang_code]}-{lang_code[-2:]}.Male-1'
-            },
-        )
+    if language_name in TTS_MODELS:
+        TTS_MODELS[language_name]['voices'].extend(full_voice_names)
     else:
-        tts_config.append(
-            {
-                "tts_language_code": lang_code,
-                "tts_voice": f'{supported_tts_languages[lang_code]}-{lang_code[-2:]}.Female-1'
-            },
-        )
-        tts_config.append(
-            {
-                "tts_language_code": lang_code,
-                "tts_voice": f'{supported_tts_languages[lang_code]}-{lang_code[-2:]}.Male-1'
-            },
-        )
+        TTS_MODELS[language_name] = {"language_code": language_code, "voices": full_voice_names}
 
+TTS_MODELS = dict(sorted(TTS_MODELS.items()))
 
+_LOGGER.info(json.dumps(TTS_MODELS, indent=4))
 
-def text_to_speech(text, voice, enable_tts):
+# Once the user selects a TTS language, narrow the options in the TTS voice
+# dropdown menu accordingly
+def update_voice_dropdown(language):
+    voice_dropdown = gr.Dropdown(
+        label="Voice", choices=TTS_MODELS[language]['voices'], value=TTS_MODELS[language]['voices'][0]
+    )
+    return voice_dropdown
+
+def text_to_speech(text, language, voice, enable_tts, auth=auth):
     if not text or not voice or not enable_tts:
         gr.Info("Provide all inputs or select an example")
         return None, gr.update(interactive=False)
-
-    tts_dict = next((item for item in tts_config if item['tts_voice'] == voice), None)
 
     first_buffer = True
     start_time = time.time()
@@ -90,30 +96,12 @@ def text_to_speech(text, voice, enable_tts):
     # TODO: Audio download does not work with streaming audio output.
     # See https://github.com/gradio-app/gradio/issues/6570
 
-    # Establish a connection to the Riva server
-    try:
-        if NVCF_RIVA_SPEECH_API_URI is not None and NVCF_RIVA_SPEECH_API_URI != "":
-            metadata = [
-                ("authorization", "Bearer " + NVCF_RUN_KEY),
-                ("function-id", NVCF_RIVA_FUNCTION_ID)
-            ]
-            auth = riva.client.Auth(
-                None, use_ssl=True,
-                uri=NVCF_RIVA_SPEECH_API_URI,
-                metadata_args=metadata
-            )
-        else:
-            auth = riva.client.Auth(uri=RIVA_SPEECH_API_URI)
-        _LOGGER.info('Created riva.client.Auth success')
-    except:
-        _LOGGER.info('Error creating riva.client.Auth')
-
     tts_client = riva.client.SpeechSynthesisService(auth)
 
     response = tts_client.synthesize_online(
         text=text,
         voice_name=voice,
-        language_code=tts_dict['tts_language_code'],
+        language_code=TTS_MODELS[language]['language_code'],
         sample_rate_hz=tts_sample_rate
     )
     for result in response:
