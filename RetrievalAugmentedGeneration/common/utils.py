@@ -107,8 +107,10 @@ def get_vector_index() -> VectorStoreIndex:
         conn.autocommit = True
 
         with conn.cursor() as c:
-            c.execute(f"DROP DATABASE IF EXISTS {db_name}")
-            c.execute(f"CREATE DATABASE {db_name}")
+            # Check for database existence first
+            c.execute(f"SELECT 1 FROM pg_database WHERE datname = '{db_name}'")
+            if not c.fetchone():  # Database doesn't exist
+                c.execute(f"CREATE DATABASE {db_name}")
 
         url = make_url(connection_string)
 
