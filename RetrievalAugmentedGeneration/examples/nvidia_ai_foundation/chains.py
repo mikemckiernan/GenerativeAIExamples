@@ -103,7 +103,7 @@ class NvidiaAIFoundation(BaseExample):
         try:
             if vectorstore != None:
                 retriever = vectorstore.as_retriever()
-                docs = retriever.get_relevant_documents("List down member of twice")
+                docs = retriever.get_relevant_documents(prompt)
 
                 context = ""
                 for doc in docs:
