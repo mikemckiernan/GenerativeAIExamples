@@ -20,7 +20,11 @@ It uses OpenAI's GPT-4 model for sub-answer formation, tool prediction and math 
 Search tool is a RAG pipeline, whereas the math tool uses an LLM call to perform mathematical calculations.
 """
 
-from langchain.chat_models import ChatOpenAI
+from langchain.vectorstores import FAISS
+from langchain.document_loaders import UnstructuredFileLoader
+from langchain.text_splitter import CharacterTextSplitter
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
 from langchain.chains import LLMChain
 from langchain.prompts import BaseChatPromptTemplate
 from langchain.schema import HumanMessage
@@ -31,23 +35,15 @@ import json
 import jinja2
 import os
 
-import base64
 import os
 import logging
-from pathlib import Path
 from typing import Generator, List
-
-from llama_index import download_loader
-from llama_index.node_parser import LangchainNodeParser
 
 from RetrievalAugmentedGeneration.common.utils import (
     get_config,
-    get_doc_retriever,
     get_llm,
-    get_text_splitter,
-    get_vector_index,
-    is_base64_encoded,
     set_service_context,
+    get_embedding_model,
 )
 from RetrievalAugmentedGeneration.common.base import BaseExample
 
@@ -61,8 +57,12 @@ just say that you don't know, don't try to make up an answer.
  answer below and nothing else. Helpful answer:[/INST]"
 """
 
-llm = ChatOpenAI(model="gpt-4", temperature=0.1)
-vector_db = None
+llm = get_llm()
+DOCS_DIR = os.path.abspath("./uploaded_files")
+vector_store_path = "vectorstore.pkl"
+document_embedder = get_embedding_model()
+vectorstore = None
+settings = get_config()
 
 ##### Helper methods and tools #####
 
@@ -86,9 +86,12 @@ def fetch_context(ledger: Ledger) -> str:
 
     return context
 
-template = """Your task is to answer questions. If you cannot answer the question, you can request use for a tool and break the question into specific sub questions. Fill with Nil where no action is required. You are given two tools:
+template = """Your task is to answer questions. If you cannot answer the question, you can request use for a tool and break the question into specific sub questions. Fill with Nil where no action is required. You should only return a JSON containing the tool and the generated sub questions. Consider the contextual information and only ask for information that you do not already have. Do not return any other explanations or text. The output should be a simple JSON structure! You are given two tools:
 - Search tool
 - Math tool
+
+Do not pass sub questions to any tool if they already have an answer in the Contextual Information.
+If you have all the information needed to answer the question, mark the Tool_Request as Nil.
 
 Contextual Information:
 {{ context }}
@@ -153,50 +156,51 @@ class CustomOutputParser(AgentOutputParser):
 
 
 class QueryDecompositionChatbot(BaseExample):
-    def ingest_docs(self, data_dir: str, filename: str):
+    def ingest_docs(self, file_name: str, filename: str):
         """Ingest documents to the VectorDB."""
 
-        logger.info(f"Ingesting {filename} in vectorDB")
-        _, ext = os.path.splitext(filename)
+        # TODO: Load embedding created in older conversation, memory persistance
+        # We initialize class in every call therefore it should be global
+        global vectorstore
+        # Load raw documents from the directory
+        # Data is copied to `DOCS_DIR` in common.server:upload_document
+        _path = os.path.join(DOCS_DIR, filename)
+        raw_documents = UnstructuredFileLoader(_path).load()
 
-        if ext.lower() == ".pdf":
-            PDFReader = download_loader("PDFReader")
-            loader = PDFReader()
-            documents = loader.load_data(file=Path(data_dir))
-
+        if raw_documents:
+            text_splitter = CharacterTextSplitter(chunk_size=settings.text_splitter.chunk_size, chunk_overlap=settings.text_splitter.chunk_overlap)
+            documents = text_splitter.split_documents(raw_documents)
+            if vectorstore:
+                vectorstore.add_documents(documents)
+            else:
+                vectorstore = FAISS.from_documents(documents, document_embedder)
+            logger.info("Vector store created and saved.")
         else:
-            unstruct_reader = download_loader("UnstructuredReader")
-            loader = unstruct_reader()
-            documents = loader.load_data(file=Path(data_dir), split_documents=False)
+            logger.warning("No documents available to process!")
 
-        encoded_filename = filename[:-4]
-        if not is_base64_encoded(encoded_filename):
-            encoded_filename = base64.b64encode(encoded_filename.encode("utf-8")).decode(
-                "utf-8"
-            )
-
-        for document in documents:
-            document.metadata = {"filename": encoded_filename}
-
-        index = get_vector_index()
-        node_parser = LangchainNodeParser(get_text_splitter())
-        nodes = node_parser.get_nodes_from_documents(documents)
-        index.insert_nodes(nodes)
-        logger.info(f"Document {filename} ingested successfully")
-
-    def llm_chain(self, context: str, question: str, num_tokens: int) -> Generator[str, None, None]:
+    def llm_chain(
+        self, context: str, question: str, num_tokens: str
+    ) -> Generator[str, None, None]:
         """Execute a simple LLM chain using the components defined above."""
 
         logger.info("Using llm to generate response directly without knowledge base.")
-        set_service_context()
-        prompt = get_config().prompts.chat_template.format(
-            context_str=context, query_str=question
+        prompt_template = ChatPromptTemplate.from_messages(
+            [
+                (
+                    "system",
+                    settings.prompts.chat_template,
+                ),
+                ("user", "{input}"),
+            ]
         )
 
-        logger.info(f"Prompt used for response generation: {prompt}")
-        response = get_llm().stream_complete(prompt, tokens=num_tokens)
-        gen_response = (resp.delta for resp in response)
-        return gen_response
+        llm = get_llm()
+
+        chain = prompt_template | llm | StrOutputParser()
+        augmented_user_input = (
+            "Context: " + context + "\n\nQuestion: " + question + "\n"
+        )
+        return chain.stream({"input": augmented_user_input})
 
     def rag_chain(self, question: str, num_tokens: int) -> Generator[str, None, None]:
         """Execute a Retrieval Augmented Generation chain using the components defined above."""
@@ -204,26 +208,17 @@ class QueryDecompositionChatbot(BaseExample):
         logger.info("Using rag to generate response from document")
 
         set_service_context()
-        if get_config().llm.model_engine == "triton-trt-llm":
-            get_llm().llm.tokens = num_tokens  # type: ignore
-        else:
-            get_llm().llm.max_tokens = num_tokens
-
-        global vector_db
-        if not vector_db:
-            vector_db = get_doc_retriever(num_nodes=4)
-
         final_context = self.run_agent(question)
         logger.info(f"Final Answer from agent: {final_context}")
-        prompt = get_config().prompts.rag_template.format(
-            context_str=final_context, query_str=question
+
+        final_prompt_template = ChatPromptTemplate.from_messages(
+            [
+                ("human", final_context)
+            ]
         )
+        chain = final_prompt_template | llm | StrOutputParser()
 
-        logger.info(f"Prompt used for final response generation: {prompt}")
-        response = get_llm().stream_complete(prompt, tokens=num_tokens)
-        gen_response = (resp.delta for resp in response)
-
-        return gen_response
+        return chain.stream({})
 
 
     def create_agent(self) -> AgentExecutor:
@@ -275,9 +270,13 @@ class QueryDecompositionChatbot(BaseExample):
         Searches for the answer from a given context.
         """
 
-        result = vector_db.retrieve(query)
+        if vectorstore is None:
+            return []
+
+        retriever = vectorstore.as_retriever()
+        result = retriever.get_relevant_documents(query)
         logger.info(result)
-        return [hit.node.text for hit in result]
+        return [hit.page_content for hit in result]
 
 
     def extract_answer(self, chunks: List[str], question: str) -> str:
@@ -285,7 +284,7 @@ class QueryDecompositionChatbot(BaseExample):
         Find the answer to the query from the retrieved chunks
         """
 
-        prompt = "Below is a Question and set of Passages that may or may not be relevant. Your task is to Extract the answer for question using only the information available in the passages. Do not infer or process the passage in any other way\n\n"
+        prompt = "Below is a Question and set of Passages that may or may not be relevant. Your task is to Extract the answer for question using only the information available in the passages. Be as concise as possible and only include the answer if present. Do not infer or process the passage in any other way\n\n"
         prompt += "Question: " + question + "\n\n"
         for idx, chunk in enumerate(chunks):
             prompt += f"Passage {idx + 1}:\n"
@@ -315,6 +314,9 @@ class QueryDecompositionChatbot(BaseExample):
         """
 
         prompt = "Solve this mathematical question:\nQuestion: " + sub_questions[0]
+        prompt += f"Context:\n{fetch_context(self.ledger)}\n"
+        prompt += "Be concise and only return the answer."
+
         logger.info(f"Performing Math LLM call with prompt: {prompt}")
         sub_answer = llm([HumanMessage(content=prompt)])
         self.ledger.question_trace.append(sub_questions[0])

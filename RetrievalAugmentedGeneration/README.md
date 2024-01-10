@@ -517,11 +517,9 @@ b23c0858c4d4   milvus-etcd            Up 48 minutes (healthy)
 
 ### 5: QA Chatbot with Task Decomposition example -- A100/H100/L40S
 
-This example deploys a recursive Task Decomposition example for chat QA. It uses OpenAI's GPT-4 model and the Llama-7b-chat model for inference.
+This example deploys a recursive Task Decomposition example for chat QA. It uses the llama2-70b chat model (via the NVIDIA AI Foundation endpoint) for inference.
 
 It showcases how to perform RAG when the agent needs to access information from several different files/chunks or perform some computation on the answers. It uses a custom langchain agent that recursively breaks down the user's questions into subquestions that it attempts to answer. It has access to 2 tools - search (which performs standard RAG on a subquestion) and math (which poses a math question to the LLM). The agent continues to break down the question into sub-questions until it has the answers it needs to formulate the final answer.
-
-This agent uses the GPT-4 chat model from OpenAI for query decomposition, the search tool and the math tool. It uses the Llama chat model for generation of the final answer from the sub-questions and sub-answers.
 
 <table class="tg">
 <thead>
@@ -539,15 +537,15 @@ This agent uses the GPT-4 chat model from OpenAI for query decomposition, the se
 </thead>
 <tbody>
   <tr>
-    <td class="tg-knyo">llama-2-7b-chat</td>
-    <td class="tg-knyo">e5-large-v2</td>
+    <td class="tg-knyo">llama2_70b</td>
+    <td class="tg-knyo">nvolveqa_40k</td>
     <td class="tg-knyo">Langchain</td>
     <td class="tg-knyo">QA chatbot</td>
     <td class="tg-knyo">NO</td>
-    <td class="tg-knyo">YES</td>
     <td class="tg-knyo">NO</td>
     <td class="tg-knyo">YES</td>
-    <td class="tg-knyo">Milvus</td>
+    <td class="tg-knyo">NO</td>
+    <td class="tg-knyo">FAISS</td>
   </tr>
 </tbody>
 </table>
@@ -556,72 +554,37 @@ This agent uses the GPT-4 chat model from OpenAI for query decomposition, the se
 
 1. Follow the steps in the ["Prepare the environment" section of example 02](#21-prepare-the-environment).
 
-2. Add your OpenAI API key in `deploy/compose/compose.env`.
-    ```shell
-    export OPENAI_API_KEY=...
-    ```
-
 
 #### 5.2 Deploy
 
-1.  Follow steps 1 - 4 in the ["Deploy" section of example 02](#downloading-the-model) to stage the model weights.
+1.  Follow the ["Deploy" section of example 01](#downloading-the-model) to setup your API key
 
-2. Find the GPU device ID. You can check this using `nvidia-smi` command.
-
-3. Assign LLM inference to specific GPUs by specifying the GPU ID(s) in the [docker compose file](../deploy/compose/docker-compose.yaml).
-
-```
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              # count: ${INFERENCE_GPU_COUNT:-all} # Comment this out
-              device_ids: ["0"]
-              capabilities: [gpu]
-```
-
-4. Follow steps in the ["Deploy the model" section of example 02](#deploying-the-model) to deploy via Docker compose.
-
-5. Change the RAG example in `deploy/compose/compose.env`.
+2. Change the RAG example in `deploy/compose/compose.env`.
     ```shell
     export RAG_EXAMPLE="query_decomposition_rag"
     ```
 
-6. Add the Open AI API key to `deploy/compose/docker-compose.yaml`.
+3. Change the LLM in `deploy/compose/docker-compose-nv-ai-foundation.yaml` to `llama2_70b`.
     ```yaml
     query:
       container_name: chain-server
-      image: chain-server:latest
-      build:
-        context: ../../
-        dockerfile: ./RetrievalAugmentedGeneration/Dockerfile
-      command: --port 8081 --host 0.0.0.0
+      ...
       environment:
-        APP_VECTORSTORE_URL: "http://milvus:19530"
+        APP_LLM_MODELNAME: llama2_70b
         ...
-        OPENAI_API_KEY: ${OPENAI_API_KEY}
     ```
 
-7. Deploy the developer RAG example via Docker compose.
-
-> ⚠️ **NOTE**: It may take up to 5 minutes for the Triton server to start. The `-d` flag starts the services in the background.
+4. Deploy the Query Decomposition RAG example via Docker compose.
 
 ```
-$ source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose.yaml build
+$ source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose-nv-ai-foundation.yaml build
 
-$ docker compose -f deploy/compose/docker-compose.yaml up -d
+$ docker compose -f deploy/compose/docker-compose-nv-ai-foundation.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES                  STATUS
 256da0ecdb7b   llm-playground         Up 48 minutes
 2974aa4fb2ce   chain-server           Up 48 minutes
-4a8c4aebe4ad   notebook-server        Up 48 minutes
-0069c5e0b373   evaluation             Up 48 minutes
-5be2b57bb5c1   milvus-standalone      Up 48 minutes (healthy)
-ecf674c8139c   llm-inference-server   Up 48 minutes (healthy)
-a6609c22c171   milvus-minio           Up 48 minutes (healthy)
-b23c0858c4d4   milvus-etcd            Up 48 minutes (healthy)
 ```
 
 #### 5.3 Test
