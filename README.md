@@ -57,6 +57,9 @@ These are open source connectors for NVIDIA-hosted and self-hosted API endpoints
 | Name | Framework | Chat | Text Embedding | Python | Description |
 |------|-----------|------|-----------|--------|-------------|
 |[NVIDIA AI Foundation Endpoints](https://python.langchain.com/docs/integrations/providers/nvidia) | [Langchain](https://www.langchain.com/) |[YES](https://python.langchain.com/docs/integrations/chat/nvidia_ai_endpoints)|[YES](https://python.langchain.com/docs/integrations/text_embedding/nvidia_ai_endpoints)|[YES](https://pypi.org/project/langchain-nvidia-ai-endpoints/)|Easy access to NVIDIA hosted models. Supports chat, embedding, code generation, steerLM, multimodal, and RAG.|
+|[NVIDIA Triton + TensorRT-LLM](https://github.com/langchain-ai/langchain/tree/master/libs/partners/nvidia-trt) | [Langchain](https://www.langchain.com/) |[YES](https://github.com/langchain-ai/langchain/blob/master/libs/partners/nvidia-trt/docs/llms.ipynb)|[YES](https://github.com/langchain-ai/langchain/blob/master/libs/partners/nvidia-trt/docs/llms.ipynb)|[YES](https://pypi.org/project/langchain-nvidia-trt/)|This connector allows Langchain to remotely interact with a Triton inference server over GRPC or HTTP tfor optimized LLM inference.|
+|[NVIDIA Triton Inference Server](https://docs.llamaindex.ai/en/stable/examples/llm/nvidia_triton.html) | [LlamaIndex](https://www.llamaindex.ai/) |YES|YES|NO|Triton inference server provides API access to hosted LLM models over gRPC. |
+|[NVIDIA TensorRT-LLM](https://docs.llamaindex.ai/en/stable/examples/llm/nvidia_tensorrt.html) | [LlamaIndex](https://www.llamaindex.ai/) |YES|YES|NO|TensorRT-LLM provides a Python API to build TensorRT engines with state-of-the-art optimizations for LLM inference on NVIDIA GPUs. |
 
 
 ## NVIDIA support
