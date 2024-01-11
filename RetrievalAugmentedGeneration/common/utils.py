@@ -20,29 +20,54 @@ import logging
 from functools import lru_cache
 from typing import TYPE_CHECKING, List, Optional
 
-import torch
-import psycopg2
-from sqlalchemy import make_url
-from llama_index.postprocessor.types import BaseNodePostprocessor
-from llama_index.schema import MetadataMode
-from llama_index.utils import globals_helper, get_tokenizer
-from llama_index.vector_stores import MilvusVectorStore, PGVectorStore
-from llama_index import VectorStoreIndex, ServiceContext, set_global_service_context
-from llama_index.llms import LangChainLLM
-from llama_index.embeddings import LangchainEmbedding
-from langchain.text_splitter import SentenceTransformersTokenTextSplitter
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain_nvidia_ai_endpoints import ChatNVIDIA, NVIDIAEmbeddings
+logger = logging.getLogger(__name__)
+
+try:
+    import torch
+except Exception as e:
+    logger.error(f"torch import failed with error: {e}")
+
+try:
+    import psycopg2
+except Exception as e:
+    logger.error(f"psycogp2 import failed with error: {e}")
+
+try:
+    from sqlalchemy import make_url
+except Exception as e:
+    logger.error(f"SQLalchemy import failed with error: {e}")
+
+try:
+    from llama_index.postprocessor.types import BaseNodePostprocessor
+    from llama_index.schema import MetadataMode
+    from llama_index.utils import globals_helper, get_tokenizer
+    from llama_index.vector_stores import MilvusVectorStore, PGVectorStore
+    from llama_index import VectorStoreIndex, ServiceContext, set_global_service_context
+    from llama_index.llms import LangChainLLM
+    from llama_index.embeddings import LangchainEmbedding
+    if TYPE_CHECKING:
+        from llama_index.indices.base_retriever import BaseRetriever
+        from llama_index.indices.query.schema import QueryBundle
+        from llama_index.schema import NodeWithScore
+except Exception as e:
+    logger.error(f"Llamaindex import failed with error: {e}")
+
+try:
+    from langchain.text_splitter import SentenceTransformersTokenTextSplitter
+    from langchain.embeddings import HuggingFaceEmbeddings
+except Exception as e:
+    logger.error(f"Langchain import failed with error: {e}")
+
+try:
+    from langchain_nvidia_ai_endpoints import ChatNVIDIA, NVIDIAEmbeddings
+except Exception as e:
+    logger.error(f"NVIDIA AI connector import failed with error: {e}")
+
 from integrations.langchain.llms.triton_trt_llm import TensorRTLLM
 from RetrievalAugmentedGeneration.common import configuration
 
 if TYPE_CHECKING:
-    from llama_index.indices.base_retriever import BaseRetriever
-    from llama_index.indices.query.schema import QueryBundle
-    from llama_index.schema import NodeWithScore
     from RetrievalAugmentedGeneration.common.configuration_wizard import ConfigWizard
-
-logger = logging.getLogger(__name__)
 
 DEFAULT_MAX_CONTEXT = 1500
 DEFAULT_NUM_TOKENS = 150

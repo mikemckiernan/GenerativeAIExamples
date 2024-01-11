@@ -6,6 +6,8 @@ services:
     build:
       context: ../../
       dockerfile: ./RetrievalAugmentedGeneration/Dockerfile
+      args:
+        EXAMPLE_NAME: ${RAG_EXAMPLE}
     command: --port 8081 --host 0.0.0.0
     environment:
       APP_LLM_MODELNAME: mixtral_8x7b
@@ -16,7 +18,6 @@ services:
       APP_TEXTSPLITTER_CHUNKOVERLAP: 200
       APP_PROMPTS_CHATTEMPLATE: "You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. Please ensure that your responses are positive in nature."
       APP_PROMPTS_RAGTEMPLATE: "You are a helpful AI assistant named Envie. You will reply to questions only based on the context that you are provided. If something is out of context, you will refrain from replying and politely decline to respond to the user."
-      RAG_EXAMPLE: ${RAG_EXAMPLE}
       NVIDIA_API_KEY: ${NVIDIA_API_KEY}
       APP_CONFIG_FILE: ${APP_CONFIG_FILE}
     volumes:
