@@ -68,7 +68,8 @@ def build_page(client: chat_client.ChatClient) -> gr.Blocks:
                 autoplay=True,
                 interactive=False,
                 streaming=True,
-                visible=True
+                visible=True,
+                show_download_button=False
             )
 
         # check boxes
@@ -189,6 +190,12 @@ def build_page(client: chat_client.ChatClient) -> gr.Blocks:
             asr_utils.transcribe_streaming,
             [audio_mic, asr_language_dropdown, state],
             [msg, state],
+            api_name=False
+        )
+        audio_mic.clear(
+            lambda: "",
+            [],
+            [msg],
             api_name=False
         )
 

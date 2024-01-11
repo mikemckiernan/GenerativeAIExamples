@@ -20,3 +20,9 @@
   content: "🎤" !important;
   background-color: var(--block-background-fill) !important;
 }
+.mic-wrap {float: left}
+#microphone{min-width: min(0px, 100%) !important;}
+#microphone div.small {
+  width: 25px;
+  height: 100%;
+}
