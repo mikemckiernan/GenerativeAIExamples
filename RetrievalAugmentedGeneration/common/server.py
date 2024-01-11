@@ -34,10 +34,6 @@ logger = logging.getLogger(__name__)
 
 # create the FastAPI server
 app = FastAPI()
-# prestage the embedding model
-_ = utils.get_embedding_model()
-# set the global service context for Llama Index
-utils.set_service_context()
 
 EXAMPLE_DIR = "RetrievalAugmentedGeneration/examples"
 
@@ -157,16 +153,11 @@ async def document_search(request: Request,data: DocumentSearch) -> List[Dict[st
     """Search for the most relevant documents for the given search parameters."""
 
     try:
-        retriever = utils.get_doc_retriever(num_nodes=data.num_docs)
-        nodes = retriever.retrieve(data.content)
-        output = []
-        for node in nodes:
-            file_name = nodes[0].metadata["filename"]
-            decoded_filename = base64.b64decode(file_name.encode("utf-8")).decode("utf-8")
-            entry = {"score": node.score, "source": decoded_filename, "content": node.text}
-            output.append(entry)
+        example = app.example()
+        if hasattr(example, "document_search") and callable(example.document_search):
+            return example.document_search(data.content, data.num_docs)
 
-        return output
+        raise NotImplementedError("Example class has not implemented the document_search method.")
 
     except Exception as e:
         logger.error(f"Error from /documentSearch endpoint. Error details: {e}")

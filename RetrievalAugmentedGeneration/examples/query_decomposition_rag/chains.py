@@ -30,7 +30,7 @@ from langchain.prompts import BaseChatPromptTemplate
 from langchain.schema import HumanMessage
 from langchain.agents import LLMSingleActionAgent, AgentOutputParser, AgentExecutor, Tool
 from langchain.schema.agent import AgentFinish, AgentAction
-from typing import List, Union
+from typing import List, Union, Dict, Any
 import json
 import jinja2
 import os
@@ -323,3 +323,22 @@ class QueryDecompositionChatbot(BaseExample):
         self.ledger.answer_trace.append(sub_answer.content)
 
         self.ledger.done = True
+
+    def document_search(self, content: str, num_docs: int) -> List[Dict[str, Any]]:
+        """Search for the most relevant documents for the given search parameters."""
+
+        try:
+            retriever = get_doc_retriever(num_nodes=num_docs)
+            nodes = retriever.retrieve(content)
+            output = []
+            for node in nodes:
+                file_name = nodes[0].metadata["filename"]
+                decoded_filename = base64.b64decode(file_name.encode("utf-8")).decode("utf-8")
+                entry = {"score": node.score, "source": decoded_filename, "content": node.text}
+                output.append(entry)
+
+            return output
+
+        except Exception as e:
+            logger.error(f"Error from /documentSearch endpoint. Error details: {e}")
+            return []
