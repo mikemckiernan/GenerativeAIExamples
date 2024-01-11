@@ -173,9 +173,10 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
       ENABLE_TRACING: false
-    env_file:
-    - compose.env
-
+      RIVA_API_URI: ${RIVA_API_URI}
+      RIVA_API_KEY: ${RIVA_API_KEY}
+      RIVA_FUNCTION_ID: ${RIVA_FUNCTION_ID}
+      TTS_SAMPLE_RATE: ${TTS_SAMPLE_RATE}
     ports:
     - "8090:8090"
     expose:

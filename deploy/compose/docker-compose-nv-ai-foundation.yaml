@@ -38,8 +38,10 @@ services:
       APP_SERVERURL: http://query
       APP_SERVERPORT: 8081
       APP_MODELNAME: ${MODEL_NAME:-${MODEL_ARCHITECTURE}}
-    env_file:
-    - compose.env
+      RIVA_API_URI: ${RIVA_API_URI}
+      RIVA_API_KEY: ${RIVA_API_KEY}
+      RIVA_FUNCTION_ID: ${RIVA_FUNCTION_ID}
+      TTS_SAMPLE_RATE: ${TTS_SAMPLE_RATE}
     ports:
     - "8090:8090"
     expose:
