@@ -34,8 +34,6 @@ from langchain.text_splitter import SentenceTransformersTokenTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain_nvidia_ai_endpoints import ChatNVIDIA, NVIDIAEmbeddings
 from integrations.langchain.llms.triton_trt_llm import TensorRTLLM
-from integrations.langchain.llms.nv_aiplay import GeneralLLM
-from integrations.langchain.embeddings.nv_aiplay import NVAIPlayEmbeddings
 from RetrievalAugmentedGeneration.common import configuration
 
 if TYPE_CHECKING:
