@@ -153,10 +153,11 @@ async def document_search(request: Request,data: DocumentSearch) -> List[Dict[st
     """Search for the most relevant documents for the given search parameters."""
 
     try:
-        if "document_search" not in dir(app.example):
-            raise NotImplementedError("Example class has not implemented the document_search method.")
+        example = app.example()
+        if hasattr(example, "document_search") and callable(example.document_search):
+            return example.document_search(data.content, data.num_docs)
 
-        return app.example().document_search(data.content, data.num_docs)
+        raise NotImplementedError("Example class has not implemented the document_search method.")
 
     except Exception as e:
         logger.error(f"Error from /documentSearch endpoint. Error details: {e}")

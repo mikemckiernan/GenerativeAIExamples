@@ -25,13 +25,12 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_nvidia_ai_endpoints import ChatNVIDIA, NVIDIAEmbeddings
 from RetrievalAugmentedGeneration.common.base import BaseExample
-from RetrievalAugmentedGeneration.common.utils import get_config, get_llm, get_embedding_model, set_service_context
+from RetrievalAugmentedGeneration.common.utils import get_config, get_llm, get_embedding_model
 
 logger = logging.getLogger(__name__)
 DOCS_DIR = os.path.abspath("./uploaded_files")
 vector_store_path = "vectorstore.pkl"
 document_embedder = get_embedding_model()
-set_service_context()
 vectorstore = None
 settings = get_config()
 
