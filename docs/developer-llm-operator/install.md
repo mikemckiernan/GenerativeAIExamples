@@ -55,15 +55,15 @@ NVIDIA container runtime on the Kubernetes node.
 
    ```console
    $ helm repo add nvidia https://helm.ngc.nvidia.com/nvidia \
-    && helm repo update
+      && helm repo update
    ```
 
 1. Install the Operator:
 
    ```console
    $ helm install --wait --generate-name \
-    -n gpu-operator --create-namespace \
-    nvidia/gpu-operator
+      -n gpu-operator --create-namespace \
+      nvidia/gpu-operator
    ```
 
 1. Optional: Configure GPU time-slicing if you have fewer than four GPUs.
@@ -106,14 +106,12 @@ NVIDIA container runtime on the Kubernetes node.
    - Verify that at least `4` GPUs are allocatable:
 
      ```console
-     $ kubectl get nodes -l nvidia.com/gpu.present -o json |   jq '.items[0].status.allocatable |
-         with_entries(select(.key | startswith("nvidia.com/"))) |
-         with_entries(select(.value != "0"))'
+     $ kubectl get nodes -l nvidia.com/gpu.present -o json | jq '.items[0].status.allocatable | with_entries(select(.key | startswith("nvidia.com/"))) | with_entries(select(.value != "0"))'
      ```
 
      *Example Output*
 
-     ```output
+     ```json
      {
        "nvidia.com/gpu": "4"
      }
@@ -129,13 +127,13 @@ in the NVIDIA GPU Operator documentation.
 1. Get the Helm chart for the Operator:
 
    ```console
-   $ helm fetch https://helm.ngc.nvidia.com/nvidia/cloud-native/charts/developer-llm-operator-v0.1.0.tgz
+   $ helm fetch https://helm.ngc.nvidia.com/nvidia/cloud-native/charts/developer-llm-operator-0.1.0.tgz
    ```
 
 1. Install the Operator:
 
    ```console
-   $ helm install --generate-name ./developer-llm-operator-v0.1.0.tgz \
+   $ helm install --generate-name ./developer-llm-operator-0.1.0.tgz \
        -n kube-trailblazer-system --create-namespace
    ```
 
@@ -242,8 +240,7 @@ in the NVIDIA GPU Operator documentation.
    - View the logs from the Operator controller pod:
 
      ```console
-     $ kubectl logs -n kube-trailblazer-system \
-        $(kubectl get pod -n kube-trailblazer-system -o=jsonpath='{.items[0].metadata.name}')
+     $ kubectl logs -n kube-trailblazer-system $(kubectl get pod -n kube-trailblazer-system -o=jsonpath='{.items[0].metadata.name}')
      ```
 
    - View the pods in the pipeline namespace:
