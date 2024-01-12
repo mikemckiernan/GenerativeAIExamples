@@ -309,6 +309,7 @@ carry out the following steps:
 
 Execute the Jupyter notebooks to explore optional features.
 
+Note: Jupyter notebook is supported for [default flow](../deploy/compose/docker-compose.yaml) i.e. trt-llm with milvus.
 1. In a web browser, open Jupyter at ``http://host-ip:8888``.
 
 2. Execute the notebooks in order:
