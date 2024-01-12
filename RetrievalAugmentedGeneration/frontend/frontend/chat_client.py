@@ -124,4 +124,4 @@ class ChatClient:
                      raise ValueError(f"{resp.json().get('message', 'Failed to upload document')}")
         except Exception as e:
             _LOGGER.error(f"Failed to get response from /uploadDocument endpoint of chain-server. Error details: {e}. Refer to chain-server logs for details.")
-            raise ValueError("Failed to upload document, upload unstructured text document")
+            raise ValueError(f"{e}")

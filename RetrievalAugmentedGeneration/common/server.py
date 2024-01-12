@@ -119,7 +119,7 @@ async def upload_document(request: Request, file: UploadFile = File(...)) -> JSO
     except Exception as e:
         logger.error("Error from /uploadDocument endpoint. Ingestion of file: " + file.filename + " failed with error: " + str(e))
         return JSONResponse(
-            content={"message": f"Ingestion of file: " + file.filename + " failed with error: " + str(e)}, status_code=500
+            content={"message": str(e)}, status_code=500
         )
 
 
