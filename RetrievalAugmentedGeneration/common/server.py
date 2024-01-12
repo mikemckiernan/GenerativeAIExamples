@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 # create the FastAPI server
 app = FastAPI()
 
-EXAMPLE_DIR = "RetrievalAugmentedGeneration/examples"
+EXAMPLE_DIR = "RetrievalAugmentedGeneration/example"
 
 class Prompt(BaseModel):
     """Definition of the Prompt API data type."""
@@ -60,12 +60,7 @@ def import_example() -> None:
     The example directory is expected to have a python file where the example class is defined.
     """
 
-    name = os.getenv("RAG_EXAMPLE", "developer_rag")
-    example_path = os.path.join(EXAMPLE_DIR, name)
-    if not os.path.exists(example_path):
-        raise ValueError(f"Could not find example directory {example_path}")
-
-    for root, dirs, files in os.walk(example_path):
+    for root, dirs, files in os.walk(EXAMPLE_DIR):
         for file in files:
             if not file.endswith(".py"):
                 continue
@@ -88,7 +83,7 @@ def import_example() -> None:
                 except:
                     raise ValueError(f"Class {name} is not implemented and could not be instantiated.")
 
-    raise NotImplementedError(f"Could not find a valid example class in {example_path}")
+    raise NotImplementedError(f"Could not find a valid example class in {EXAMPLE_DIR}")
 
 
 @app.post("/uploadDocument")

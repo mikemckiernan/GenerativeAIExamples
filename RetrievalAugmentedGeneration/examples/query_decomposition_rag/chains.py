@@ -49,14 +49,6 @@ from RetrievalAugmentedGeneration.common.base import BaseExample
 
 logger = logging.getLogger(__name__)
 
-FINAL_PROMPT_TEMPLATE = """<s>[INST] <<SYS>>
-Use the following context to answer the user's question. If you don't know the answer,
-just say that you don't know, don't try to make up an answer.
-<</SYS>>
-<s>[INST] Context: {context} Question: {question} Only return the helpful
- answer below and nothing else. Helpful answer:[/INST]"
-"""
-
 llm = get_llm()
 DOCS_DIR = os.path.abspath("./uploaded_files")
 vector_store_path = "vectorstore.pkl"
