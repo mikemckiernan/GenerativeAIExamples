@@ -99,12 +99,17 @@ def build_page(client: chat_client.ChatClient) -> gr.Blocks:
                     value=tts_language_list[0],
                 )
                 all_voices = []
-                for model in tts_utils.TTS_MODELS:
-                    all_voices.extend(tts_utils.TTS_MODELS[model]['voices'])
+                try:
+                    for model in tts_utils.TTS_MODELS:
+                        all_voices.extend(tts_utils.TTS_MODELS[model]['voices'])
+                    default_voice = tts_utils.TTS_MODELS[tts_language_list[0]]['voices'][0]                    
+                except:
+                    all_voices.append("No TTS voices available")
+                    default_voice = "No TTS voices available"
                 tts_voice_dropdown = gr.components.Dropdown(
                     label="TTS Voice",
                     choices=all_voices,
-                    value=tts_utils.TTS_MODELS[tts_language_list[0]]['voices'][0],
+                    value=default_voice,
                 )
 
         # audio and text input boxes
