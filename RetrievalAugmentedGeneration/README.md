@@ -274,17 +274,17 @@ Reference:
 
 ![Grace query failure](../notebooks/imgs/grace_noanswer_with_riva.png)
 
-5. If you encounter an error message reading "Media devices could not be accessed" when you first attempt to transcribe a voice query, 
+5. If you encounter an error message reading "Media devices could not be accessed" when you first attempt to transcribe a voice query,
 
 ![Media device access error](../notebooks/imgs/media_device_access_error.png)
 
-carry out the following steps: 
+carry out the following steps:
 
-  - Open ``chrome://flags`` in another browser tab. 
+  - Open ``chrome://flags`` in another browser tab.
 
-  - Search for "insecure origins treated as secure". 
+  - Search for "insecure origins treated as secure".
 
-  - Copy ``http://host-ip:8090`` into the associated text box. 
+  - Copy ``http://host-ip:8090`` into the associated text box.
 
   - Select "Enabled" in the adjacent dropdown menu.
 
@@ -627,7 +627,7 @@ CONTAINER ID   NAMES                  STATUS
 
 ### 6: QA Chatbot -- NemoTron Model
 
-This example deploys a developer RAG pipeline for chat QA and serves inference via the NeMo Framework inference container using NeMoTron model
+This example deploys a developer RAG pipeline for chat QA and serves inference via the NeMo Framework inference container using NeMoTron model and showcases inference using sample notebook.
 
 1. Download [NeMoTron chat checkpoint](https://huggingface.co/nvidia/nemotron-3-8b-chat-4k-sft) from HuggingFace
 
@@ -635,12 +635,18 @@ This example deploys a developer RAG pipeline for chat QA and serves inference v
 git-lfs clone https://huggingface.co/nvidia/nemotron-3-8b-chat-4k-sft
 ```
 
-2. Make sure the relative model path of nemotron-3-8b-chat-4k-sft model is updated in `/GenerativeAIExamples/deploy/compose/compose-nemotron.env`
+2. Make sure the absolute model path of nemotron-3-8b-chat-4k-sft model is updated in `/GenerativeAIExamples/deploy/compose/compose.env`. Set the below values in `compose.env` file.
+
+```
+export MODEL_DIRECTORY="/home/nvidia/nemotron-3-8b-chat-4k-sft" # Example path
+export MODEL_ARCHITECTURE="gptnext"
+export MODEL_NAME="nemotron-3-8b-chat-4k-sft"
+```
 
 3. Build and deploy the nemotron workflow
 
 ```
-source deploy/compose/compose-nemotron.env
+source deploy/compose/compose.env
 docker compose -f deploy/compose/docker-compose-nemotron.yaml build
 docker compose -f deploy/compose/docker-compose-nemotron.yaml up -d
 ```
@@ -654,6 +660,10 @@ I0107 03:03:38.679626 260 http_server.cc:187] Started Metrics Service at 0.0.0.0
 5. Run `02_langchain_simple.ipynb` for Document Question-Answering with LangChain based using NeMoTron model.
 
 [Optional] Run `00-llm-non-streaming-nemotron.ipynb` to send request to LLM.
+
+> ⚠️ **NOTE**:
+- Nemotron models do not support streaming.
+
 <hr>
 
 ### Additional
