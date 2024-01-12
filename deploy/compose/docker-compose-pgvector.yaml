@@ -112,8 +112,8 @@ services:
     container_name: llm-playground
     image: nvcr.io/nvidian/enterprise-rag:0.3.0-rc1-llm-playground
     build:
-      context: ../.././RetrievalAugmentedGeneration/frontend/
-      dockerfile: Dockerfile
+      context: ../../RetrievalAugmentedGeneration/
+      dockerfile: ./frontend/Dockerfile
     command: --port 8090
     environment:
       APP_SERVERURL: http://query
