@@ -180,7 +180,7 @@ class QueryDecompositionChatbot(BaseExample):
                 logger.warning("No documents available to process!")
         except Exception as e:
             logger.error(f"Failed to ingest document due to exception {e}")
-            raise ValueError("Failed to upload document, upload unstructured text document")
+            raise ValueError("Failed to upload document. Please upload an unstructured text document.")
 
 
     def llm_chain(

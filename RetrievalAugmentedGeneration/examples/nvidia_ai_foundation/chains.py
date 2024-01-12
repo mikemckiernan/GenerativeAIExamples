@@ -60,7 +60,7 @@ class NvidiaAIFoundation(BaseExample):
                 logger.warning("No documents available to process!")
         except Exception as e:
             logger.error(f"Failed to ingest document due to exception {e}")
-            raise ValueError("Failed to upload document, upload unstructured text document")
+            raise ValueError("Failed to upload document. Please upload an unstructured text document.")
 
     def llm_chain(
         self, context: str, question: str, num_tokens: str
@@ -144,7 +144,7 @@ class NvidiaAIFoundation(BaseExample):
                         "content": doc.page_content
                         }
                     )
-                return docs
+                return result
             return []
         except Exception as e:
             logger.error(f"Error from /documentSearch endpoint. Error details: {e}")

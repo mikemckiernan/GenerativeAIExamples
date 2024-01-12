@@ -79,7 +79,7 @@ class QAChatbot(BaseExample):
             logger.info(f"Document {filename} ingested successfully")
         except Exception as e:
             logger.error(f"Failed to ingest document due to exception {e}")
-            raise ValueError("Failed to upload document, upload unstructured text document")
+            raise ValueError("Failed to upload document. Please upload an unstructured text document.")
 
     def llm_chain(self, context: str, question: str, num_tokens: int) -> Generator[str, None, None]:
         """Execute a simple LLM chain using the components defined above."""
