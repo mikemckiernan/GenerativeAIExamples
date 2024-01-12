@@ -4,7 +4,7 @@ Retrieval Augmented Generation (RAG) generates up-to-date and domain-specific an
 
 ## Developer RAG Examples
 
-1. [QA Chatbot -- NVIDIA AI Foundation Inference endpoint](#1-qa-chatbot----nvidia-ai-foundation-inference-endpoint)
+1. [QA Chatbot -- No-GPU using NVIDIA AI Foundation](#1-qa-chatbot----nvidia-ai-foundation-inference-endpoint)
 2. [QA Chatbot -- A100/H100/L40S](#2-qa-chatbot----a100h100l40s-gpu)
 3. [QA Chatbot -- Multi-GPU](#3-qa-chatbot-multi-gpu----a100h100l40s)
 4. [QA Chatbot -- Quantized LLM model](#4-qa-chatbot-with-quantized-llm-model----a100h100l40s)
@@ -662,10 +662,10 @@ I0107 03:03:38.679626 260 http_server.cc:187] Started Metrics Service at 0.0.0.0
 [Optional] Run `00-llm-non-streaming-nemotron.ipynb` to send request to LLM.
 
 > ⚠️ **NOTE**:
-- Nemotron models do not support streaming.
+- Nemotron models do not support streaming in this release.
 
 <hr>
 
-### Additional
+### Learn More
 
-1. [NVIDIA RAG Chatbot Developer Guide](https://docs.nvidia.com/ai-enterprise/workflows-generative-ai/0.1.0/customized-development.html)
+To deep dive into different components and workflow used by the examples, please refer to the [Developer Guide.](../docs/README.md)
