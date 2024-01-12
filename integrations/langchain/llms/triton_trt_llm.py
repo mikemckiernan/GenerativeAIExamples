@@ -82,9 +82,9 @@ if USE_LANGCHAIN:
         def validate_environment(cls, values: Dict[str, Any]) -> Dict[str, Any]:
             """Validate that python package exists in environment."""
             try:
-                # if values.get("streaming", True):
-                #     values["client"] = GrpcTritonClient(values["server_url"])
-                # else:
+                if values.get("streaming", True):
+                    values["client"] = GrpcTritonClient(values["server_url"])
+                else:
                 values["client"] = HttpTritonClient(values["server_url"])
 
             except ImportError as err:
