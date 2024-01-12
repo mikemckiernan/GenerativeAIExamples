@@ -233,7 +233,7 @@ def _stream_predict(
     if use_knowledge_base:
         documents = client.search(prompt = question)
 
-    for chunk in client.predict(question, use_knowledge_base, OUTPUT_TOKENS):
+    for chunk in client.predict(query=question, use_knowledge_base=use_knowledge_base, num_tokens=OUTPUT_TOKENS):
         if chunk:
             chunks += chunk
             yield "", chat_history + [[question, chunks]], documents, ""
