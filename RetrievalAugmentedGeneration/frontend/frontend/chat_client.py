@@ -117,8 +117,11 @@ class ChatClient:
                     str({"server_url": url, "file": fpath}),
                 )
 
-                _ = requests.post(
+                resp = requests.post(
                     url, headers=headers, files=files, timeout=600  # type: ignore [arg-type]
                 )
+                if resp.status_code == 500:
+                     raise ValueError(f"{resp.json().get('message', 'Failed to upload document')}")
         except Exception as e:
             _LOGGER.error(f"Failed to get response from /uploadDocument endpoint of chain-server. Error details: {e}. Refer to chain-server logs for details.")
+            raise ValueError(f"{e}")

@@ -49,33 +49,37 @@ class QAChatbot(BaseExample):
     def ingest_docs(self, data_dir: str, filename: str):
         """Ingest documents to the VectorDB."""
 
-        logger.info(f"Ingesting {filename} in vectorDB")
-        _, ext = os.path.splitext(filename)
+        try:
+            logger.info(f"Ingesting {filename} in vectorDB")
+            _, ext = os.path.splitext(filename)
 
-        if ext.lower() == ".pdf":
-            PDFReader = download_loader("PDFReader")
-            loader = PDFReader()
-            documents = loader.load_data(file=Path(data_dir))
+            if ext.lower() == ".pdf":
+                PDFReader = download_loader("PDFReader")
+                loader = PDFReader()
+                documents = loader.load_data(file=Path(data_dir))
 
-        else:
-            unstruct_reader = download_loader("UnstructuredReader")
-            loader = unstruct_reader()
-            documents = loader.load_data(file=Path(data_dir), split_documents=False)
+            else:
+                unstruct_reader = download_loader("UnstructuredReader")
+                loader = unstruct_reader()
+                documents = loader.load_data(file=Path(data_dir), split_documents=False)
 
-        encoded_filename = filename[:-4]
-        if not is_base64_encoded(encoded_filename):
-            encoded_filename = base64.b64encode(encoded_filename.encode("utf-8")).decode(
-                "utf-8"
-            )
+            encoded_filename = filename[:-4]
+            if not is_base64_encoded(encoded_filename):
+                encoded_filename = base64.b64encode(encoded_filename.encode("utf-8")).decode(
+                    "utf-8"
+                )
 
-        for document in documents:
-            document.metadata = {"filename": encoded_filename}
+            for document in documents:
+                document.metadata = {"filename": encoded_filename}
 
-        index = get_vector_index()
-        node_parser = LangchainNodeParser(get_text_splitter())
-        nodes = node_parser.get_nodes_from_documents(documents)
-        index.insert_nodes(nodes)
-        logger.info(f"Document {filename} ingested successfully")
+            index = get_vector_index()
+            node_parser = LangchainNodeParser(get_text_splitter())
+            nodes = node_parser.get_nodes_from_documents(documents)
+            index.insert_nodes(nodes)
+            logger.info(f"Document {filename} ingested successfully")
+        except Exception as e:
+            logger.error(f"Failed to ingest document due to exception {e}")
+            raise ValueError("Failed to upload document. Please upload an unstructured text document.")
 
     def llm_chain(self, context: str, question: str, num_tokens: int) -> Generator[str, None, None]:
         """Execute a simple LLM chain using the components defined above."""

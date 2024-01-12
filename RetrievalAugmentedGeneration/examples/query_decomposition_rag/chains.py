@@ -159,24 +159,29 @@ class QueryDecompositionChatbot(BaseExample):
     def ingest_docs(self, file_name: str, filename: str):
         """Ingest documents to the VectorDB."""
 
-        # TODO: Load embedding created in older conversation, memory persistance
-        # We initialize class in every call therefore it should be global
-        global vectorstore
-        # Load raw documents from the directory
-        # Data is copied to `DOCS_DIR` in common.server:upload_document
-        _path = os.path.join(DOCS_DIR, filename)
-        raw_documents = UnstructuredFileLoader(_path).load()
+        try:
+            # TODO: Load embedding created in older conversation, memory persistance
+            # We initialize class in every call therefore it should be global
+            global vectorstore
+            # Load raw documents from the directory
+            # Data is copied to `DOCS_DIR` in common.server:upload_document
+            _path = os.path.join(DOCS_DIR, filename)
+            raw_documents = UnstructuredFileLoader(_path).load()
 
-        if raw_documents:
-            text_splitter = CharacterTextSplitter(chunk_size=settings.text_splitter.chunk_size, chunk_overlap=settings.text_splitter.chunk_overlap)
-            documents = text_splitter.split_documents(raw_documents)
-            if vectorstore:
-                vectorstore.add_documents(documents)
+            if raw_documents:
+                text_splitter = CharacterTextSplitter(chunk_size=settings.text_splitter.chunk_size, chunk_overlap=settings.text_splitter.chunk_overlap)
+                documents = text_splitter.split_documents(raw_documents)
+                if vectorstore:
+                    vectorstore.add_documents(documents)
+                else:
+                    vectorstore = FAISS.from_documents(documents, document_embedder)
+                logger.info("Vector store created and saved.")
             else:
-                vectorstore = FAISS.from_documents(documents, document_embedder)
-            logger.info("Vector store created and saved.")
-        else:
-            logger.warning("No documents available to process!")
+                logger.warning("No documents available to process!")
+        except Exception as e:
+            logger.error(f"Failed to ingest document due to exception {e}")
+            raise ValueError("Failed to upload document. Please upload an unstructured text document.")
+
 
     def llm_chain(
         self, context: str, question: str, num_tokens: str
