@@ -32,26 +32,6 @@ services:
       retries: 3
       start_period: 10m
 
-  jupyter-server:
-    container_name: notebook-server
-    image: notebook-server:latest
-    build:
-      context: ../../
-      dockerfile: ./notebooks/Dockerfile.notebooks
-    ports:
-    - "8888:8888"
-    expose:
-    - "8888"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
-    depends_on:
-      - "llm"
-
   pgvector:
     container_name: pgvector
     image: ankane/pgvector:v0.5.1
