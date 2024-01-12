@@ -273,13 +273,33 @@ Reference:
 
 ![Grace query failure](../notebooks/imgs/grace_noanswer_with_riva.png)
 
-5.  Upload the sample data set to the <B>Knowledge Base</B> tab.
+5. If you encounter an error message reading "Media devices could not be accessed" when you first attempt to transcribe a voice query, 
+
+![Media device access error](../notebooks/imgs/media_device_access_error.png)
+
+carry out the following steps: 
+
+  - Open ``chrome://flags`` in another browser tab. 
+
+  - Search for "insecure origins treated as secure". 
+
+  - Copy ``http://host-ip:8090`` into the associated text box. 
+
+  - Select "Enabled" in the adjacent dropdown menu.
+
+  - Click on the "Relaunch" button at the bottom right of the page.
+
+  - Grant ``http://host-ip:8090`` access to your microphone.
+
+![Fix media device access error in Chrome Flags](../notebooks/imgs/chrome_flags_fix_media_device_access_error.png)
+
+6.  Upload the sample data set to the <B>Knowledge Base</B> tab.
 
 > ⚠️ **NOTE**: ``dataset.zip`` is located in the ``notebooks`` directory. Unzip the archive and upload the PDFs.
 
-6. Return to **Converse** tab and check **[X] Use knowledge base**.
+7. Return to **Converse** tab and check **[X] Use knowledge base**.
 
-7. Retype (or re-transcribe) the question: "How many cores does the Grace superchip contain?"
+8. Retype (or re-transcribe) the question: "How many cores does the Grace superchip contain?"
 
 ![Grace query success](../notebooks/imgs/grace_answer_with_riva.png)
 
@@ -368,7 +388,7 @@ This example deploys a developer RAG pipeline for chat QA and serves inference v
 
 #### 3.1 Prepare the environment
 
-1. Follow steps 1 - 3 in the ["Prepare the environment" section of example 02](#21-prepare-the-environment).
+1. Follow the steps in the ["Prepare the environment" section of example 02](#21-prepare-the-environment).
 
 #### 3.2 Deploy
 
