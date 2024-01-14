@@ -113,7 +113,7 @@ Reference
 
 #### 1.2 Deploy
 
-**Downloading the model**
+**Downloading the LLM model**
 1. You can download the model from NGC or generate model repository.
 
     The models available in NGC are compiled for A100 machine, if you're using any other GPU you need to manually create the system specific TRT-LLM plan files. To understand this workflow please refer [model_conversion.md](../docs/rag/model_conversion.md). Refer to  [Nemo Inference Microservice(NIM)](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms) to know more about this.
@@ -148,6 +148,22 @@ Reference
     ```
     3. Check `model-store` directory after unzipping in the same directory.
 
+**Downloading embedding the model**
+1. You can download the embedding model from NGC.
+
+    The embedding models available in NGC are compiled for A100 and L4 machine, model conversion for any other GPU is not supported as of now. Refer to  [Nemo Retriever Embedding Microservice](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemo-retriever-embedding-microservice) to know more about this.
+
+    **Note**: List of supported model and their version are mentioned below.
+    | Model Name  | Model Version Supported |
+    | ------------- |:-------------:|
+    | [NV-Embed-QA-003](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/nv-embed-qa)      |   A100  | ohlfw0olaadg/ea-participants/nv-embed-qa:003-A100     |
+    | [NV-Embed-QA-003](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/nv-embed-qa)      |    L4   | ohlfw0olaadg/ea-participants/nv-embed-qa:003-L4     |
+
+    1. Download the embedding model from ngc
+    ```
+    ngc registry model download-version "ohlfw0olaadg/ea-participants/nv-embed-qa:003-A100"
+    ```
+
 **Deploying the model**
 1. Set the absolute path to the model location in compose.env
 
@@ -161,6 +177,9 @@ Modify ``compose.env`` in the ``deploy/compose`` directory to set your environme
 
     # the name of the model being used - only for displaying on frontend
     export MODEL_NAME="llama-2-13b-chat"
+
+    # full path to the model store directory storing the nemo embedding model
+    export EMBEDDING_MODEL_DIRECTORY="/home/nvidia/nv-embed-qa_v003-A100"
 
 2. [OPTIONAL] the config file for chain server can be updated in compose.env
     ```
