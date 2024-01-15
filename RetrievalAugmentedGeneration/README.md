@@ -257,7 +257,7 @@ CONTAINER ID   NAMES                  STATUS
 cbd3cf65ce7e   pgvector                     Up 22 hours
 ```
 
-After deployment is successful, you can follow steps from [Test](#23-test) to verify workflow.
+After deployment is successful, you can follow steps from [Test](#13-test) to verify workflow.
 
 <hr>
 
