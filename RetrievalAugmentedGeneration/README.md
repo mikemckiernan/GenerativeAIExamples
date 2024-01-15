@@ -8,7 +8,7 @@ Retrieval Augmented Generation (RAG) generates up-to-date and domain-specific an
 2. [QA Chatbot -- A100/H100/L40S](#2-qa-chatbot----a100h100l40s-gpu)
 3. [QA Chatbot -- Multi-GPU](#3-qa-chatbot-multi-gpu----a100h100l40s)
 4. [QA Chatbot -- Quantized LLM model](#4-qa-chatbot-with-quantized-llm-model----a100h100l40s)
-5. [QA Chatbot -- Task Decomposition](#5-qa-chatbot-task-decomposition----a100h100l40s)
+5. [QA Chatbot -- Task Decomposition](#5-qa-chatbot-with-task-decomposition-example----a100h100l40s)
 6. [QA Chatbot -- NemoTron Model](#6-qa-chatbot----nemotron-model)
 
 <hr>
@@ -110,7 +110,9 @@ This example deploys a developer RAG pipeline for chat QA and serves inferencing
 
 #### 2.1 Prepare the environment
 
-1. Verify NVIDIA GPU driver version 535 or later is installed.
+1. Install [Docker Engine and Docker Compose.](https://docs.docker.com/engine/install/ubuntu/)
+
+2. Verify NVIDIA GPU driver version 535 or later is installed.
 
 ``` $ nvidia-smi --query-gpu=driver_version --format=csv,noheader
 535.129.03
@@ -127,9 +129,9 @@ Attached GPUs                             : 1
 GPU 00000000:CA:00.0
     Compute Mode                          : Default
 ```
-Reference: [NVIDIA Linux driver installation instructions](https://docs.nvidia.com/datacenter/tesla/tesla-installation-notes/index.html)
+Reference: [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) and [NVIDIA Linux driver installation instructions](https://docs.nvidia.com/datacenter/tesla/tesla-installation-notes/index.html)
 
-2. Clone the Generative AI examples Git repository.
+3. Clone the Generative AI examples Git repository.
 
 > ⚠️ **NOTE**: This example requires Git Large File Support (LFS)
 
@@ -139,8 +141,6 @@ git clone git@github.com:NVIDIA/GenerativeAIExamples.git
 cd GenerativeAIExamples/
 git lfs pull
 ```
-
-3. Install [Docker Engine and Docker Compose.](https://docs.docker.com/engine/install/ubuntu/)
 
 4. Verify the NVIDIA container toolkit is installed and configured as the default container runtime.
 
@@ -197,7 +197,7 @@ Reference:
 1. Clone the Llama Github.
 
 ```
-git clone git@github.com:facebookresearch/llama.git
+git clone https://github.com/facebookresearch/llama.git
 cd llama/
 ```
 
@@ -465,7 +465,7 @@ This example deploys a developer RAG pipeline for chat QA and serves inference v
 
 
 #### 4.2 Deploy
-1. Download Llama2-7b chat Chat Model Weights from [Meta by following steps 1-4 here](#downloading-the-model).
+1. Download Llama2-7b chat Chat Model Weights from huggingface as meta checkpoint does not have config.json.
 
 > ⚠️ **NOTE**: For this initial version only 7B chat model is supported on A100/H100/L40 GPUs.
 
