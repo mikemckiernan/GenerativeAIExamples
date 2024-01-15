@@ -121,7 +121,7 @@ services:
 
   query:
     container_name: chain-server
-    image: nvcr.io/nvidian/enterprise-rag:0.3.0-rc1-chain-server
+    image: nvcr.io/nvidian/enterprise-rag:0.3.0-rc2-chain-server
     build:
       context: ../../
       dockerfile: ./RetrievalAugmentedGeneration/Dockerfile
@@ -162,7 +162,7 @@ services:
 
   frontend:
     container_name: llm-playground
-    image: nvcr.io/nvidian/enterprise-rag:0.3.0-rc1-llm-playground
+    image: nvcr.io/nvidian/enterprise-rag:0.3.0-rc2-llm-playground
     build:
       context: ../../RetrievalAugmentedGeneration/
       dockerfile: ./frontend/Dockerfile
