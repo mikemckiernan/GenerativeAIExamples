@@ -49,7 +49,9 @@ This example deploys a enterprise RAG pipeline for chat QA and serves inferencin
 We've used [Llama2](https://ai.meta.com/llama/) and NV-Embed-QA-003 models as example defaults in this workflow, you should ensure that both the LLM and embedding model are appropriate for your use case, and validate that they are secure and have not been tampered with prior to use.
 
 #### 1.1 Prepare the environment
-1. Verify NVIDIA GPU driver version 535 or later is installed.
+1. Install [Docker Engine and Docker Compose](https://docs.docker.com/engine/install/ubuntu/).
+
+2. Verify NVIDIA GPU driver version 535 or later is installed.
 
 ```
 535.129.03
@@ -67,9 +69,9 @@ GPU 00000000:CA:00.0
     Compute Mode                          : Default
 
 ```
-Reference: [NVIDIA Linux driver installation instructions](https://docs.nvidia.com/datacenter/tesla/tesla-installation-notes/index.html)
+Reference: [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) and [NVIDIA Linux driver installation instructions](https://docs.nvidia.com/datacenter/tesla/tesla-installation-notes/index.html)
 
-2. Clone the Generative AI examples Git repository.
+3. Clone the Generative AI examples Git repository.
 > ⚠️ NOTE: This example requires Git Large File Support (LFS)
 ```
 sudo apt -y install git-lfs
@@ -77,8 +79,6 @@ git clone git@github.com:NVIDIA/GenerativeAIExamples.git
 cd GenerativeAIExamples/
 git lfs pull
 ```
-
-3. Install [Docker Engine and Docker Compose](https://docs.docker.com/engine/install/ubuntu/).
 
 4. Verify the NVIDIA container toolkit is installed and configured as the default container runtime.
 
