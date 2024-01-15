@@ -114,6 +114,8 @@ This example deploys a developer RAG pipeline for chat QA and serves inferencing
 
 2. Verify NVIDIA GPU driver version 535 or later is installed.
 
+    **Note**: This step is not required for Nvidia AI foundation workflow
+
 ``` $ nvidia-smi --query-gpu=driver_version --format=csv,noheader
 535.129.03
 
@@ -144,6 +146,8 @@ git lfs pull
 
 4. Verify the NVIDIA container toolkit is installed and configured as the default container runtime.
 
+    **Note**: This step is not required for Nvidia AI foundation workflow
+
 ```
 $ cat /etc/docker/daemon.json
 {
@@ -170,7 +174,7 @@ Login to `nvcr.io` using the following command:
 docker login nvcr.io
 ```
 
-6. Enable Riva ASR and TTS.
+6. [Optional] Enable Riva ASR and TTS.
 
     a. To launch a Riva server locally, please refer to the instructions in the [Riva Quick Start Guide](https://docs.nvidia.com/deeplearning/riva/user-guide/docs/quick-start-guide.html).
 
@@ -194,7 +198,10 @@ Reference:
 #### 2.2 Deploy
 
 ##### Downloading the model
-To download model checkpoint from huffingface refer [download hugging face checkpoint](../docs/rag/hf_model_download.md)
+You can download the model either from huggingface or meta.
+
+The steps mentioned here explains how to download from meta. If you are interested in downloading the model checkpoints from huggingface, follow the steps [here](../docs/rag/hf_model_download.md) instead.
+
 1. Clone the Llama Github.
 
 ```
@@ -299,7 +306,7 @@ carry out the following steps:
 
 > ⚠️ **NOTE**: ``dataset.zip`` is located in the ``notebooks`` directory. Unzip the archive and upload the PDFs.
 
-> knowledge base has timeout of `10 min`. Uploading large files may see ingestion failure depending on network bandwidth.
+> There is a timeout of `10 mins` set for the ingestion process. Uploading large files may see ingestion failure depending on network bandwidth.
 
 7. Return to **Converse** tab and check **[X] Use knowledge base**.
 
@@ -468,7 +475,7 @@ This example deploys a developer RAG pipeline for chat QA and serves inference v
 
 
 #### 4.2 Deploy
-1. [Download Llama2-7b chat Chat Model Weights](#downloading-the-model) from huggingface as meta checkpoint does not have config.json.
+1. [Download Llama2-7b chat Chat Model Weights](#downloading-the-model) from huggingface as meta checkpoint does not have the required files to quantize it.
 
 > ⚠️ **NOTE**: For this initial version only 7B chat model is supported on A100/H100/L40 GPUs.
 
