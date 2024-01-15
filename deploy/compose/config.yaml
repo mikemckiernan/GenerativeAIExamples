@@ -2,7 +2,7 @@ vector_store:
   # The configuration of the Vector Store connection.
 
   name: milvus
-  # The name of vector store db.
+  # The name of vector store db. Can be pgvector or milvus.
   # Type: str
   # ENV Variable: APP_VECTORSTORE_NAME
 
@@ -15,19 +15,19 @@ llm:
   # The configuration for the server hosting the Large Language models.
 
   model_engine: "triton-trt-llm"
-  # The backend name hosting the model. Options currently supported are: triton-trt-llm, ai-playground 
+  # The backend name hosting the model. Options currently supported are: triton-trt-llm, ai-playground
   # Type: str
   # ENV Variable: APP_LLM_MODELENGINE
 
   server_url: "llm:8001"
-  # The location of the server hosting the large language model. Use this option when model engine is 
+  # The location of the server hosting the large language model. Use this option when model engine is
   # set to triton-trt-llm, ignore this option if model_engine is set to "ai-playground"
   # Type: str
   # ENV Variable: APP_LLM_SERVERURL
 
   model_name: "ensemble"
   # if model_engine is "triton-trt-llm" set this to "ensemble"
-  # if model_engine is "ai-plaground" options are "llama2_13b", "llama2_70b", "mistral_7b" 
+  # if model_engine is "ai-plaground" options are "llama2_13b", "llama2_70b", "mistral_7b"
   # The name of the hosted model.
   # Type: str
   # ENV Variable: APP_LLM_MODELNAME
