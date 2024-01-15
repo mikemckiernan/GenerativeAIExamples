@@ -194,6 +194,7 @@ Reference:
 #### 2.2 Deploy
 
 ##### Downloading the model
+To download model checkpoint from huffingface refer [download hugging face checkpoint](../docs/rag/hf_model_download.md)
 1. Clone the Llama Github.
 
 ```
@@ -297,6 +298,8 @@ carry out the following steps:
 6.  Upload the sample data set to the <B>Knowledge Base</B> tab.
 
 > ⚠️ **NOTE**: ``dataset.zip`` is located in the ``notebooks`` directory. Unzip the archive and upload the PDFs.
+
+> knowledge base has timeout of `10 min`. Uploading large files may see ingestion failure depending on network bandwidth.
 
 7. Return to **Converse** tab and check **[X] Use knowledge base**.
 
@@ -465,7 +468,7 @@ This example deploys a developer RAG pipeline for chat QA and serves inference v
 
 
 #### 4.2 Deploy
-1. Download Llama2-7b chat Chat Model Weights from huggingface as meta checkpoint does not have config.json.
+1. [Download Llama2-7b chat Chat Model Weights](#downloading-the-model) from huggingface as meta checkpoint does not have config.json.
 
 > ⚠️ **NOTE**: For this initial version only 7B chat model is supported on A100/H100/L40 GPUs.
 
