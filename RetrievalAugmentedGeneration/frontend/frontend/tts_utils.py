@@ -32,7 +32,12 @@ _LOGGER = logging.getLogger(__name__)
 RIVA_API_URI = os.getenv("RIVA_API_URI", None)
 RIVA_API_KEY = os.getenv("RIVA_API_KEY", None)
 RIVA_FUNCTION_ID = os.getenv("RIVA_FUNCTION_ID", None)
-tts_sample_rate = int(os.getenv("TTS_SAMPLE_RATE", 48000))
+
+try:
+    tts_sample_rate = int(os.getenv("TTS_SAMPLE_RATE", 48000))
+except Exception as e:
+    _LOGGER.info('TTS_SAMPLE_RATE is not set to an integer value. Defaulting to 48000.')
+    tts_sample_rate = 48000
 
 # Establish a connection to the Riva server
 try:
@@ -41,12 +46,12 @@ try:
     if RIVA_API_KEY:
         use_ssl = True
         metadata.append(("authorization", "Bearer " + RIVA_API_KEY))
-    if RIVA_FUNCTION_ID: 
+    if RIVA_FUNCTION_ID:
         use_ssl = True
         metadata.append(("function-id", RIVA_FUNCTION_ID))
     auth = riva.client.Auth(
-        None, use_ssl=use_ssl, 
-        uri=RIVA_API_URI, 
+        None, use_ssl=use_ssl,
+        uri=RIVA_API_URI,
         metadata_args=metadata
     )
     _LOGGER.info('Created riva.client.Auth success')
@@ -55,7 +60,7 @@ except:
 
 # Obtain the TTS languages and voices available on the Riva server
 TTS_MODELS = dict()
-try: 
+try:
     tts_client = riva.client.SpeechSynthesisService(auth)
     config_response = tts_client.stub.GetRivaSynthesisConfig(riva_tts.RivaSynthesisConfigRequest())
     for model_config in config_response.model_config:
@@ -75,7 +80,7 @@ try:
     _LOGGER.info(json.dumps(TTS_MODELS, indent=4))
 except:
     TTS_MODELS["No TTS languages available"] = "No TTS languages available"
-    gr.Info('The app could not find any available TTS languages. Thus, none will appear in the "TTS Language" or "TTS Voice" dropdown menus. Check that you are connected to a Riva server with TTS enabled.') 
+    gr.Info('The app could not find any available TTS languages. Thus, none will appear in the "TTS Language" or "TTS Voice" dropdown menus. Check that you are connected to a Riva server with TTS enabled.')
     _LOGGER.info('The app could not find any available TTS languages. Thus, none will appear in the "TTS Language" or "TTS Voice" dropdown menus. Check that you are connected to a Riva server with TTS enabled.')
 
 # Once the user selects a TTS language, narrow the options in the TTS voice
@@ -92,6 +97,8 @@ def update_voice_dropdown(language):
     return voice_dropdown
 
 def text_to_speech(text, language, voice, enable_tts, auth=auth):
+    if not enable_tts:
+        return None
     if language == "No TTS languages available":
         gr.Info('The app cannot access TTS services. Any attempt to synthesize audio will be unsuccessful. Check that you are connected to a Riva server with TTS enabled.')
         _LOGGER.info('The app cannot access TTS services. Any attempt to synthesize audio will be unsuccessful. Check that you are connected to a Riva server with TTS enabled.')
@@ -135,5 +142,5 @@ def text_to_speech(text, language, voice, enable_tts, auth=auth):
             yield (tts_sample_rate, np.frombuffer(result.audio, dtype=np.int16))
 
     _LOGGER.info(f"TTS request [{result.id.value}] last buffer latency: {time.time() - start_time} sec")
-    
+
     yield (tts_sample_rate, np.frombuffer(b'', dtype=np.int16))
