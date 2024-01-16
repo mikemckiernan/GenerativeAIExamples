@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# This is a simple standalone implemention showing rag pipeline using nv ai playground.
+# This is a simple standalone implementation showing rag pipeline using Nvidia AI Foundational models.
 # It uses a simple Streamlit UI and one file implementation of a minimalistic RAG pipeline.
 
 ############################################
