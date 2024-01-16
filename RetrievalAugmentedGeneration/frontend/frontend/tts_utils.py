@@ -43,6 +43,7 @@ except Exception as e:
 try:
     use_ssl = False
     metadata = []
+    auth = None
     if RIVA_API_KEY:
         use_ssl = True
         metadata.append(("authorization", "Bearer " + RIVA_API_KEY))
@@ -99,6 +100,9 @@ def update_voice_dropdown(language):
 def text_to_speech(text, language, voice, enable_tts, auth=auth):
     if not enable_tts:
         return None
+    if auth == None:
+        _LOGGER.info('Riva client did not initialize properly. Skipping text to speech.')
+        return None, None
     if language == "No TTS languages available":
         gr.Info('The app cannot access TTS services. Any attempt to synthesize audio will be unsuccessful. Check that you are connected to a Riva server with TTS enabled.')
         _LOGGER.info('The app cannot access TTS services. Any attempt to synthesize audio will be unsuccessful. Check that you are connected to a Riva server with TTS enabled.')
