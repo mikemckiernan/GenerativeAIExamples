@@ -117,7 +117,7 @@ Reference
 1. You can download the model from NGC or generate model repository.
 
     The models available in NGC are compiled for A100 machine, if you're using any other GPU you need to manually create the system specific TRT-LLM plan files. To understand this workflow please refer [model_conversion.md](../docs/rag/model_conversion.md). Refer to  [Nemo Inference Microservice(NIM)](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms) to know more about this.
-    
+
     You can skip the conversion steps mentioned here, if you are using A100 GPU based system.
 
     **Note**: List of supported model and their version are mentioned below. Make sure you're using model version provided in the table and not the latest one. You will see **inference failure** when using other model version.
@@ -186,7 +186,7 @@ Modify ``compose.env`` in the ``deploy/compose`` directory to set your environme
     APP_CONFIG_FILE=/dev/null
     ```
 
-    Note: If you're using `NV-GPT-8B-base`, use [nemotron_config.yaml](../deploy/compose/nemotron_config.yaml) as `APP_CONFIG_FILE` in [compose.env](../deploy/compose/compose.env) for proper response. Default prompts work well with **llama chat** model, if you're using **completion** model, prompts need to be finetuned accordingly.
+    Note: If you're using `NV-GPT-8B-base`, use [nemotron_config.yaml](../deploy/compose/nemotron_config.yaml) as `APP_CONFIG_FILE` in [compose.env](../deploy/compose/compose.env) for proper response.
 
 3. Deploy the enterprise RAG example via Docker compose using milvus vector store, steps to deploy RAG example with pgvector vector store is [here](#deploying-with-pgvector-vector-store).
 
@@ -284,4 +284,9 @@ Chain server's core logic resides in [developer_rag](./examples/developer_rag/) 
     ```
     source deploy/compose/compose.env; docker compose -f deploy/compose/docker-compose-enterprise.yaml up -d
     ```
+
+### Limitations
+1. The [existing prompts in nemotron config file](../deploy/compose/nemotron_config.yaml) do not work well for nemotron models. Some extra sentences may be added to response.
+2. Default prompts work well with **llama chat** model, if you're using **completion** model, prompts need to be finetuned accordingly.
+
 
