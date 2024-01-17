@@ -123,6 +123,8 @@ services:
     build:
       context: ../../
       dockerfile: ./RetrievalAugmentedGeneration/Dockerfile
+      args:
+        EXAMPLE_NAME: ${RAG_EXAMPLE}
     command: --port 8081 --host 0.0.0.0
     environment:
       APP_VECTORSTORE_URL: "http://milvus:19530"
@@ -132,7 +134,6 @@ services:
       APP_LLM_MODELENGINE: triton-trt-llm
       APP_CONFIG_FILE: ${APP_CONFIG_FILE}
       NVAPI_KEY: ${AI_PLAYGROUND_API_KEY}
-      RAG_EXAMPLE: ${RAG_EXAMPLE}
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
       ENABLE_TRACING: false
