@@ -629,6 +629,16 @@ CONTAINER ID   NAMES                  STATUS
 
 This example deploys a developer RAG pipeline for chat QA and serves inference via the NeMo Framework inference container using NeMoTron model and showcases inference using sample notebook.
 
+
+#### 6.1 Prepare the environment
+
+1. Follow the steps in the ["Prepare the environment" section of example 02](#21-prepare-the-environment).
+
+> ⚠️ **NOTE**: This example requires at least 100GB of GPU memory or two  A100 GPUs for locally deploying the nemotron model.
+
+
+#### 6.2 Deploy
+
 1. Download [NeMoTron chat checkpoint](https://huggingface.co/nvidia/nemotron-3-8b-chat-4k-sft) from HuggingFace
 
 ```
@@ -657,7 +667,10 @@ Successful TRT-LLM conversion and Triton Inference Server deployment logs will d
 I0107 03:03:38.638311 260 http_server.cc:3558] Started HTTPService at 0.0.0.0:8000
 I0107 03:03:38.679626 260 http_server.cc:187] Started Metrics Service at 0.0.0.0:8002
 ```
-5. Run `02_langchain_simple.ipynb` for Document Question-Answering with LangChain based using NeMoTron model.
+
+#### 6.3 Test
+
+1. Run `02_langchain_simple.ipynb` for Document Question-Answering with LangChain based using NeMoTron model.
 
 [Optional] Run `00-llm-non-streaming-nemotron.ipynb` to send request to LLM.
 
