@@ -35,12 +35,12 @@ This guide sheds more light on the infrastructure details and the execution flow
 
 The sample RAG worlflow provides a set of evaluation pipelines via notebooks which developers can use for benchmarking the default cannonical RAG example.
 There are also detailed guides on how to reproduce results and create datasets for the evaluation.
-* [RAG Evaluation](../rag/evaluation.md): Understand the different notebooks available.
+* [RAG Evaluation](./rag/evaluation.md): Understand the different notebooks available.
 
 ## Observability Tool
 
 Observability is a crucial aspect that facilitates the monitoring and comprehension of the internal state and behavior of a system or application.
-* [Observability tool](../rag/observability.md): Understand the tool and deployment steps for the observability tool.
+* [Observability tool](./rag/observability.md): Understand the tool and deployment steps for the observability tool.
 
 ## Others
 
