@@ -63,7 +63,7 @@ Follow [these instructions](../docs/rag/aiplayground.md) to sign up for an NVIDI
 ### 2: QA Chatbot -- A100/H100/L40S GPU
 
 This example deploys a developer RAG pipeline for chat QA and serves inferencing via the NeMo Framework inference container.
-> ⚠️ **NOTE**: This example requires an A100, H100, or L40S GPU.
+> ⚠️ **NOTE**: This example requires an A100, H100, or L40S GPU. Refer to the [support matrix](../docs/rag/support_matrix.md) to understand memory requirements for the model you are deploying.
 
 <table class="tg">
 <thead>
