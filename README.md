@@ -17,16 +17,18 @@ A RAG pipeline embeds multimodal data --  such as documents, images, and video -
 
 ### Developer RAG Examples
 
-The developer RAG examples run on a single VM. They demonstrate how to combine NVIDIA GPU acceleration with popular LLM programming frameworks using NVIDIA's [open source connectors](#open-source-integrations). The examples are easy to deploy via [Docker Compose](https://docs.docker.com/compose/) or [Ansible](https://www.ansible.com/).
+The developer RAG examples run on a single VM. They demonstrate how to combine NVIDIA GPU acceleration with popular LLM programming frameworks using NVIDIA's [open source connectors](#open-source-integrations). The examples are easy to deploy via [Docker Compose](https://docs.docker.com/compose/).
 
 Examples support local and remote inference endpoints. If you have a GPU, you can inference locally via [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM). If you don't have a GPU, you can inference and embed remotely via [NVIDIA AI Foundations endpoints](https://www.nvidia.com/en-us/ai-data-science/foundation-models/).
 
 | Model         | Embedding           | Framework        | Description               | Multi-GPU | TRT-LLM | NVIDIA AI Foundation | Triton | Vector Database |
 |---------------|-----------------------|------------|-------------------------|-----------|------------|-------------|---------|--------|
-| llama-2 | e5-large-v2 | Llamaindex | QA Chatbot  | [YES](RetrievalAugmentedGeneration/README.md#3-qa-chatbot-multi-gpu----a100h100l40s)        | [YES](RetrievalAugmentedGeneration/README.md#2-qa-chatbot----a100h100l40s-gpu)       | No | YES     | Milvus/[PGVector]((RetrievalAugmentedGeneration/README.md#2-qa-chatbot----a100h100l40s-gpu))|
-| mixtral_8x7b | nvolveqa_40k | Langchain | Nvidia AI foundation based QA Chatbot  | No        | No       | [YES](RetrievalAugmentedGeneration/README.md#1-qa-chatbot----nvidia-ai-foundation-inference-endpoint) | YES     | FAISS|
-| llama-2 | all-MiniLM-L6-v2 | Llama Index | QA Chatbot, GeForce, Windows | NO        | [YES](https://github.com/NVIDIA/trt-llm-rag-windows/tree/release/1.0)         | NO | NO     | FAISS |
-| llama-2 | nvolveqa_40k | Langchain | QA Chatbot, Task Decomposition Agent | No | No | [YES](RetrievalAugmentedGeneration/README.md#1-qa-chatbot----nvidia-ai-foundation-inference-endpoint) | YES | FAISS |
+| llama-2 | e5-large-v2 | Llamaindex | Canonical QA Chatbot | [YES](RetrievalAugmentedGeneration/README.md#3-qa-chatbot-multi-gpu----a100h100l40s)        | [YES](RetrievalAugmentedGeneration/README.md#2-qa-chatbot----a100h100l40s-gpu)       | No | YES     | Milvus/[PGVector]((RetrievalAugmentedGeneration/README.md#2-qa-chatbot----a100h100l40s-gpu))|
+| mixtral_8x7b | nvolveqa_40k | Langchain | [Nvidia AI foundation based QA Chatbot](RetrievalAugmentedGeneration/README.md#1-qa-chatbot----nvidia-ai-foundation-inference-endpoint)  | No        | No       | YES | YES     | FAISS|
+| llama-2 | all-MiniLM-L6-v2 | Llama Index | [QA Chatbot, GeForce, Windows](https://github.com/NVIDIA/trt-llm-rag-windows/tree/release/1.0)  | NO        | YES        | NO | NO     | FAISS |
+| llama-2 | nvolveqa_40k | Langchain | [QA Chatbot, Task Decomposition Agent](./RetrievalAugmentedGeneration/README.md#5-qa-chatbot-with-task-decomposition-example----a100h100l40s) | No | No | YES | YES | FAISS
+| mixtral_8x7b | nvolveqa_40k | Langchain | [Minimilastic example showcasing RAG using Nvidia AI foundation models](./examples/README.md#rag-in-5-minutes-example)  | No        | No       | YES | YES     | FAISS|
+
 
 
 ### Enterprise RAG Examples

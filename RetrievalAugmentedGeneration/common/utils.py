@@ -173,7 +173,7 @@ def get_llm() -> LangChainLLM:
     """Create the LLM connection."""
     settings = get_config()
 
-    logger.info(f"Using {settings.llm.model_engine} as model engine for llm")
+    logger.info(f"Using {settings.llm.model_engine} as model engine for llm. Model name: {settings.llm.model_name}")
     if settings.llm.model_engine == "triton-trt-llm":
         trtllm = TensorRTLLM(  # type: ignore
             server_url=settings.llm.server_url,
@@ -184,7 +184,7 @@ def get_llm() -> LangChainLLM:
     elif settings.llm.model_engine == "nv-ai-foundation":
         return ChatNVIDIA(model=settings.llm.model_name)
     else:
-        raise RuntimeError("Unable to find any supported Large Language Model server. Supported engines are triton-trt-llm and nemo-infer.")
+        raise RuntimeError("Unable to find any supported Large Language Model server. Supported engines are triton-trt-llm and nv-ai-foundation.")
 
 
 @lru_cache
