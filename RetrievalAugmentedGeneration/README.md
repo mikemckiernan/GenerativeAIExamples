@@ -507,12 +507,12 @@ This example deploys a developer RAG pipeline for chat QA and serves inference v
 
 5. Now, we will come back our repository, follow the steps below to deploy this quantized model using the inference server.
 
-  - Update [compose.env](../../deploy/compose/compose.env) with `MODEL_DIRECTORY` pointing to Llama2 model directory containing the quantized checkpoint.
+  - Update [compose.env](../deploy/compose/compose.env) with `MODEL_DIRECTORY` pointing to Llama2 model directory containing the quantized checkpoint.
 
   - Make sure the qantized PyTorch model (.pt) file generated using above steps is present inside the MODEL_DIRECTORY.
 
 
-  - Uncomment the QUANTIZATION variable which specifies quantization as "int4_awq" inside the [compose.env](../../deploy/compose/compose.env).
+  - Uncomment the QUANTIZATION variable which specifies quantization as "int4_awq" inside the [compose.env](../deploy/compose/compose.env).
   ```
     export QUANTIZATION="int4_awq"
   ```

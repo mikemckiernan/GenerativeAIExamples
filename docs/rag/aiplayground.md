@@ -54,7 +54,6 @@ $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES             STATUS
 70ef27ae4c91   llm-playground    Up 56 seconds
 4aacfbe89464   chain-server      Up 56 seconds
-42c5b628cd2b   evaluation        Up 56 seconds
 ```
 
 ## Test

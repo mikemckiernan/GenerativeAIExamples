@@ -23,7 +23,7 @@ LLM Inference server hosts the Large Language Model (LLM) with triton backend.
 
     model_engine: An enum specifying the backend name hosting the model. Options currently supported are:
     1. `triton-trt-llm` for using locally deployed LLM models. Follow steps [here](../../RetrievalAugmentedGeneration/README.md#local-llm-setup) to understand how to deploy and use on-prem deployed models.
-    2. `ai-playground` for using NV AI Playground based models. Follow steps [here](../../RetrievalAugmentedGeneration/README.md#1-qa-chatbot----nvidia-ai-foundation-inference-endpoint) to understand how to deploy and use TRT-LLM optimized playground models from cloud.
+    2. `nv-ai-foundation` for using NV AI Playground based models. Follow steps [here](../../RetrievalAugmentedGeneration/README.md#1-qa-chatbot----nvidia-ai-foundation-inference-endpoint) to understand how to deploy and use TRT-LLM optimized playground models from cloud.
 
 #### Text Splitter Configuration
 This section covers the settings for the Text Splitter component.
@@ -36,7 +36,7 @@ This section covers the settings for the Text Splitter component.
 The Embeddings section contains information required for generating embeddings.
 
     model_name: Indicate the name of the model used to generate embeddings.
-    model_engine: An enum specifying the backend name hosting the model, Currently huggingface and ai-playground are supported.
+    model_engine: An enum specifying the backend name hosting the model, Currently huggingface and nv-ai-foundation are supported.
     dimensions: Integer value specifying the dimensions of the embedding search model from huggingface.
     Note: Any change in `model_name`` may also necessitate changes in the model's `dimensions`, which can be adjusted using this field.
 
@@ -74,7 +74,7 @@ The Query service is the core component responsible for interacting with the llm
     APP_LLM_MODELNAME: The model name used by the Triton server.
     APP_LLM_MODELENGINE: An enum specifying the backend name hosting the model. Options currently supported are:
     1. `triton-trt-llm` if you are using locally deployed LLM models.
-    2. `ai-playground` if you are using NV AI Playground based models.
+    2. `nv-ai-foundation` if you are using NV AI Playground based models.
     APP_CONFIG_FILE: Provides the path to the configuration file used by the Chain Server or this container. Defaults to /dev/null
 
 #### Frontend
