@@ -107,9 +107,6 @@ def text_to_speech(text, language, voice, enable_tts, auth=auth):
         gr.Info('The app cannot access TTS services. Any attempt to synthesize audio will be unsuccessful. Check that you are connected to a Riva server with TTS enabled.')
         _LOGGER.info('The app cannot access TTS services. Any attempt to synthesize audio will be unsuccessful. Check that you are connected to a Riva server with TTS enabled.')
         return None, gr.update(interactive=False)
-    if not text or not voice or not enable_tts:
-        gr.Info("Provide all inputs or select an example")
-        return None, gr.update(interactive=False)
     if not text:
         gr.Info('No text from which to synthesize a voice has been provided')
         return None, gr.update(interactive=False)
