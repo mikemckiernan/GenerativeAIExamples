@@ -16,7 +16,7 @@ The RAG documentation is divided into the following sections:
 
 ## User Guides
 
-The user guides cover the core details of the provided sample cannonical developer rag example and how to configure and use different features to make your own chains.
+The user guides cover the core details of the provided sample canonical developer rag example and how to configure and use different features to make your own chains.
 
 * [LLM Inference Server](./rag/llm_inference_server.md): Learn about the service which accelerates LLM inference time using TRT-LLM.
 * [Integration with Nvidia AI Playground](./rag/aiplayground.md): Understand how to access **NVIDIA AI Playground** on NGC which allows developers to experience state of the art LLMs and embedding models accelerated on NVIDIA DGX Cloud with NVIDIA TensorRT and Triton Inference Server.
@@ -27,20 +27,20 @@ The user guides cover the core details of the provided sample cannonical develop
 
 ## Architecture Guide
 
-This guide sheds more light on the infrastructure details and the execution flow for a query when the runtime is used for the default cannonical RAG example:
+This guide sheds more light on the infrastructure details and the execution flow for a query when the runtime is used for the default canonical RAG example:
 
 * [Architecture](./rag/architecture.md): Understand the architecture of the sample RAG workflow.
 
 ## Evaluation Tool
 
-The sample RAG worlflow provides a set of evaluation pipelines via notebooks which developers can use for benchmarking the default cannonical RAG example.
+The sample RAG worlflow provides a set of evaluation pipelines via notebooks which developers can use for benchmarking the default canonical RAG example.
 There are also detailed guides on how to reproduce results and create datasets for the evaluation.
-* [RAG Evaluation](../rag/evaluation.md): Understand the different notebooks available.
+* [RAG Evaluation](./rag/evaluation.md): Understand the different notebooks available.
 
 ## Observability Tool
 
 Observability is a crucial aspect that facilitates the monitoring and comprehension of the internal state and behavior of a system or application.
-* [Observability tool](../rag/observability.md): Understand the tool and deployment steps for the observability tool.
+* [Observability tool](./rag/observability.md): Understand the tool and deployment steps for the observability tool.
 
 ## Others
 

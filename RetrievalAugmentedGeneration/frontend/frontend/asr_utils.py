@@ -46,15 +46,16 @@ RIVA_FUNCTION_ID = os.getenv("RIVA_FUNCTION_ID", None)
 try:
     use_ssl = False
     metadata = []
+    auth = None
     if RIVA_API_KEY:
         use_ssl = True
         metadata.append(("authorization", "Bearer " + RIVA_API_KEY))
-    if RIVA_FUNCTION_ID: 
+    if RIVA_FUNCTION_ID:
         use_ssl = True
         metadata.append(("function-id", RIVA_FUNCTION_ID))
     auth = riva.client.Auth(
-        None, use_ssl=use_ssl, 
-        uri=RIVA_API_URI, 
+        None, use_ssl=use_ssl,
+        uri=RIVA_API_URI,
         metadata_args=metadata
     )
     _LOGGER.info('Created riva.client.Auth success')
@@ -76,7 +77,7 @@ try:
             ASR_LANGS[language_name] = {"language_code": language_code, "model": model_config.model_name}
 except:
     ASR_LANGS["No ASR languages available"] = "No ASR languages available"
-    gr.Info('The app could not find any available ASR languages. Thus, none will appear in the "ASR Language" dropdown menu. Check that you are connected to a Riva server with ASR enabled.') 
+    gr.Info('The app could not find any available ASR languages. Thus, none will appear in the "ASR Language" dropdown menu. Check that you are connected to a Riva server with ASR enabled.')
     _LOGGER.info('The app could not find any available ASR languages. Thus, none will appear in the "ASR Language" dropdown menu. Check that you are connected to a Riva server with ASR enabled.')
 
 ASR_LANGS = dict(sorted(ASR_LANGS.items()))
@@ -115,7 +116,7 @@ def start_recording(audio, language, asr_session):
 
 def stop_recording(asr_session):
     _LOGGER.info('stop_recording')
-    try: 
+    try:
         asr_session.request_queue.put(None)
         asr_session.response_thread.join()
     except:
@@ -124,6 +125,11 @@ def stop_recording(asr_session):
 
 def transcribe_streaming(audio, language, asr_session, auth=auth):
     _LOGGER.info('transcribe_streaming')
+
+    if auth == None:
+        _LOGGER.info('Riva client did not initialize properly. Skipping transcription.')
+        return None, None
+
     if language == 'No ASR languages available':
         gr.Info('The app cannot access ASR services. Any attempt to transcribe audio will be unsuccessful. Check that you are connected to a Riva server with ASR enabled.')
         _LOGGER.info('The app cannot access ASR services. Any attempt to transcribe audio will be unsuccessful. Check that you are connected to a Riva server with ASR enabled.')
@@ -175,6 +181,11 @@ def transcribe_streaming(audio, language, asr_session, auth=auth):
 
 def transcribe_offline(audio, language, diarization, auth=auth):
     _LOGGER.info('transcribe_offline')
+
+    if auth == None:
+        _LOGGER.info('Riva client did not initialize properly. Skipping transcription.')
+        return None, None
+
     if language == 'No ASR languages available':
         gr.Info('The app cannot access ASR services. Any attempt to transcribe audio will be unsuccessful. Check that you are connected to a Riva server with ASR enabled.')
         _LOGGER.info('The app cannot access ASR services. Any attempt to transcribe audio will be unsuccessful. Check that you are connected to a Riva server with ASR enabled.')

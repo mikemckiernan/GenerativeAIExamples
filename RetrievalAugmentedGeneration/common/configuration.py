@@ -32,7 +32,7 @@ class VectorStoreConfig(ConfigWizard):
     )
     url: str = configfield(
         "url",
-        default="http://localhost:19530", # for pgvector `pgvector:5432`
+        default="http://milvus:19530", # for pgvector `pgvector:5432`
         help_txt="The host of the machine running Vector Store DB",
     )
     nlist: int = configfield(

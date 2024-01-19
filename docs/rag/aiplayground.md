@@ -35,13 +35,12 @@ $ git lfs pull
 ```
 $ cd GenerativeAIExamples
 
-$ grep NVIDIA_API_KEY deploy/compose/compose.env 
+$ grep NVIDIA_API_KEY deploy/compose/compose.env
  export NVIDIA_API_KEY="nvapi-*"
 ```
 
-3. Set the nv-ai-foundation example to run
+3. Set the nv-ai-foundation example in <i>compose.env</i>.
 ```
-grep RAG_EXAMPLE deploy/compose/compose.env
  export RAG_EXAMPLE="nvidia_ai_foundation"
 ```
 4. Deploy the developer RAG example via Docker compose.

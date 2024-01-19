@@ -9,7 +9,7 @@ There are 3 components needed for evaluating the performance of a RAG pipeline:
 3. Human-like evaluation of the generated response from the end-to-end pipeline.
 
 > ⚠️ **NOTE**
-This tool provides a set of notebooks that show examples of how to address these requirements in an automated fashion for the default cannonical developer rag example.
+This tool provides a set of notebooks that show examples of how to address these requirements in an automated fashion for the default canonical developer rag example.
 
 ### Synthetic Data Generation
 Using an existing knowledge base we can synthetically generate question|answer|context triplets using a LLM. This tool uses the Llama 2 70B model on [Nvidia AI Playground](https://www.nvidia.com/en-us/research/ai-playground/) for data generation.
