@@ -185,6 +185,13 @@ def get_llm() -> LangChainLLM:
         return LangChainLLM(llm=trtllm)
     elif settings.llm.model_engine == "nv-ai-foundation":
         return ChatNVIDIA(model=settings.llm.model_name)
+    elif settings.llm.model_engine == "nemo-infer":
+        nemo_infer = NemoInfer(
+            server_url=f"http://{settings.llm.server_url}/v1/completions",
+            model=settings.llm.model_name,
+            tokens=DEFAULT_NUM_TOKENS,
+        )
+        return LangChainLLM(llm=nemo_infer)
     else:
         raise RuntimeError("Unable to find any supported Large Language Model server. Supported engines are triton-trt-llm and nv-ai-foundation.")
 
