@@ -49,7 +49,7 @@ from RetrievalAugmentedGeneration.common.base import BaseExample
 
 logger = logging.getLogger(__name__)
 
-llm = get_llm()
+llm = get_llm().llm
 DOCS_DIR = os.path.abspath("./uploaded_files")
 vector_store_path = "vectorstore.pkl"
 document_embedder = get_embedding_model()
@@ -190,8 +190,6 @@ class QueryDecompositionChatbot(BaseExample):
                 ("user", "{input}"),
             ]
         )
-
-        llm = get_llm()
 
         chain = prompt_template | llm | StrOutputParser()
         augmented_user_input = (

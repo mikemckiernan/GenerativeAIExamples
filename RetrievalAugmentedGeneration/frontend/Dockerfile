@@ -1,4 +1,4 @@
-FROM docker.io/library/python:3.11-slim
+FROM nvcr.io/nvidia/pytorch:23.12-py3
 
 RUN mkdir /app
 COPY requirements.txt /app

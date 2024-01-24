@@ -57,7 +57,7 @@ embeddings:
   # Type: int
 
   model_engine: huggingface
-  # The backend name hosting the model, huggingface, nv-ai-foundation and nemo-embed are supported.
+  # The backend name hosting the model, huggingface, nv-ai-foundation are supported.
   # Type: str
   # ENV Variable: APP_EMBEDDINGS_MODELENGINE
 
