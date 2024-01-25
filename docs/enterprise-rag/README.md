@@ -116,7 +116,7 @@ Reference
 **Downloading the LLM model**
 1. You can download the model from NGC or generate model repository.
 
-    The models available in NGC are compiled for A100 machine, if you're using any other GPU you need to manually create the system specific TRT-LLM plan files. To understand this workflow please refer [model_conversion.md](../docs/rag/model_conversion.md). Refer to  [Nemo Inference Microservice(NIM)](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms) to know more about this.
+    The models available in NGC are compiled for A100 machine, if you're using any other GPU you need to manually create the system specific TRT-LLM plan files. To understand this workflow please refer [model_conversion.md](./model_conversion.md). Refer to  [Nemo Inference Microservice(NIM)](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms) to know more about this.
 
     You can skip the conversion steps mentioned here, if you are using A100 GPU based system.
 

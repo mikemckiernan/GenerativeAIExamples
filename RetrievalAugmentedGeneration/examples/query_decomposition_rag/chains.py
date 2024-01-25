@@ -34,8 +34,7 @@ from typing import List, Union, Dict, Any
 import json
 import jinja2
 import os
-
-import os
+import base64
 import logging
 from typing import Generator, List
 
@@ -44,12 +43,13 @@ from RetrievalAugmentedGeneration.common.utils import (
     get_llm,
     set_service_context,
     get_embedding_model,
+    get_doc_retriever
 )
 from RetrievalAugmentedGeneration.common.base import BaseExample
 
 logger = logging.getLogger(__name__)
 
-llm = get_llm().llm
+llm = get_llm()
 DOCS_DIR = os.path.abspath("./uploaded_files")
 vector_store_path = "vectorstore.pkl"
 document_embedder = get_embedding_model()
