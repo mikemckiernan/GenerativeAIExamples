@@ -78,13 +78,13 @@ services:
       MINIO_ACCESS_KEY: minioadmin
       MINIO_SECRET_KEY: minioadmin
     ports:
-      - "9001:9001"
-      - "9000:9000"
+      - "9011:9011"
+      - "9010:9010"
     volumes:
       - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/minio:/minio_data
-    command: minio server /minio_data --console-address ":9001"
+    command: minio server /minio_data --console-address ":9011" --address ":9010"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: ["CMD", "curl", "-f", "http://localhost:9010/minio/health/live"]
       interval: 30s
       timeout: 20s
       retries: 3
@@ -95,7 +95,7 @@ services:
     command: ["milvus", "run", "standalone"]
     environment:
       ETCD_ENDPOINTS: etcd:2379
-      MINIO_ADDRESS: minio:9000
+      MINIO_ADDRESS: minio:9010
       KNOWHERE_GPU_MEM_POOL_SIZE: 2048;4096
     volumes:
       - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/milvus:/var/lib/milvus
@@ -136,6 +136,9 @@ services:
       APP_EMBEDDINGS_SERVERURL: "embeddings:9080"
       APP_EMBEDDINGS_MODELNAME: ${EMBEDDING_MODEL_NAME:?please update the env file and source it before running}
       APP_EMBEDDINGS_MODELENGINE: nemo-embed
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      ENABLE_TRACING: false
     volumes:
       - ${APP_CONFIG_FILE}:${APP_CONFIG_FILE}
     ports:
@@ -164,13 +167,20 @@ services:
     container_name: llm-playground
     image: nvcr.io/ohlfw0olaadg/ea-rag-examples/enterprise-rag:0.3.0-llm-playground
     build:
-      context: ../../RetrievalAugmentedGeneration/
-      dockerfile: ./frontend/Dockerfile
+      context: ../.././RetrievalAugmentedGeneration/frontend/
+      dockerfile: Dockerfile
     command: --port 8090
     environment:
       APP_SERVERURL: http://query
       APP_SERVERPORT: 8081
-      APP_MODELNAME: ${MODEL_NAME:?please update the env file and source it before running}
+      APP_MODELNAME: ${MODEL_NAME:-${MODEL_ARCHITECTURE}}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      ENABLE_TRACING: false
+      RIVA_API_URI: ${RIVA_API_URI}
+      RIVA_API_KEY: ${RIVA_API_KEY}
+      RIVA_FUNCTION_ID: ${RIVA_FUNCTION_ID}
+      TTS_SAMPLE_RATE: ${TTS_SAMPLE_RATE}
     ports:
     - "8090:8090"
     expose:

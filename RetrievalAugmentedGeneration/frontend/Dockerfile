@@ -7,6 +7,8 @@ RUN apt-get update; \
     python3 -m pip --no-cache-dir install -r /app/requirements.txt; \
     python3 -m pip --no-cache-dir install nvidia-riva-client==2.14.0; \
     apt-get clean
+
+RUN apt-get remove python3-pip
 USER 1001
 COPY frontend /app/frontend
 

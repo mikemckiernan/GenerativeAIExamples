@@ -18,5 +18,7 @@ RUN if [ -f "/opt/RetrievalAugmentedGeneration/example/requirements.txt" ] ; the
     echo "Skipping example dependency installation, since requirements.txt was not found" ; \
     fi
 
+RUN apt-get remove python3-pip
+
 WORKDIR /opt
 ENTRYPOINT ["uvicorn", "RetrievalAugmentedGeneration.common.server:app"]
