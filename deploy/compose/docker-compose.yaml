@@ -37,7 +37,7 @@ services:
     image: notebook-server:latest
     build:
       context: ../../
-      dockerfile: ./notebooks/Dockerfile.notebooks
+      dockerfile: ./notebooks/Dockerfile.notebooks # replace GPU enabled Dockerfile ./notebooks/Dockerfile.gpu_notebook
     ports:
     - "8888:8888"
     expose:
