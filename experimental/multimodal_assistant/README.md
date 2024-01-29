@@ -4,6 +4,7 @@ Create a simple example to showcase multimodal RAG. It should be easy to adapt, 
 # Implemented Features
 - [RAG in 5 minutes Chatbot Video](https://youtu.be/N_OOfkEWcOk) Setup with NVIDIA AI Playground components
 - Source references with options to download the source document
+- Analytics through Streamlit at ```/?analytics=on```
 - Added user feedback and integrated with Google Sheets or other database
 - Add fact-check verification of results through a second LLM API call
 - Multimodal parsing of documents - images, tables, text through multimodal LLM APIs

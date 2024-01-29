@@ -30,7 +30,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-c', '--config', help = "Provide a chatbot config to run the deployment")
 
 st.set_page_config(
-        page_title = "ChatNeMo UI",
+        page_title = "Multimodal RAG Assistant",
         page_icon = ":speech_balloon:",
         layout = "wide",
 )
@@ -48,11 +48,6 @@ args = vars(parser.parse_args())
 cfg_arg = args["config"]
 
 # Initialize session state variables if not already present
-if 'selected_topic' not in st.session_state:
-    st.session_state['selected_topic'] = None
-
-if 'previous_topic' not in st.session_state:
-    st.session_state['previous_topic'] = None
 
 if 'prompt_value' not in st.session_state:
     st.session_state['prompt_value'] = None
@@ -124,43 +119,6 @@ if "retriever" not in st.session_state:
     st.session_state.retriever = Retriever(embedder=st.session_state.query_embedder , vector_client=st.session_state.vector_client)
 retriever = st.session_state.retriever
 
-def select_random_question(df, cluster_title):
-    # Filter DataFrame for the selected cluster
-    cluster_df = df[df['Cluster Title'] == cluster_title]
-    
-    # Check if the cluster DataFrame is not empty
-    if not cluster_df.empty:
-        # Select a random index from the cluster DataFrame
-        random_index = random.choice(cluster_df.index)
-        # Return the corresponding question
-        return cluster_df.loc[random_index, 'Questions']
-    else:
-        return "What does SOL stand for?"
-    
-if os.path.exists("clustered_data.pkl"):
-    df = pd.read_pickle("clustered_data.pkl")
-    topic_list = df['Cluster Title'].unique()
-    # Convert to a list
-    topic_list = topic_list.tolist()
-else:
-    topic_list = ["NVIDIA DGX SuperPOD and BasePOD Architecture",
-    "NVIDIA Professional Visualization and Virtual Workstations",
-    "NVIDIA AI Enterprise",
-    "NVIDIA BlueField-3 and SuperNICs",
-    "NVIDIA BlueField DPU Platform",
-    "NVIDIA Omniverse",
-    "NVIDIA ConnectX-6",
-    "NVIDIA AI Enterprise Solutions",
-    "NVIDIA A100 Performance Comparison",
-    "NVIDIA Earnings Dates",
-    "NVIDIA TensorRT and Inference Optimization",
-    "NVIDIA Virtual Workstations and Cloud Platforms",
-    "DGX Portfolio Updates",
-    "NVIDIA RTX Technology",
-    "NVIDIA Virtualization and Acceleration",
-    "NVIDIA Technology and Content Marketing",
-    "NVIDIA Business and Support"]
-
 messages = st.session_state.messages
 
 for n, msg in enumerate(messages):
@@ -215,7 +173,6 @@ for n, msg in enumerate(messages):
 
         if feedback_key not in st.session_state:
             st.session_state[feedback_key] = None
-        #st.markdown('<div style="text-align: right;"><strong>I am still learning. Click one of the icons below to provide feedback.</strong></div>', unsafe_allow_html=True)
         col1, col2 = st.columns(2)
         with col1:
             st.write("**Please provide feedback by clicking one of these icons:**")
@@ -224,7 +181,7 @@ for n, msg in enumerate(messages):
 
 # Check if the topic has changed
 if st.session_state['prompt_value'] == None:
-    prompt_value = "What does SOL stand for?"
+    prompt_value = "Hi, what can you help me with?"
     st.session_state["prompt_value"] = prompt_value
 
 colx, coly = st.columns([1,20])
@@ -246,9 +203,6 @@ with placeholder:
             submitted = st.form_submit_button("Chat")
     if submitted and len(prompt) > 0:
         placeholder.empty()
-        # Reset selected topic after form submission
-        st.session_state['selected_topic'] = None
-        st.session_state['previous_topic'] = None
         st.session_state['prompt_value'] = None
 
 if len(prompt) > 0 and submitted == True:
@@ -261,7 +215,6 @@ if len(prompt) > 0 and submitted == True:
     with st.spinner("Obtaining references from documents..."):
         BASE_DIR = os.path.abspath("vectorstore")
         CORE_DIR = os.path.join(BASE_DIR, config["core_docs_directory_name"])
-        # context, sources = get_relevant_docs_gpu(CORE_DIR, config["core_docs_directory_name"], transformed_query["text"])
         context, sources = retriever.get_relevant_docs(transformed_query["text"])
         st.session_state.sources = sources
         augmented_prompt = "Relevant documents:" + context + "\n\n[[QUESTION]]\n\n" + transformed_query["text"] #+ "\n" + config["footer"]
