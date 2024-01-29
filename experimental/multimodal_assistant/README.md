@@ -1,5 +1,5 @@
-# Customer Service RAG Chatbot with NVIDIA NeMo
-Create a reference architecture for customer service RAG which can be used by our customers to build specific use cases for their industry specific workflows. It should be easy to adapt, easy to build on top of and using NVIDIA microservices.  
+# Multimodal RAG Assistant with NVIDIA NeMo
+Create a simple example to showcase multimodal RAG. It should be easy to adapt, easy to build on top of and uses NVIDIA AI Foundation Models.  
 
 # Implemented Features
 - [RAG in 5 minutes Chatbot Video](https://youtu.be/N_OOfkEWcOk) Setup with NVIDIA AI Playground components
@@ -7,7 +7,7 @@ Create a reference architecture for customer service RAG which can be used by ou
 - Added user feedback and integrated with Google Sheets or other database
 - Add fact-check verification of results through a second LLM API call
 - Multimodal parsing of documents - images, tables, text through multimodal LLM APIs
-- [ ] Add conversational history with memory and summarization
+- Added simple conversational history with memory and summarization
 
 ## Setup Steps
 
