@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.3.0] - 2024-01-19
+## [0.3.0] - 2024-01-22
 
 ### Added
 
@@ -19,10 +19,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Upgraded Langchain and llamaindex dependencies for all container.
 - Restructured [README](./README.md) files for better intuitiveness.
 - Added provision to plug in multiple examples using [a common base class](./RetrievalAugmentedGeneration/common/base.py).
-- Changed `minio` service's port to `9010`from `9000`.
-- Moved `evaluation` directory from top level to under `tools`.
+- Changed `minio` service's port to `9010`from `9000` in docker based deployment.
+- Moved `evaluation` directory from top level to under `tools` and created a [dedicated compose file](./deploy/compose/docker-compose-evaluation.yaml).
 - Added an [experimental directory](./experimental/) for plugging in experimental features.
 - Modified notebooks to use TRTLLM and Nvidia AI foundation based connectors from langchain.
+- Changed `ai-playground` model engine name to `nv-ai-foundation` in configurations.
 
 ### Fixed
 

@@ -64,6 +64,8 @@ except Exception as e:
     logger.error(f"NVIDIA AI connector import failed with error: {e}")
 
 from integrations.langchain.llms.triton_trt_llm import TensorRTLLM
+from integrations.langchain.llms.nemo_infer import NemoInfer
+from integrations.langchain.embeddings.nemo_embed import NemoEmbeddings
 from RetrievalAugmentedGeneration.common import configuration
 
 if TYPE_CHECKING:
@@ -183,6 +185,13 @@ def get_llm() -> LangChainLLM:
         return LangChainLLM(llm=trtllm)
     elif settings.llm.model_engine == "nv-ai-foundation":
         return ChatNVIDIA(model=settings.llm.model_name)
+    elif settings.llm.model_engine == "nemo-infer":
+        nemo_infer = NemoInfer(
+            server_url=f"http://{settings.llm.server_url}/v1/completions",
+            model=settings.llm.model_name,
+            tokens=DEFAULT_NUM_TOKENS,
+        )
+        return LangChainLLM(llm=nemo_infer)
     else:
         raise RuntimeError("Unable to find any supported Large Language Model server. Supported engines are triton-trt-llm and nv-ai-foundation.")
 
@@ -208,6 +217,12 @@ def get_embedding_model() -> LangchainEmbedding:
         return LangchainEmbedding(hf_embeddings)
     elif settings.embeddings.model_engine == "nv-ai-foundation":
         return NVIDIAEmbeddings(model=settings.embeddings.model_name, model_type="passage")
+    elif settings.embeddings.model_engine == "nemo-embed":
+        nemo_embed = NemoEmbeddings(
+            server_url=f"http://{settings.embeddings.server_url}/v1/embeddings",
+            model_name=settings.embeddings.model_name,
+        )
+        return LangchainEmbedding(nemo_embed)
     else:
         raise RuntimeError("Unable to find any supported embedding model. Supported engine is huggingface.")
 

@@ -34,8 +34,7 @@ from typing import List, Union, Dict, Any
 import json
 import jinja2
 import os
-
-import os
+import base64
 import logging
 from typing import Generator, List
 
@@ -44,6 +43,7 @@ from RetrievalAugmentedGeneration.common.utils import (
     get_llm,
     set_service_context,
     get_embedding_model,
+    get_doc_retriever
 )
 from RetrievalAugmentedGeneration.common.base import BaseExample
 
@@ -190,8 +190,6 @@ class QueryDecompositionChatbot(BaseExample):
                 ("user", "{input}"),
             ]
         )
-
-        llm = get_llm()
 
         chain = prompt_template | llm | StrOutputParser()
         augmented_user_input = (

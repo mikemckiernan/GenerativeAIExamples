@@ -15,13 +15,13 @@ llm:
   # The configuration for the server hosting the Large Language models.
 
   model_engine: "triton-trt-llm"
-  # The backend name hosting the model. Options currently supported are: triton-trt-llm, ai-playground
+  # The backend name hosting the model. Options currently supported are: triton-trt-llm, nv-ai-foundation
   # Type: str
   # ENV Variable: APP_LLM_MODELENGINE
 
   server_url: "llm:8001"
   # The location of the server hosting the large language model. Use this option when model engine is
-  # set to triton-trt-llm, ignore this option if model_engine is set to "ai-playground"
+  # set to triton-trt-llm, ignore this option if model_engine is set to "nv-ai-foundation"
   # Type: str
   # ENV Variable: APP_LLM_SERVERURL
 
@@ -48,16 +48,23 @@ embeddings:
   # The configuration embedding models.
 
   model_name: intfloat/e5-large-v2
-  # The name embedding search model from huggingface or ai-playground.
+  # The name embedding search model from huggingface or nv-ai-foundation.
   # Type: str
+  # ENV Variable: APP_EMBEDDINGS_MODELNAME
 
   dimensions: 1024
   # The dimensions of the embedding search model from huggingface.
   # Type: int
 
   model_engine: huggingface
-  # The backend name hosting the model, huggingface and ai-playground are supported.
+  # The backend name hosting the model, huggingface, nv-ai-foundation are supported.
   # Type: str
+  # ENV Variable: APP_EMBEDDINGS_MODELENGINE
+
+  server_url: "embeddings:9080"
+  # The server url of nemo embedding microservice
+  # Type: str
+  # ENV Variable: APP_EMBEDDINGS_SERVERURL
 
 prompts:
   # The configuration for the prompts used for response generation.

@@ -1,5 +1,5 @@
 ARG BASE_IMAGE_URL=nvcr.io/nvidia/pytorch
-ARG BASE_IMAGE_TAG=23.08-py3
+ARG BASE_IMAGE_TAG=23.12-py3
 
 FROM ${BASE_IMAGE_URL}:${BASE_IMAGE_TAG}
 
@@ -17,6 +17,8 @@ RUN if [ -f "/opt/RetrievalAugmentedGeneration/example/requirements.txt" ] ; the
     python3 -m pip install --no-cache-dir -r /opt/RetrievalAugmentedGeneration/example/requirements.txt ; else \
     echo "Skipping example dependency installation, since requirements.txt was not found" ; \
     fi
+
+RUN apt-get remove python3-pip
 
 WORKDIR /opt
 ENTRYPOINT ["uvicorn", "RetrievalAugmentedGeneration.common.server:app"]
