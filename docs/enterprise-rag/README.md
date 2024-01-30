@@ -194,11 +194,9 @@ Modify ``compose.env`` in the ``deploy/compose`` directory to set your environme
 $ source deploy/compose/compose.env; docker compose -f deploy/compose/docker-compose-enterprise.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
-$ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES                     STATUS
 256da0ecdb7b   llm-playground               Up 48 minutes
 2974aa4fb2ce   chain-server                 Up 48 minutes
-4a8c4aebe4ad   notebook-server              Up 48 minutes
 0069c5e0b373   nemollm-inference-ms         Up 48 minutes
 6044c2b8b421   nemo-retriever-embedding-ms  Up 48 minutes
 5be2b57bb5c1   milvus-standalone            Up 48 minutes (healthy)
@@ -253,7 +251,6 @@ CONTAINER ID   NAMES                  STATUS
 8d0ab09fcb98   chain-server                 Up 22 hours
 0069c5e0b373   nemollm-inference-ms         Up 22 hours
 6044c2b8b421   nemo-retriever-embedding-ms  Up 22 hours
-85bd98ba3b24   notebook-server              Up 22 hours
 cbd3cf65ce7e   pgvector                     Up 22 hours
 ```
 
