@@ -33,9 +33,9 @@ The following describes how you can have this chatbot up-and-running in less tha
 
 4. Follow instructions available [here](https://milvus.io/docs/install_standalone-gpu-docker.md).
 
-5. Run the example using streamlit
+5. Go to the folder with this code and then run the example using streamlit
 ```
-streamlit run examples/5_mins_rag_no_gpu/main.py
+cd GenerativeAIExamples/experimental/multimodal_assistant && streamlit run Multimodal_Assistant.py
 ```
 
 6. Finally to test the deployed example, goto the URL `http://<host_ip>:8501` in a web browser. Click on `browse files` and select your knowledge source. After selecting click on `Upload!` button to complete the ingestion process.
