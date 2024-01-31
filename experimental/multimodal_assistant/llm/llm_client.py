@@ -16,7 +16,7 @@
 from llm.llm import create_llm
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
-
+from langchain_core.messages import HumanMessage
 
 class LLMClient:
     def __init__(self, model_name="mixtral_8x7b", model_type="NVIDIA"):
@@ -28,3 +28,11 @@ class LLMClient:
         response = chain.stream({"input": prompt})
 
         return response
+
+    def multimodal_invoke(self, b64_string, steer=False, creativity=0, quality=9, complexity=0, verbosity=8):
+        message = HumanMessage(content=[{"type": "text", "text": "Describe this image in detail:"},
+                                        {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{b64_string}"},}])
+        if steer:
+            return self.llm.invoke([message], labels={"creativity": creativity, "quality": quality, "complexity": complexity, "verbosity": verbosity})
+        else:
+            return self.llm.invoke([message])

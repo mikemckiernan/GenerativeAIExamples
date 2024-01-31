@@ -35,6 +35,9 @@ from retriever.vector import MilvusVectorClient, QdrantClient
 from retriever.retriever import Retriever
 from utils.feedback import feedback_kwargs
 
+from langchain_nvidia_ai_endpoints import ChatNVIDIA
+from langchain_core.messages import HumanMessage
+
 llm_client = LLMClient("mixtral_8x7b")
 
 # Start the analytics service (using browser.usageStats)
@@ -81,6 +84,9 @@ if "messages" not in st.session_state:
 if "sources" not in st.session_state:
     st.session_state.sources = []
 
+if "image_query" not in st.session_state:
+    st.session_state.image_query = ""
+
 if "queried" not in st.session_state:
     st.session_state.queried = False
 
@@ -104,16 +110,29 @@ with st.sidebar:
 
     st.success("Select an experience above.")
 
-    #st.header("Image/Table Query")
+    st.header("Image Input Query")
 
-    #with st.form("my-form", clear_on_submit=True):
-    #    uploaded_file = st.file_uploader("Upload an image (JPG/JPEG/PNG) or table(XLSX/CSV) along with a text input:", accept_multiple_files = False)
+    # with st.form("my-form", clear_on_submit=True):
+    uploaded_file = st.file_uploader("Upload an image (JPG/JPEG/PNG) along with a text input:", accept_multiple_files = False)
     #    submitted = st.form_submit_button("UPLOAD!")
     
-    #if uploaded_file and submitted:
-    #    st.success("File uploaded successfully!")
-    #    with open(os.path.join("/tmp/", uploaded_file.name),"wb") as f:
-    #        f.write(uploaded_file.read())
+    if uploaded_file and st.session_state.image_query == "":
+        st.success("Image loaded for multimodal RAG Q&A.")
+        st.session_state.image_query = os.path.join("/tmp/", uploaded_file.name)
+        with open(st.session_state.image_query,"wb") as f:
+            f.write(uploaded_file.read())
+    
+        with st.spinner("Getting image description using NeVA"):
+            neva = LLMClient("neva_22b")
+            image = Image.open(st.session_state.image_query).convert("RGB")
+            buffered = BytesIO()
+            image.save(buffered, format="JPEG")
+            b64_string = base64.b64encode(buffered.getvalue()).decode("utf-8")
+            res = neva.multimodal_invoke(b64_string, creativity = 0, quality = 9, complexity = 0, verbosity = 9)
+            st.session_state.image_query = res.content
+    
+    if not uploaded_file:
+        st.session_state.image_query = ""
 
 # Page title
 st.header(config["page_title"])
@@ -162,13 +181,14 @@ for n, msg in enumerate(messages):
                             f = open(download_path, "rb").read()
                             st.download_button("Download now", f, key=download_path+str(n)+str(ctr), file_name=file_name)
                         else:
-                            download_path = source_str
+                            download_path = source["doc_metadata"]["image"]
                             file_name = os.path.basename(download_path)
                             try:
                                 f = open(download_path, 'rb').read()
                                 st.download_button("Download now", f, key=download_path+str(n)+str(ctr), file_name=file_name)
-                            except:
+                            except Exception as e:
                                 print("failed to provide download for ", file_name)
+                                print(f"Exception: {e}")
                     if "type" in source["doc_metadata"]:
                         if source["doc_metadata"]["type"] == "table":
                             # get the pandas table and show in Streamlit
@@ -223,8 +243,10 @@ with placeholder:
 if len(prompt) > 0 and submitted == True:
     with st.chat_message("user"):
         st.write(prompt)
-    transformed_query = {"text": prompt}
     
+    if st.session_state.image_query:
+        prompt = f"\nI have uploaded an image with the following description: {st.session_state.image_query}" + "Here is the question: " + prompt
+    transformed_query = {"text": prompt}
     messages.append({"role": "user", "content": transformed_query["text"]})
     
     with st.spinner("Obtaining references from documents..."):
@@ -237,7 +259,6 @@ if len(prompt) > 0 and submitted == True:
     # Display assistant response in chat message container
     with st.chat_message("assistant"):
         response = llm_client.chat_with_prompt(system_prompt, augmented_prompt)
-
         message_placeholder = st.empty()
         full_response = ""
         for chunk in response:

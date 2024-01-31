@@ -19,6 +19,7 @@ from pptx import Presentation
 import glob
 import fitz
 from langchain.docstore.document import Document
+from vectorstore.custom_pdf_parser import is_graph, process_graph
 import shutil
 
 
@@ -88,13 +89,19 @@ def process_ppt_file(ppt_path):
     for (image_path, page_num), (slide_text, notes) in zip(images_data, slide_texts):
         if notes:
             notes = "\n\nThe speaker notes for this slide are: " + notes
+        
+        # get image description with NeVA/DePlot
+        image_description = " "
+        if is_graph(image_path):
+            image_description = process_graph(image_path)
+
         image_metadata = {
             "source": f"{os.path.basename(ppt_path)}",
             "image": image_path,
-            "caption": slide_text + notes,
+            "caption": slide_text + image_description + notes,
             "type": "image",
             "page_num": page_num
         }
-        processed_data.append(Document(page_content = "This is a slide with the text: " + slide_text, metadata = image_metadata))
+        processed_data.append(Document(page_content = "This is a slide with the text: " + slide_text + image_description, metadata = image_metadata))
 
     return processed_data

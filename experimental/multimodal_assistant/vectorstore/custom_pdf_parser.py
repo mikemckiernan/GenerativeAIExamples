@@ -17,18 +17,46 @@ import fitz
 import pandas as pd
 import os
 from langchain.docstore.document import Document
+from llm.llm_client import LLMClient
+from PIL import Image
+from io import BytesIO
+import base64
 
-header_footer_keywords = ["NVIDIA", "Confidential", "Page", "Date:"]  
+def get_b64_image(image_path):
+    image = Image.open(image_path).convert("RGB")
+    buffered = BytesIO()
+    image.save(buffered, format="JPEG", quality=20)
+    b64_string = base64.b64encode(buffered.getvalue()).decode("utf-8")
+    return b64_string
 
-def is_graph(image):
+def is_graph(image_path):
     # Placeholder function for graph detection logic
     # Implement graph detection algorithm here
-    return False
+    neva = LLMClient("neva_22b")
+    b64_string = get_b64_image(image_path)
+    res = neva.multimodal_invoke(b64_string, creativity = 0, quality = 9, complexity = 0, verbosity = 9).content
+    print(res)
+    if "graph" in res or "plot" in res or "chart" in res:
+        return True
+    else:
+        return False
 
 def process_graph(image_path):
     # Placeholder function for graph processing logic
     # Implement graph processing algorithm here
-    pass
+    # Call DePlot through the API
+    deplot = LLMClient("deplot")
+    b64_string = get_b64_image(image_path)
+    res = deplot.multimodal_invoke(b64_string)
+    deplot_description = res.content
+    mixtral = LLMClient(model_name="mixtral_8x7b")
+    response = mixtral.chat_with_prompt(system_prompt="Your responsibility is to explain charts. You are an expert in describing the responses of linearized tables into plain English text for LLMs to use.", 
+                             prompt="Explain the following linearized table. " + deplot_description)
+    full_response = ""
+    for chunk in response:
+        full_response += chunk
+    print(full_response)
+    return full_response
 
 def extract_text_around_item(text_blocks, bbox, page_height, threshold_percentage=0.1):
     before_text, after_text = "", ""
@@ -114,11 +142,14 @@ def parse_all_tables(filename, page, pagenum, text_blocks, ongoing_tables):
                 table_img = page.get_pixmap(clip=bbox)
                 table_img_path = os.path.join(tablerefdir, f"table{ctr}-page{pagenum}.jpg")
                 table_img.save(table_img_path)
+                description = process_graph(table_img_path)
                 ctr += 1
 
-                caption = before_text.replace("\n", " ") + " " + after_text.replace("\n", " ")
+                caption = before_text.replace("\n", " ") + description + after_text.replace("\n", " ")
                 if before_text == "" and after_text == "":
                     caption = " ".join(tab.header.names)
+
+
                 table_metadata = {
                     "source": f"{filename[:-4]}-page{pagenum}-table{ctr}",
                     "dataframe": df_xlsx_path,
@@ -163,12 +194,13 @@ def parse_all_images(filename, page, pagenum, text_blocks):
         if before_text == "" and after_text == "":
             continue
 
-        # Combine the texts to form a caption
-        caption = before_text.replace("\n", " ") + " " + after_text.replace("\n", " ")
-
         # Process the image if it's a graph
+        image_description = " "
         if is_graph(image_path):
-            process_graph(image_path)
+            image_description = process_graph(image_path)
+
+        # Combine the texts to form a caption
+        caption = before_text.replace("\n", " ") + image_description + after_text.replace("\n", " ")
 
         image_metadata = {
             "source": f"{filename[:-4]}-page{pagenum}-image{xref}",
