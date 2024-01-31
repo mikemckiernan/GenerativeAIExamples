@@ -27,6 +27,10 @@ Experimental examples are sample code and deployments for RAG pipelines that are
 
   This example ingests product catalog data, determines how to respond or which tools to use, retrieves appropriate products, and answer questions about the products.
 
+* [NVIDIA Multimodal RAG Assistant](./multimodal_assistant)
+
+  This example is able to ingest PDFs, PowerPoint slides, Word and other documents with complex data formats including text, images, slides and tables. It allows users to ask questions through a text interface and optionally with an image query, and it can respond with text and reference images, slides and tables in its response, along with source links and downloads.
+
 * [Run RAG-LLM in Azure Machine Learning](./AzureML)
 
   This example shows the configuration changes to using Docker containers and local GPUs that are required
