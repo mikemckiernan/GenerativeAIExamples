@@ -58,6 +58,10 @@ TO ssh with port forwarding:
 ssh -L PORT:IP_ADDR:PORT localhost
 ```
 
+## Known Limitations
+
+Once you add documents and re-create the vector database, it will show that it has successfully completed and you can now use it to answer questions. Since the chatbot needs to connect to the newly created connection, you may have to refresh the page, or else you will see a Milvus connection error. Once you refresh it should be able to connect to the collection.
+
 ## Architecture Diagram
 
 Here is how the system is designed:
