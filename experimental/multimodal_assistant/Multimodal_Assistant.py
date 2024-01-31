@@ -126,7 +126,7 @@ with st.sidebar:
             neva = LLMClient("neva_22b")
             image = Image.open(st.session_state.image_query).convert("RGB")
             buffered = BytesIO()
-            image.save(buffered, format="JPEG")
+            image.save(buffered, format="JPEG", quality=20) # Quality = 20 is a workaround (WAR)
             b64_string = base64.b64encode(buffered.getvalue()).decode("utf-8")
             res = neva.multimodal_invoke(b64_string, creativity = 0, quality = 9, complexity = 0, verbosity = 9)
             st.session_state.image_query = res.content

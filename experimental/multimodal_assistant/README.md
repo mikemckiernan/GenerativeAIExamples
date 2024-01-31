@@ -31,16 +31,20 @@ The following describes how you can have this chatbot up-and-running in less tha
    export NVIDIA_API_KEY="provide_your_key"
    ```
 
-4. Follow instructions available [here](https://milvus.io/docs/install_standalone-gpu-docker.md).
+4. Follow instructions available [here](https://milvus.io/docs/install_standalone-docker.md#Install-Milvus-standalone-using-Docker-Compose).
 
-5. Go to the folder with this code and then run the example using streamlit
+5. If you want to use the PowerPoint parsing feature, you will need LibreOffice. On Ubuntu Linux systems, use the command ```sudo apt install libreoffice``` to install it.
+
+6. Note that if you would like to use the "Feedback" feature, you will need a service account for Google Sheets. Save the service account credentials file as service.json in the multimodal_assistant folder.
+
+7. Go to the folder with this code and then run the example using streamlit
 ```
 cd GenerativeAIExamples/experimental/multimodal_assistant && streamlit run Multimodal_Assistant.py
 ```
 
-6. Finally to test the deployed example, goto the URL `http://<host_ip>:8501` in a web browser. Click on `browse files` and select your knowledge source. After selecting click on `Upload!` button to complete the ingestion process.
+8. Finally to test the deployed example, goto the URL `http://<host_ip>:8501` in a web browser. Click on `browse files` and select your knowledge source. After selecting click on `Upload!` button to complete the ingestion process.
 
-7. You are all set now! Try out queries pertinent to the knowledge base using text from the UI.
+9. You are all set now! Try out queries pertinent to the knowledge base using text from the UI.
 
 The resulting server will launch on a specified port, like localhost:8501. If your machine has ports being forwarded on the public IP, it can be accessed by other people who can use `<IP_ADDR>:<PORT>` to access the chatbot.
 
