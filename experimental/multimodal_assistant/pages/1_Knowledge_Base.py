@@ -84,7 +84,7 @@ if st.button("Re-train {}".format(config["name"])):
     with st.status("[Step 1/4] Loading documents. Expand to see current status", expanded=False) as status:
         update_vectorstore(DOCS_DIR, vector_client, document_embedder, config["core_docs_directory_name"], status)
     st.success("Completed re-training. Now {} will use the updated documentation to answer questions!".format(config["name"]))
-
+    st.rerun()
 st.divider()
 
 filelist = [file for root, dirs, files in os.walk(DOCS_DIR) for file in files]

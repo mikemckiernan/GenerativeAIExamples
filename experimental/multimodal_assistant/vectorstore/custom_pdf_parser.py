@@ -25,7 +25,7 @@ import base64
 def get_b64_image(image_path):
     image = Image.open(image_path).convert("RGB")
     buffered = BytesIO()
-    image.save(buffered, format="JPEG", quality=20)
+    image.save(buffered, format="JPEG", quality=20)  # quality=20 is a workaround (WAR)
     b64_string = base64.b64encode(buffered.getvalue()).decode("utf-8")
     return b64_string
 
