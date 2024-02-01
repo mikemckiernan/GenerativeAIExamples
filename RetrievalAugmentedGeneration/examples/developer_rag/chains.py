@@ -101,10 +101,14 @@ class QAChatbot(BaseExample):
         logger.info("Using rag to generate response from document")
 
         set_service_context()
-        if get_config().llm.model_engine == "triton-trt-llm":
-            get_llm().llm.tokens = num_tokens  # type: ignore
-        else:
-            get_llm().llm.max_tokens = num_tokens
+        try:
+            if get_config().llm.model_engine == "triton-trt-llm" or get_config().llm.model_engine == "nemo-infer":
+                get_llm().llm.tokens = num_tokens  # type: ignore
+            else:
+                get_llm().llm.max_tokens = num_tokens
+        except Exception as e:
+            logger.error(f"Exception in setting llm tokens: {e}")
+
         retriever = get_doc_retriever(num_nodes=4)
         qa_template = Prompt(get_config().prompts.rag_template)
 
