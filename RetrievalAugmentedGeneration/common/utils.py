@@ -73,6 +73,7 @@ except Exception as e:
 
 try:
     from langchain_nvidia_ai_endpoints import ChatNVIDIA, NVIDIAEmbeddings
+    from langchain_community.chat_models import ChatOpenAI
 except Exception as e:
     logger.error(f"NVIDIA AI connector import failed with error: {e}")
 
@@ -181,7 +182,7 @@ def get_vector_index() -> VectorStoreIndex:
     return VectorStoreIndex.from_vector_store(vector_store)
 
 
-def get_vectorstore_langchain(documents, document_embedder) -> VectorStore:
+def get_vectorstore_langchain(documents, document_embedder, pg_collection_name: str = "document_store") -> VectorStore:
     """Create the vector db index for langchain."""
 
     config = get_config()
@@ -244,6 +245,21 @@ def get_llm() -> LangChainLLM:
             tokens=DEFAULT_NUM_TOKENS,
         )
         return LangChainLLM(llm=nemo_infer)
+    elif settings.llm.model_engine == "nemo-infer-langchain":
+        nemo_infer = NemoInfer(
+            server_url=f"http://{settings.llm.server_url}/v1/completions",
+            model=settings.llm.model_name,
+            tokens=DEFAULT_NUM_TOKENS,
+        )
+        return nemo_infer
+    elif settings.llm.model_engine == "nemo-infer-openai":
+        nemo_infer = ChatOpenAI(
+            openai_api_base=f"http://{settings.llm.server_url}/v1/",
+            openai_api_key="xyz",
+            model_name=settings.llm.model_name,
+            max_tokens=DEFAULT_NUM_TOKENS,
+        )
+        return nemo_infer
     else:
         raise RuntimeError("Unable to find any supported Large Language Model server. Supported engines are triton-trt-llm and nv-ai-foundation.")
 
@@ -275,6 +291,12 @@ def get_embedding_model() -> LangchainEmbedding:
             model_name=settings.embeddings.model_name,
         )
         return LangchainEmbedding(nemo_embed)
+    elif settings.embeddings.model_engine == "nemo-embed-langchain":
+        nemo_embed = NemoEmbeddings(
+            server_url=f"http://{settings.embeddings.server_url}/v1/embeddings",
+            model_name=settings.embeddings.model_name,
+        )
+        return nemo_embed
     else:
         raise RuntimeError("Unable to find any supported embedding model. Supported engine is huggingface.")
 

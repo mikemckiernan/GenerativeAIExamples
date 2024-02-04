@@ -76,10 +76,10 @@ services:
       APP_VECTORSTORE_NAME: "pgvector"
       APP_LLM_SERVERURL: "llm:9999"
       APP_LLM_MODELNAME: ${MODEL_NAME:?please update the env file and source it before running}
-      APP_LLM_MODELENGINE: nemo-infer
+      APP_LLM_MODELENGINE: nemo-infer-openai
       APP_EMBEDDINGS_SERVERURL: "embeddings:9080"
       APP_EMBEDDINGS_MODELNAME: ${EMBEDDING_MODEL_NAME:?please update the env file and source it before running}
-      APP_EMBEDDINGS_MODELENGINE: nemo-embed
+      APP_EMBEDDINGS_MODELENGINE: nemo-embed-langchain
       APP_CONFIG_FILE: ${APP_CONFIG_FILE}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
