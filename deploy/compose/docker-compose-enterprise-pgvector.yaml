@@ -81,7 +81,6 @@ services:
       APP_EMBEDDINGS_MODELNAME: ${EMBEDDING_MODEL_NAME:?please update the env file and source it before running}
       APP_EMBEDDINGS_MODELENGINE: nemo-embed
       APP_CONFIG_FILE: ${APP_CONFIG_FILE}
-      NVAPI_KEY: ${AI_PLAYGROUND_API_KEY}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-api}
