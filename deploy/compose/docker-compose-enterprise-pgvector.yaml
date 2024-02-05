@@ -25,10 +25,10 @@ services:
 
   embeddings:
     container_name: nemo-retriever-embedding-ms
-    image: nvcr.io/ohlfw0olaadg/ea-participants/nemo-retriever-embedding-microservice:23.12
+    image: nvcr.io/ohlfw0olaadg/ea-participants/nemo-retriever-embedding-microservice:24.01
     volumes:
-    - ${EMBEDDING_MODEL_DIRECTORY:?please update the env file and source it before running}:/model-store
-    command: bin/web -m /model-store -p 9080
+    - ${EMBEDDING_MODEL_DIRECTORY:?please update the env file and source it before running}:/model-checkpoint-path
+    command:  bin/web -p 9080 -c /model-checkpoint-path/${EMBEDDING_MODEL_CKPT_NAME} -g model_config_templates/${EMBEDDING_MODEL_NAME}_template.yaml
     ports:
     - "9080:9080"
     expose:

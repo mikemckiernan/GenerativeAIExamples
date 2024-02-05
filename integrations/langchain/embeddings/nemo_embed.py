@@ -50,7 +50,7 @@ class NemoEmbeddings(BaseModel, Embeddings):
         headers = {"accept": "application/json", "Content-Type": "application/json"}
         data = {}
         if query:
-            data["input"] = [query]
+            data["input"] = query
 
         if not data["input"]:
             logger.warning("Valid query/passage not found in request")
@@ -61,6 +61,9 @@ class NemoEmbeddings(BaseModel, Embeddings):
 
         if input_type:
             data["input_type"] = input_type
+
+        data["encoding_format"] = "float"
+        data["truncate"] = "END"
 
         response = None
         request_timeout = int(request_timeout)
