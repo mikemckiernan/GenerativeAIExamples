@@ -26,7 +26,6 @@ class LLMClient:
         langchain_prompt = ChatPromptTemplate.from_messages([("system", system_prompt), ("user", "{input}")])
         chain = langchain_prompt | self.llm | StrOutputParser()
         response = chain.stream({"input": prompt})
-
         return response
 
     def multimodal_invoke(self, b64_string, steer=False, creativity=0, quality=9, complexity=0, verbosity=8):
