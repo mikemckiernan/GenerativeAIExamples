@@ -85,7 +85,7 @@ services:
 
   milvus:
     container_name: milvus-standalone
-    image: milvusdb/milvus:v2.3.1-gpu
+    image: milvusdb/milvus:v2.4.0.1-gpu-beta
     command: ["milvus", "run", "standalone"]
     environment:
       ETCD_ENDPOINTS: etcd:2379
