@@ -75,18 +75,19 @@ def update_voice_dropdown(language):
     return voice_dropdown
 
 def text_to_speech(text, language, voice, enable_tts):
-    if language == "No TTS languages available":
-        gr.Info('The app cannot access TTS services. Any attempt to synthesize audio will be unsuccessful. Check that you are connected to a Riva server with TTS enabled.')
-        _LOGGER.info('The app cannot access TTS services. Any attempt to synthesize audio will be unsuccessful. Check that you are connected to a Riva server with TTS enabled.')
-        return None, gr.update(interactive=False)
-    if not text:
-        gr.Info('No text from which to synthesize a voice has been provided')
-        return None, gr.update(interactive=False)
-    if not voice:
-        gr.Info('No TTS voice or an invalid TTS voice has been selected')
-        return None, gr.update(interactive=False)
-    if not enable_tts:
-        gr.Info('TTS output is currently disabled. Click on the "Enable TTS output" checkbox to enable it.')
+    if enable_tts:
+        if language == "No TTS languages available":
+            gr.Info('The app cannot access TTS services. Any attempt to synthesize audio will be unsuccessful. Check that you are connected to a Riva server with TTS enabled.')
+            _LOGGER.info('The app cannot access TTS services. Any attempt to synthesize audio will be unsuccessful. Check that you are connected to a Riva server with TTS enabled.')
+            return None, gr.update(interactive=False)
+        if not text:
+            gr.Info('No text from which to synthesize a voice has been provided')
+            return None, gr.update(interactive=False)
+        if not voice:
+            gr.Info('No TTS voice or an invalid TTS voice has been selected')
+            return None, gr.update(interactive=False)
+    else:
+        _LOGGER.debug('TTS output is currently disabled. Click on the "Enable TTS output" checkbox to enable it.')
         return None, gr.update(interactive=False)
 
     first_buffer = True
