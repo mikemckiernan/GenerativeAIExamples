@@ -51,11 +51,21 @@ class MultimodalRAG(BaseExample):
     def ingest_docs(self, filepath: str, filename: str):
         """Ingest documents to the VectorDB."""
 
+        global vector_client
+        global retriever
+
         try:
+            vector_client = MilvusVectorClient(hostname="milvus", port="19530", collection_name=config["core_docs_directory_name"])
+            retriever = Retriever(embedder=query_embedder , vector_client=vector_client)
             update_vectorstore(os.path.abspath(filepath), vector_client, document_embedder, config["core_docs_directory_name"])
         except Exception as e:
             logger.error(f"Failed to ingest document due to exception {e}")
             raise ValueError("Failed to upload document. Please check chain server logs for details.")
+        finally:
+            pass
+            # vector_client = MilvusVectorClient(hostname="milvus", port="19530", collection_name=config["core_docs_directory_name"])
+            # retriever = Retriever(embedder=query_embedder , vector_client=vector_client)
+
 
     def llm_chain(
         self, context: str, question: str, num_tokens: str
