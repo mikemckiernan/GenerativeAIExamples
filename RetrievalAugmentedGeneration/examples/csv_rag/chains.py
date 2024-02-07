@@ -48,6 +48,7 @@ settings = get_config()
 
 FOUNDATIONAL_LLM_PD = "playground_nv_llama2_rlhf_70b"
 
+
 class PandasDataFrame(ResponseParser):
     """Returns Pandas Dataframe instead of SmartDataFrame"""
 
@@ -100,9 +101,8 @@ class CSVChatbot(BaseExample):
 
         logger.info("Using llm to generate response directly without knowledge base.")
         set_service_context()
-        prompt = PromptTemplate(
-            template=get_config().prompts.chat_template,
-            input_variables=["context_str", "query_str"],
+        prompt = ChatPromptTemplate.from_messages(
+            [("system", get_config().prompts.chat_template), ("user", "{input}")]
         )
 
         logger.info("Using prompt for response: %s", prompt)
@@ -129,9 +129,7 @@ class CSVChatbot(BaseExample):
         data_retrieval_prompt_params = get_prompt_params(
             prompt_config.get("csv_prompts", [])
         )
-        llm_data_retrieval = PandasAI_NVIDIA(
-            temperature=0.2, model=FOUNDATIONAL_LLM_PD
-        )
+        llm_data_retrieval = PandasAI_NVIDIA(temperature=0.2, model=FOUNDATIONAL_LLM_PD)
 
         config_data_retrieval = {
             "llm": llm_data_retrieval,
