@@ -16,11 +16,9 @@
 import os
 import subprocess
 from pptx import Presentation
-import glob
 import fitz
 from langchain.docstore.document import Document
 from RetrievalAugmentedGeneration.example.vectorstore.custom_pdf_parser import is_graph, process_graph
-import shutil
 
 
 def convert_ppt_to_pdf(ppt_path):

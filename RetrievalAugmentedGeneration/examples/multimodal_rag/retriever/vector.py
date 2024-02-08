@@ -15,12 +15,8 @@
 
 from abc import ABC, abstractmethod
 from typing import Any
-import os
-
 from pydantic import BaseModel
-#from qdrant_client import QdrantClient
 from pymilvus import connections, Collection, FieldSchema, CollectionSchema, DataType, utility
-#from qdrant_client.http.models import PointStruct, VectorParams, Distance
 
 class VectorClient(ABC, BaseModel):
 
@@ -49,7 +45,7 @@ class MilvusVectorClient(VectorClient):
     hostname : str = "milvus"
     port : str = "19530"
     metric_type : str = "L2"
-    index_type : str = "IVF_FLAT"
+    index_type : str = "GPU_IVF_FLAT"
     nlist : int = 100
     index_field_name : str = "embedding"
     nprobe : int = 5
@@ -145,8 +141,12 @@ class MilvusVectorClient(VectorClient):
         return schema
 
     def create_collection(self, collection_name, embedding_size):
-        if utility.has_collection(collection_name):
-            utility.drop_collection(collection_name)
+
+        try:
+            if utility.has_collection(collection_name):
+                utility.drop_collection(collection_name)
+        except Exception as e:
+            print("Failed to check for a new connector")
 
         schema = self.get_schema(embedding_size)
         self.vector_db = Collection(name=collection_name, schema=schema)
