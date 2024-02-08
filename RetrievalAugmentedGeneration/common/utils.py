@@ -162,6 +162,41 @@ def get_vector_index() -> VectorStoreIndex:
         raise RuntimeError("Unable to find any supported Vector Store DB. Supported engines are milvus and pgvector.")
     return VectorStoreIndex.from_vector_store(vector_store)
 
+from langchain_core.vectorstores import VectorStore
+
+@lru_cache
+def get_vectorstore_langchain(documents, document_embedder) -> VectorStore:
+    """Create the vector db index."""
+    config = get_config()
+    vectorstore = None
+    from langchain.vectorstores import FAISS
+    print(type(documents), type(document_embedder))
+    return FAISS.from_documents(documents, document_embedder)
+    logger.info(f"Using {config.vector_store.name} as vector store")
+    if config.vector_store.name == "pgvector":
+        from langchain_community.vectorstores import PGVector
+        db_name = os.getenv('POSTGRES_DB', 'vector_db')
+        connection_string = f"postgresql://{os.getenv('POSTGRES_USER', '')}:{os.getenv('POSTGRES_PASSWORD', '')}@{config.vector_store.url}/{db_name}"
+        vectorstore = PGVector.from_documents(
+            embedding=document_embedder,
+            documents=documents,
+            collection_name="document_store",
+            connection_string=connection_string,
+        )
+    elif config.vector_store.name == "milvus":
+        from langchain_community.vectorstores import Milvus
+        vectorstore = Milvus.from_documents(
+            documents, 
+            document_embedder, 
+            connection_args={"uri": config.vector_store.url}
+        )
+    if config.vector_store.name == "faiss":
+        from langchain.vectorstores import FAISS
+        return FAISS.from_documents(documents, document_embedder)
+    else:
+        raise RuntimeError("Unable to find any supported Vector Store DB. Supported engines are milvus and pgvector.")
+    return vectorstore
+
 
 @lru_cache
 def get_doc_retriever(num_nodes: int = 4) -> "BaseRetriever":

@@ -25,7 +25,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_nvidia_ai_endpoints import ChatNVIDIA, NVIDIAEmbeddings
 from RetrievalAugmentedGeneration.common.base import BaseExample
-from RetrievalAugmentedGeneration.common.utils import get_config, get_llm, get_embedding_model
+from RetrievalAugmentedGeneration.common.utils import get_config, get_llm, get_embedding_model, get_vectorstore_langchain
 
 logger = logging.getLogger(__name__)
 DOCS_DIR = os.path.abspath("./uploaded_files")
@@ -38,7 +38,6 @@ settings = get_config()
 class NvidiaAIFoundation(BaseExample):
     def ingest_docs(self, file_name: str, filename: str):
         """Ingest documents to the VectorDB."""
-
         try:
             # TODO: Load embedding created in older conversation, memory persistance
             # We initialize class in every call therefore it should be global
@@ -54,11 +53,38 @@ class NvidiaAIFoundation(BaseExample):
                 if vectorstore:
                     vectorstore.add_documents(documents)
                 else:
-                    vectorstore = FAISS.from_documents(documents, document_embedder)
-                logger.info("Vector store created and saved.")
+                    config = get_config()
+                    logger.info(f"Using {config.vector_store.name} as vector store")
+
+                    # vectorstore = get_vectorstore_langchain(documents, document_embedder)
+                    if config.vector_store.name == "faiss":
+                        vectorstore = FAISS.from_documents(documents, document_embedder)
+                    elif config.vector_store.name == "pgvector":
+                        from langchain_community.vectorstores import PGVector
+                        db_name = os.getenv('POSTGRES_DB', 'vector_db')
+                        connection_string = f"postgresql://{os.getenv('POSTGRES_USER', '')}:{os.getenv('POSTGRES_PASSWORD', '')}@{config.vector_store.url}/{db_name}"
+                        vectorstore = PGVector.from_documents(
+                            embedding=document_embedder,
+                            documents=documents,
+                            collection_name="document_store",
+                            connection_string=connection_string,
+                        )
+                    elif config.vector_store.name == "milvus":
+                        from langchain_community.vectorstores import Milvus
+                        from urllib.parse import urlparse
+                        url = urlparse(config.vector_store.url)
+                        vectorstore = Milvus.from_documents(
+                            documents, 
+                            document_embedder,
+                            connection_args={"host": url.hostname, "port": url.port}
+                        )
+                        print("Milvus Vectorstore: ", vectorstore)
+                    logger.info("Vector store created and saved.")
             else:
                 logger.warning("No documents available to process!")
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             logger.error(f"Failed to ingest document due to exception {e}")
             raise ValueError("Failed to upload document. Please upload an unstructured text document.")
 
@@ -106,8 +132,14 @@ class NvidiaAIFoundation(BaseExample):
 
         try:
             if vectorstore != None:
-                retriever = vectorstore.as_retriever(search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.25})
-                docs = retriever.get_relevant_documents(prompt)
+                try:
+                    retriever = vectorstore.as_retriever(search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.25})
+                    docs = retriever.get_relevant_documents(prompt)
+                except NotImplementedError:
+                    # Some retriever like milvus don't have similarity score threshold implemented
+                    retriever = vectorstore.as_retriever()
+                    docs = retriever.get_relevant_documents(prompt)
+
 
                 context = ""
                 for doc in docs:
@@ -120,6 +152,8 @@ class NvidiaAIFoundation(BaseExample):
                 return chain.stream({"input": augmented_user_input})
         except Exception as e:
             logger.warning(f"Failed to generate response due to exception {e}")
+            import traceback
+            traceback.print_exc()
         logger.warning(
             "No response generated from LLM, make sure you've ingested document."
         )
@@ -134,8 +168,14 @@ class NvidiaAIFoundation(BaseExample):
 
         try:
             if vectorstore != None:
-                retriever = vectorstore.as_retriever(search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.25})
-                docs = retriever.get_relevant_documents(content)
+                try:
+                    retriever = vectorstore.as_retriever(search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.25})
+                    docs = retriever.get_relevant_documents(content)
+                except NotImplementedError:
+                    # Some retriever like milvus don't have similarity score threshold implemented
+                    retriever = vectorstore.as_retriever()
+                    docs = retriever.get_relevant_documents(content)
+
                 result = []
                 for doc in docs:
                     result.append(
