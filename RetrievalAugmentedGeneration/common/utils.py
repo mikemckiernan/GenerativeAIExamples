@@ -18,6 +18,7 @@ import os
 import base64
 import logging
 from functools import lru_cache
+from urllib.parse import urlparse
 from typing import TYPE_CHECKING, List, Optional
 
 logger = logging.getLogger(__name__)
@@ -55,8 +56,20 @@ except Exception as e:
 try:
     from langchain.text_splitter import SentenceTransformersTokenTextSplitter
     from langchain.embeddings import HuggingFaceEmbeddings
+    from langchain.vectorstores import FAISS
 except Exception as e:
     logger.error(f"Langchain import failed with error: {e}")
+
+try:
+    from langchain_core.vectorstores import VectorStore
+except Exception as e:
+    logger.error(f"Langchain core import failed with error: {e}")
+
+try:
+    from langchain_community.vectorstores import PGVector
+    from langchain_community.vectorstores import Milvus
+except Exception as e:
+    logger.error(f"Langchain community import failed with error: {e}")
 
 try:
     from langchain_nvidia_ai_endpoints import ChatNVIDIA, NVIDIAEmbeddings
@@ -162,19 +175,15 @@ def get_vector_index() -> VectorStoreIndex:
         raise RuntimeError("Unable to find any supported Vector Store DB. Supported engines are milvus and pgvector.")
     return VectorStoreIndex.from_vector_store(vector_store)
 
-from langchain_core.vectorstores import VectorStore
 
-@lru_cache
 def get_vectorstore_langchain(documents, document_embedder) -> VectorStore:
-    """Create the vector db index."""
+    """Create the vector db index for langchain."""
+
     config = get_config()
-    vectorstore = None
-    from langchain.vectorstores import FAISS
-    print(type(documents), type(document_embedder))
-    return FAISS.from_documents(documents, document_embedder)
-    logger.info(f"Using {config.vector_store.name} as vector store")
-    if config.vector_store.name == "pgvector":
-        from langchain_community.vectorstores import PGVector
+
+    if config.vector_store.name == "faiss":
+        vectorstore = FAISS.from_documents(documents, document_embedder)
+    elif config.vector_store.name == "pgvector":
         db_name = os.getenv('POSTGRES_DB', 'vector_db')
         connection_string = f"postgresql://{os.getenv('POSTGRES_USER', '')}:{os.getenv('POSTGRES_PASSWORD', '')}@{config.vector_store.url}/{db_name}"
         vectorstore = PGVector.from_documents(
@@ -184,17 +193,15 @@ def get_vectorstore_langchain(documents, document_embedder) -> VectorStore:
             connection_string=connection_string,
         )
     elif config.vector_store.name == "milvus":
-        from langchain_community.vectorstores import Milvus
+        url = urlparse(config.vector_store.url)
         vectorstore = Milvus.from_documents(
-            documents, 
-            document_embedder, 
-            connection_args={"uri": config.vector_store.url}
+            documents,
+            document_embedder,
+            connection_args={"host": url.hostname, "port": url.port}
         )
-    if config.vector_store.name == "faiss":
-        from langchain.vectorstores import FAISS
-        return FAISS.from_documents(documents, document_embedder)
     else:
-        raise RuntimeError("Unable to find any supported Vector Store DB. Supported engines are milvus and pgvector.")
+        raise ValueError(f"{config.vector_store.name} vector database is not supported")
+    logger.info("Vector store created and saved.")
     return vectorstore
 
 

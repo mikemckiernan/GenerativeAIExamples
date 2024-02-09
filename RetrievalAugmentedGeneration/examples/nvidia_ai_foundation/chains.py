@@ -25,7 +25,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_nvidia_ai_endpoints import ChatNVIDIA, NVIDIAEmbeddings
 from RetrievalAugmentedGeneration.common.base import BaseExample
-from RetrievalAugmentedGeneration.common.utils import get_config, get_llm, get_embedding_model, get_vectorstore_langchain
+from RetrievalAugmentedGeneration.common.utils import get_config, get_llm, get_embedding_model, vectorstore_langchain
 
 logger = logging.getLogger(__name__)
 DOCS_DIR = os.path.abspath("./uploaded_files")
@@ -53,38 +53,10 @@ class NvidiaAIFoundation(BaseExample):
                 if vectorstore:
                     vectorstore.add_documents(documents)
                 else:
-                    config = get_config()
-                    logger.info(f"Using {config.vector_store.name} as vector store")
-
-                    # vectorstore = get_vectorstore_langchain(documents, document_embedder)
-                    if config.vector_store.name == "faiss":
-                        vectorstore = FAISS.from_documents(documents, document_embedder)
-                    elif config.vector_store.name == "pgvector":
-                        from langchain_community.vectorstores import PGVector
-                        db_name = os.getenv('POSTGRES_DB', 'vector_db')
-                        connection_string = f"postgresql://{os.getenv('POSTGRES_USER', '')}:{os.getenv('POSTGRES_PASSWORD', '')}@{config.vector_store.url}/{db_name}"
-                        vectorstore = PGVector.from_documents(
-                            embedding=document_embedder,
-                            documents=documents,
-                            collection_name="document_store",
-                            connection_string=connection_string,
-                        )
-                    elif config.vector_store.name == "milvus":
-                        from langchain_community.vectorstores import Milvus
-                        from urllib.parse import urlparse
-                        url = urlparse(config.vector_store.url)
-                        vectorstore = Milvus.from_documents(
-                            documents, 
-                            document_embedder,
-                            connection_args={"host": url.hostname, "port": url.port}
-                        )
-                        print("Milvus Vectorstore: ", vectorstore)
-                    logger.info("Vector store created and saved.")
+                    vectorstore = vectorstore_langchain(documents, document_embedder)
             else:
                 logger.warning("No documents available to process!")
         except Exception as e:
-            import traceback
-            traceback.print_exc()
             logger.error(f"Failed to ingest document due to exception {e}")
             raise ValueError("Failed to upload document. Please upload an unstructured text document.")
 
@@ -152,8 +124,6 @@ class NvidiaAIFoundation(BaseExample):
                 return chain.stream({"input": augmented_user_input})
         except Exception as e:
             logger.warning(f"Failed to generate response due to exception {e}")
-            import traceback
-            traceback.print_exc()
         logger.warning(
             "No response generated from LLM, make sure you've ingested document."
         )

@@ -100,11 +100,11 @@ services:
       APP_CONFIG_FILE: ${APP_CONFIG_FILE}
       CSV_NAME: ${CSV_NAME}
 
-      APP_VECTORSTORE_URL: "${POSTGRES_HOST_IP:-pgvector}:${POSTGRES_PORT_NUMBER:-5432}"
-      # APP_VECTORSTORE_URL: "http://milvus:19530"
+      # APP_VECTORSTORE_URL: "${POSTGRES_HOST_IP:-pgvector}:${POSTGRES_PORT_NUMBER:-5432}"
+      APP_VECTORSTORE_URL: "http://milvus:19530"
       # APP_VECTORSTORE_NAME: "faiss"
-      APP_VECTORSTORE_NAME: "pgvector"
-      # APP_VECTORSTORE_NAME: "milvus"
+      # APP_VECTORSTORE_NAME: "pgvector"
+      APP_VECTORSTORE_NAME: "milvus"
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-api}
