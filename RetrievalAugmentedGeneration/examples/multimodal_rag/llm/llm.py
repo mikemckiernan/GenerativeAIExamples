@@ -24,19 +24,22 @@ from RetrievalAugmentedGeneration.common.utils import get_llm
 
 
 class NvidiaLLM:
-    def __init__(self, model_name, is_response_generator: bool = False):
+    def __init__(self, model_name, is_response_generator: bool = False, **kwargs):
 
         # LLM is used for response generation as well as for generating description
         # of images, only use llm from configuration for response generator
         if is_response_generator:
             self.llm = get_llm()
         else:
-            self.llm = ChatNVIDIA(model=model_name)
+            self.llm = ChatNVIDIA(model=model_name,
+                            temperature = kwargs.get('temperature', None),
+                            top_p = kwargs.get('top_p', None),
+                            max_tokens = kwargs.get('max_tokens', None))
 
 
 
 class LocalLLM:
-    def __init__(self, model_path):
+    def __init__(self, model_path, **kwargs):
         tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
         model = AutoModelForCausalLM.from_pretrained(
             model_path, 
@@ -49,21 +52,21 @@ class LocalLLM:
             "text-generation",
             model=model,
             tokenizer=tokenizer,
-            max_length=1024,
-            temperature=0.6,
-            top_p=0.3,
+            max_length=kwargs.get('max_tokens',1024),
+            temperature=kwargs.get('temperature', 0.6),
+            top_p=kwargs.get('top_p', 0.3),
             repetition_penalty=1.0
         )
 
         self.llm = HuggingFacePipeline(pipeline=pipe)
 
 
-def create_llm(model_name, model_type="NVIDIA", is_response_generator=False):
+def create_llm(model_name, model_type="NVIDIA", is_response_generator=False, **kwargs):
     # Use LLM to generate answer
     if model_type == "NVIDIA":
-        model = NvidiaLLM(model_name, is_response_generator)
+        model = NvidiaLLM(model_name, is_response_generator, **kwargs)
     elif model_type == "LOCAL":
-        model = LocalLLM(model_name)
+        model = LocalLLM(model_name, **kwargs)
     else:
         print("Error! Need model_name and model_type!")
         exit()

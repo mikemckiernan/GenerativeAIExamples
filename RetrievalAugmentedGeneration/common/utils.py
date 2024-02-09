@@ -17,9 +17,9 @@
 import os
 import base64
 import logging
-from functools import lru_cache
+from functools import lru_cache, wraps
 from urllib.parse import urlparse
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, Callable, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -117,11 +117,21 @@ class LimitRetrievedNodesLength(BaseNodePostprocessor):
 
         return included_nodes
 
+def utils_cache(func: Callable) -> Callable:
+    """Use this to convert unhashable args to hashable ones"""
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        # Convert unhashable args to hashable ones
+        args_hashable = tuple(tuple(arg) if isinstance(arg, (list, dict, set)) else arg for arg in args)
+        kwargs_hashable = {key: tuple(value) if isinstance(value, (list, dict, set)) else value for key, value in kwargs.items()}
+        return func(*args_hashable, **kwargs_hashable)
+    return wrapper
 
+@utils_cache
 @lru_cache
-def set_service_context() -> None:
+def set_service_context(**kwargs) -> None:
     """Set the global service context."""
-    llm = LangChainLLM(get_llm())
+    llm = LangChainLLM(get_llm(**kwargs))
     embedding = LangchainEmbedding(get_embedding_model())
     service_context = ServiceContext.from_defaults(
         llm=llm, embed_model=embedding
@@ -186,7 +196,9 @@ def get_vector_index(collection_name: str = "") -> VectorStoreIndex:
             overwrite=False)
     else:
         raise RuntimeError("Unable to find any supported Vector Store DB. Supported engines are milvus and pgvector.")
-    return VectorStoreIndex.from_vector_store(vector_store)
+    vector_store_index = VectorStoreIndex.from_vector_store(vector_store)
+    vector_store_index._store_nodes_override = True
+    return vector_store_index
 
 
 def get_vectorstore_langchain(documents, document_embedder, collection_name: str = "") -> VectorStore:
@@ -232,8 +244,9 @@ def get_doc_retriever(num_nodes: int = 4) -> "BaseRetriever":
     return index.as_retriever(similarity_top_k=num_nodes)
 
 
-@lru_cache
-def get_llm() -> LLM | SimpleChatModel:
+@utils_cache
+@lru_cache()
+def get_llm(**kwargs) -> LLM | SimpleChatModel:
     """Create the LLM connection."""
     settings = get_config()
 
@@ -242,24 +255,45 @@ def get_llm() -> LLM | SimpleChatModel:
         trtllm = TensorRTLLM(  # type: ignore
             server_url=settings.llm.server_url,
             model_name=settings.llm.model_name,
-            tokens=DEFAULT_NUM_TOKENS,
+            temperature = kwargs.get('temperature', None),
+            top_p = kwargs.get('top_p', None),
+            tokens = kwargs.get('max_tokens', DEFAULT_NUM_TOKENS)
         )
+        unused_params = [key for key in kwargs.keys() if key not in ['temperature', 'top_p', 'max_tokens', 'stream']]
+        if unused_params:
+            logger.warning(f"The following parameters from kwargs are not supported: {unused_params} for {settings.llm.model_engine}")
         return trtllm
     elif settings.llm.model_engine == "nv-ai-foundation":
-        return ChatNVIDIA(model=settings.llm.model_name)
+        unused_params = [key for key in kwargs.keys() if key not in ['temperature', 'top_p', 'max_tokens']]
+        if unused_params:
+            logger.warning(f"The following parameters from kwargs are not supported: {unused_params} for {settings.llm.model_engine}")
+        return ChatNVIDIA(model=settings.llm.model_name,
+                          temperature = kwargs.get('temperature', None),
+                          top_p = kwargs.get('top_p', None),
+                          max_tokens = kwargs.get('max_tokens', None))
     elif settings.llm.model_engine == "nemo-infer":
+        unused_params = [key for key in kwargs.keys() if key not in ['temperature', 'top_p', 'max_tokens',  'stream']]
+        if unused_params:
+            logger.warning(f"The following parameters from kwargs are not supported: {unused_params} for {settings.llm.model_engine}")
         nemo_infer = NemoInfer(
             server_url=f"http://{settings.llm.server_url}/v1/completions",
             model=settings.llm.model_name,
-            tokens=DEFAULT_NUM_TOKENS,
+            temperature = kwargs.get('temperature', None),
+            top_p = kwargs.get('top_p', None),
+            tokens = kwargs.get('max_tokens', DEFAULT_NUM_TOKENS)
         )
         return nemo_infer
     elif settings.llm.model_engine == "nemo-infer-openai":
+        unused_params = [key for key in kwargs.keys() if key not in ['temperature', 'top_p', 'max_tokens',  'stream']]
+        if unused_params:
+            logger.warning(f"The following parameters from kwargs are not supported: {unused_params} for {settings.llm.model_engine}")
         nemo_infer = ChatOpenAI(
             openai_api_base=f"http://{settings.llm.server_url}/v1/",
             openai_api_key="xyz",
             model_name=settings.llm.model_name,
-            max_tokens=DEFAULT_NUM_TOKENS,
+            temperature = kwargs.get('temperature', None),
+            top_p = kwargs.get('top_p', None),
+            max_tokens=kwargs.get('max_tokens', DEFAULT_NUM_TOKENS)
         )
         return nemo_infer
     else:
@@ -319,3 +353,62 @@ def get_text_splitter() -> SentenceTransformersTokenTextSplitter:
         tokens_per_chunk=get_config().text_splitter.chunk_size,
         chunk_overlap=get_config().text_splitter.chunk_overlap,
     )
+
+
+def get_docs_vectorstore_langchain(vectorstore: VectorStore) -> List[str]:
+    """Retrieves filenames stored in the vector store implemented in LangChain."""
+
+    settings = get_config()
+    try:
+        # No API availbe in LangChain for listing the docs, thus usig its private _dict 
+        extract_filename = lambda metadata : os.path.splitext(os.path.basename(metadata['source']))[0]
+        if settings.vector_store.name == "faiss":
+            in_memory_docstore = vectorstore.docstore._dict
+            filenames = [extract_filename(doc.metadata) for doc in in_memory_docstore.values()]
+            filenames = list(set(filenames))
+            return filenames
+        elif settings.vector_store.name == "pgvector":
+            # No API availbe in LangChain for listing the docs, thus usig its private _make_session 
+            with vectorstore._make_session() as session:
+                embedding_doc_store = session.query(vectorstore.EmbeddingStore.custom_id, vectorstore.EmbeddingStore.document, vectorstore.EmbeddingStore.cmetadata).all()
+                filenames = set([extract_filename(metadata) for _, _, metadata in embedding_doc_store])
+                return filenames
+        elif settings.vector_store.name == "milvus":
+            # Getting all the ID's > 0
+            milvus_data = vectorstore.col.query(expr="pk >= 0", output_fields=["pk","source", "text"])
+            filenames = set([extract_filename(metadata) for metadata in milvus_data])
+            return filenames
+    except Exception as e:
+        logger.error(f"Error occurred while retrieving documents: {e}")
+        return []
+    
+
+def del_docs_vectorstore_langchain(vectorstore: VectorStore, filenames: List[str]):
+    """Delete documents from the vector index implemented in LangChain."""
+
+    settings = get_config()
+    try:
+        # No other API availbe in LangChain for listing the docs, thus usig its private _dict
+        extract_filename = lambda metadata : os.path.splitext(os.path.basename(metadata['source']))[0]
+        if settings.vector_store.name == "faiss":
+            in_memory_docstore = vectorstore.docstore._dict
+            for filename in filenames:
+                ids_list = [doc_id for doc_id, doc_data in in_memory_docstore.items() if extract_filename(doc_data.metadata) == filename]
+                vectorstore.delete(ids_list)
+                logger.info(f"Deleted documents with filenames {filename}")
+        elif settings.vector_store.name == "pgvector":
+            with vectorstore._make_session() as session:
+                embedding_doc_store = session.query(vectorstore.EmbeddingStore.custom_id, vectorstore.EmbeddingStore.document, vectorstore.EmbeddingStore.cmetadata).all()
+            for filename in filenames:
+                ids_list = [doc_id for doc_id, doc_data, metadata in embedding_doc_store if extract_filename(metadata) == filename]
+                vectorstore.delete(ids_list)
+                logger.info(f"Deleted documents with filenames {filename}")
+        elif settings.vector_store.name == "milvus":
+            # Getting all the ID's > 0
+            milvus_data = vectorstore.col.query(expr="pk >= 0", output_fields=["pk","source", "text"])
+            for filename in filenames:
+                ids_list = [metadata["pk"] for metadata in milvus_data if extract_filename(metadata) == filename]
+                vectorstore.col.delete(f"pk in {ids_list}")
+                logger.info(f"Deleted documents with filenames {filename}")
+    except Exception as e:
+        logger.error(f"Error occurred while deleting documents: {e}")

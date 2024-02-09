@@ -19,6 +19,8 @@ from typing import Generator, List, Dict, Any
 from functools import lru_cache
 from traceback import print_exc
 
+from RetrievalAugmentedGeneration.common.utils import utils_cache
+
 logger = logging.getLogger(__name__)
 
 from RetrievalAugmentedGeneration.common.base import BaseExample
@@ -52,8 +54,9 @@ def get_doc_retriever(type: str = "query") -> Retriever:
     return Retriever(embedder=get_embedder(type) , vector_client=get_vector_index(embedding_size))
 
 @lru_cache()
-def get_llm(model_name, is_response_generator=False):
-    return LLMClient(model_name=model_name, is_response_generator=is_response_generator)
+@utils_cache
+def get_llm(model_name, is_response_generator=False, **kwargs):
+    return LLMClient(model_name=model_name, is_response_generator=is_response_generator=model_name, **kwargs)
 
 
 class MultimodalRAG(BaseExample):
@@ -72,27 +75,27 @@ class MultimodalRAG(BaseExample):
 
 
     def llm_chain(
-        self, context: str, question: str, num_tokens: str
+        self, query: str, chat_history: List["Message"], **kwargs
     ) -> Generator[str, None, None]:
         """Execute a simple LLM chain using the components defined above."""
-
+        # TODO integrate chat_history
         logger.info("Using llm to generate response directly without knowledge base.")
-        response = get_llm(model_name=RESPONSE_PARAPHRASING_MODEL, is_response_generator=True).chat_with_prompt(settings.prompts.chat_template, question)
+        response = get_llm(model_name=RESPONSE_PARAPHRASING_MODEL, is_response_generator=True, **kwargs).chat_with_prompt(settings.prompts.chat_template, query)
         return response
 
 
-    def rag_chain(self, prompt: str, num_tokens: int) -> Generator[str, None, None]:
+    def rag_chain(self, query: str, chat_history: List["Message"], **kwargs) -> Generator[str, None, None]:
         """Execute a Retrieval Augmented Generation chain using the components defined above."""
 
         logger.info("Using rag to generate response from document")
-
+        # TODO integrate chat_history
         try:
             retriever = get_doc_retriever(type="query")
-            context, sources = retriever.get_relevant_docs(prompt, limit=settings.retriever.top_k)
-            augmented_prompt = "Relevant documents:" + context + "\n\n[[QUESTION]]\n\n" + prompt
+            context, sources = retriever.get_relevant_docs(query, limit=settings.retriever.top_k)
+            augmented_prompt = "Relevant documents:" + context + "\n\n[[QUESTION]]\n\n" + query
             system_prompt = settings.prompts.rag_template
             logger.info(f"Formulated prompt for RAG chain: {system_prompt}\n{augmented_prompt}")
-            response = get_llm(model_name=RESPONSE_PARAPHRASING_MODEL, is_response_generator=True).chat_with_prompt(settings.prompts.rag_template, augmented_prompt)
+            response = get_llm(model_name=RESPONSE_PARAPHRASING_MODEL, is_response_generator=True, **kwargs).chat_with_prompt(settings.prompts.rag_template, augmented_prompt)
             return response
 
         except Exception as e:
@@ -114,3 +117,13 @@ class MultimodalRAG(BaseExample):
         except Exception as e:
             logger.error(f"Error from /documentSearch endpoint. Error details: {e}")
         return []
+
+    def get_documents(self):
+        """Retrieves filenames stored in the vector store."""
+        decoded_filenames = []
+        logger.error("get_documents not implemented")
+        return decoded_filenames
+
+    def delete_documents(self, filenames: List[str]):
+        """Delete documents from the vector index."""
+        logger.error("delete_documents not implemented")
