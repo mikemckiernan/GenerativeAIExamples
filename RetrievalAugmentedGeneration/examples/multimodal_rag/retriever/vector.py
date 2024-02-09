@@ -50,10 +50,11 @@ class MilvusVectorClient(VectorClient):
     index_field_name : str = "embedding"
     nprobe : int = 5
     vector_db : Any = None
+    embedding_size: int = 1024
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.vector_db = self.connect(self.collection_name, self.hostname, self.port)
+        self.vector_db = self.connect(self.collection_name, self.hostname, self.port, embedding_size=self.embedding_size)
         self._create_index(self.metric_type, self.index_type, self.index_field_name, self.nlist)
         self.vector_db.load()
 
@@ -66,14 +67,14 @@ class MilvusVectorClient(VectorClient):
         }
         self.vector_db.create_index(field_name=field_name, index_params=index_params)
 
-    def connect(self, collection_name, hostname, port, alias="default"):
+    def connect(self, collection_name, hostname, port, alias="default", embedding_size=1024):
         connections.connect(alias, host=hostname, port=port)
         try:
             vector_db = Collection(name=collection_name)
             return vector_db
         except:
             # create the vector DB using default embedding dimensions of 1024
-            vector_db = self.create_collection(collection_name, embedding_size=1024)
+            vector_db = self.create_collection(collection_name, embedding_size)
             return self.vector_db
 
     def disconnect(self, alias="default"):
@@ -141,12 +142,6 @@ class MilvusVectorClient(VectorClient):
         return schema
 
     def create_collection(self, collection_name, embedding_size):
-
-        try:
-            if utility.has_collection(collection_name):
-                utility.drop_collection(collection_name)
-        except Exception as e:
-            print("Failed to check for a new connector")
-
+        # Formulate the schema and create the collection
         schema = self.get_schema(embedding_size)
         self.vector_db = Collection(name=collection_name, schema=schema)

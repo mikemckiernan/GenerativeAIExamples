@@ -35,8 +35,9 @@ config = {
 sources = []
 RESPONSE_PARAPHRASING_MODEL = "mixtral_8x7b"
 
-def get_vector_index() -> MilvusVectorClient:
-    return MilvusVectorClient(hostname="milvus", port="19530", collection_name=config["collection_name"])
+@lru_cache
+def get_vector_index(embed_dim: int = 1024) -> MilvusVectorClient:
+    return MilvusVectorClient(hostname="milvus", port="19530", collection_name=config["collection_name"], embedding_size=embed_dim)
 
 @lru_cache
 def get_embedder(type: str = "query") -> NVIDIAEmbedders:
@@ -48,7 +49,9 @@ def get_embedder(type: str = "query") -> NVIDIAEmbedders:
 
 @lru_cache
 def get_doc_retriever(type: str = "query") -> Retriever:
-    return Retriever(embedder=get_embedder(type) , vector_client=get_vector_index())
+    embedder = get_embedder(type)
+    embedding_size = embedder.get_embedding_size()
+    return Retriever(embedder=get_embedder(type) , vector_client=get_vector_index(embedding_size))
 
 @lru_cache()
 def get_llm(model_name):
@@ -61,7 +64,9 @@ class MultimodalRAG(BaseExample):
         """Ingest documents to the VectorDB."""
 
         try:
-            update_vectorstore(os.path.abspath(filepath), get_vector_index(), get_embedder(type="passage"), config["collection_name"])
+            embedder = get_embedder(type="passage")
+            embedding_size = embedder.get_embedding_size()
+            update_vectorstore(os.path.abspath(filepath), get_vector_index(embedding_size), embedder, config["collection_name"])
         except Exception as e:
             logger.error(f"Failed to ingest document due to exception {e}")
             print_exc()
@@ -89,6 +94,7 @@ class MultimodalRAG(BaseExample):
             context, sources = retriever.get_relevant_docs(prompt)
             augmented_prompt = "Relevant documents:" + context + "\n\n[[QUESTION]]\n\n" + prompt
             system_prompt = config["system_instruction"]
+            logger.info(f"Formulated prompt for RAG chain: {system_prompt}\n{augmented_prompt}")
             response = get_llm(RESPONSE_PARAPHRASING_MODEL).chat_with_prompt(system_prompt, augmented_prompt)
             return response
 

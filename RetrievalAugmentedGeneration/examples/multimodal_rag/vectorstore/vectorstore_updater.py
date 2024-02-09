@@ -65,10 +65,7 @@ def update_vectorstore(file_path, vector_client, embedder, config_name):
     logger.info("[Step 1/4] Creating/loading vector store")
 
     # Create collection if it doesn't exist
-    logger.info("Creating collection...")
-    # get embedding size
-    embedding_size = embedder.get_embedding_size()
-    vector_client.create_collection(config_name, embedding_size)
+    logger.info("Accessing collection...")
 
     logger.info("[Step 2/4] Processing and splitting documents")
     # load and split documents
