@@ -25,7 +25,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_nvidia_ai_endpoints import ChatNVIDIA, NVIDIAEmbeddings
 from RetrievalAugmentedGeneration.common.base import BaseExample
-from RetrievalAugmentedGeneration.common.utils import get_config, get_llm, get_embedding_model, vectorstore_langchain
+from RetrievalAugmentedGeneration.common.utils import get_config, get_llm, get_embedding_model, get_vectorstore_langchain
 
 logger = logging.getLogger(__name__)
 DOCS_DIR = os.path.abspath("./uploaded_files")
@@ -53,7 +53,7 @@ class NvidiaAIFoundation(BaseExample):
                 if vectorstore:
                     vectorstore.add_documents(documents)
                 else:
-                    vectorstore = vectorstore_langchain(documents, document_embedder)
+                    vectorstore = get_vectorstore_langchain(documents, document_embedder)
             else:
                 logger.warning("No documents available to process!")
         except Exception as e:

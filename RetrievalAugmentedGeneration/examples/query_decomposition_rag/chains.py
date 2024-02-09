@@ -43,7 +43,8 @@ from RetrievalAugmentedGeneration.common.utils import (
     get_llm,
     set_service_context,
     get_embedding_model,
-    get_doc_retriever
+    get_doc_retriever,
+    get_vectorstore_langchain,
 )
 from RetrievalAugmentedGeneration.common.base import BaseExample
 
@@ -166,7 +167,7 @@ class QueryDecompositionChatbot(BaseExample):
                 if vectorstore:
                     vectorstore.add_documents(documents)
                 else:
-                    vectorstore = FAISS.from_documents(documents, document_embedder)
+                    vectorstore = get_vectorstore_langchain(documents, document_embedder)
                 logger.info("Vector store created and saved.")
             else:
                 logger.warning("No documents available to process!")
