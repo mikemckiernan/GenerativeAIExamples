@@ -1,5 +1,19 @@
 services:
 
+  pgvector:
+    container_name: pgvector
+    image: ankane/pgvector:v0.5.1
+    ports:
+    - 5432:5432
+    expose:
+    - "5432"
+    volumes:
+    - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/data:/var/lib/postgresql/data
+    environment:
+    - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+    - POSTGRES_USER=${POSTGRES_USER:-postgres}
+    - POSTGRES_DB=${POSTGRES_DB:-api}
+
   query:
     container_name: chain-server
     image: chain-server:latest
@@ -21,7 +35,11 @@ services:
       NVIDIA_API_KEY: ${NVIDIA_API_KEY}
       APP_CONFIG_FILE: ${APP_CONFIG_FILE}
       CSV_NAME: ${CSV_NAME}
-      APP_VECTORSTORE_NAME: "faiss"
+      APP_VECTORSTORE_URL: "${POSTGRES_HOST_IP:-pgvector}:${POSTGRES_PORT_NUMBER:-5432}"
+      APP_VECTORSTORE_NAME: "pgvector"
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-api}
     volumes:
       - ${APP_CONFIG_FILE}:${APP_CONFIG_FILE}
     ports:
@@ -29,6 +47,8 @@ services:
     expose:
     - "8081"
     shm_size: 5gb
+    depends_on:
+      - "pgvector"
 
   frontend:
     container_name: llm-playground
