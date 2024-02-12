@@ -125,6 +125,7 @@ services:
     environment:
       APP_VECTORSTORE_URL: "http://milvus:19530"
       APP_VECTORSTORE_NAME: "milvus"
+      MILVUS_DB: ${RAG_EXAMPLE}
       APP_LLM_SERVERURL: "llm:9999"
       APP_LLM_MODELNAME: ${MODEL_NAME:?please update the env file and source it before running}
       APP_LLM_MODELENGINE: nemo-infer

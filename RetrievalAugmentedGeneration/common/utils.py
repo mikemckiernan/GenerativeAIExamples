@@ -140,9 +140,11 @@ def get_vector_index() -> VectorStoreIndex:
     vector_store = None
 
     logger.info(f"Using {config.vector_store.name} as vector store")
+
     if config.vector_store.name == "pgvector":
-        db_name = os.getenv('POSTGRES_DB', 'vector_db')
+        db_name = os.getenv('POSTGRES_DB', "vector_db")
         connection_string = f"postgresql://{os.getenv('POSTGRES_USER', '')}:{os.getenv('POSTGRES_PASSWORD', '')}@{config.vector_store.url}/{db_name}"
+        logger.info(f"Using DB name as: {db_name}")
 
         conn = psycopg2.connect(connection_string)
         conn.autocommit = True
@@ -165,9 +167,11 @@ def get_vector_index() -> VectorStoreIndex:
             embed_dim=config.embeddings.dimensions,
         )
     elif config.vector_store.name == "milvus":
+        db_name = os.getenv('MILVUS_DB', "vector_db")
+        logger.info(f"Using DB name as: {db_name}")
         vector_store = MilvusVectorStore(uri=config.vector_store.url,
             dim=config.embeddings.dimensions,
-            collection_name="document_store_ivfflat",
+            collection_name=db_name,
             index_config={"index_type": "GPU_IVF_FLAT", "nlist": config.vector_store.nlist},
             search_config={"nprobe": config.vector_store.nprobe},
             overwrite=False)
@@ -184,7 +188,8 @@ def get_vectorstore_langchain(documents, document_embedder) -> VectorStore:
     if config.vector_store.name == "faiss":
         vectorstore = FAISS.from_documents(documents, document_embedder)
     elif config.vector_store.name == "pgvector":
-        db_name = os.getenv('POSTGRES_DB', 'vector_db')
+        db_name = os.getenv('POSTGRES_DB', "vector_db")
+        logger.info(f"Using DB name as: {db_name}")
         connection_string = f"postgresql://{os.getenv('POSTGRES_USER', '')}:{os.getenv('POSTGRES_PASSWORD', '')}@{config.vector_store.url}/{db_name}"
         vectorstore = PGVector.from_documents(
             embedding=document_embedder,
@@ -193,10 +198,14 @@ def get_vectorstore_langchain(documents, document_embedder) -> VectorStore:
             connection_string=connection_string,
         )
     elif config.vector_store.name == "milvus":
+        db_name = os.getenv('MILVUS_DB', "vector_db")
+        logger.info(f"Using DB name as: {db_name}")
         url = urlparse(config.vector_store.url)
+        logger.info(f"Using DB name as: {example_name}")
         vectorstore = Milvus.from_documents(
             documents,
             document_embedder,
+            collection_name=db_name,
             connection_args={"host": url.hostname, "port": url.port}
         )
     else:

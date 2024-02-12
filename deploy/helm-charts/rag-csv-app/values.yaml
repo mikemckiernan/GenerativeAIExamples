@@ -12,7 +12,7 @@ imagePullSecret:
   password: ""
 
 query:
-  image: nvcr.io/ea-botmaker/dev/chain-server:query-decomposition-rag-0.4.0-rc1
+  image: nvcr.io/ea-botmaker/dev/chain-server:csv-rag-0.4.0-rc2
   replicas: 1
   resources:
     limits:
@@ -21,7 +21,12 @@ query:
   tolerations: {}
   affinity: {}
   env:
-      APP_LLM_MODELNAME: llama2_70b
+      APP_VECTORSTORE_URL: "pgvector:5432"
+      APP_VECTORSTORE_NAME: "pgvector"
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: csv-rag
+      APP_LLM_MODELNAME: mixtral_8x7b
       APP_LLM_MODELENGINE: nv-ai-foundation
       APP_EMBEDDINGS_MODELNAME: nvolveqa_40k
       APP_EMBEDDINGS_MODELENGINE: nv-ai-foundation
@@ -30,11 +35,12 @@ query:
       APP_PROMPTS_CHATTEMPLATE: "You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. Please ensure that your responses are positive in nature."
       APP_PROMPTS_RAGTEMPLATE: "You are a helpful AI assistant named Envie. You will reply to questions only based on the context that you are provided. If something is out of context, you will refrain from replying and politely decline to respond to the user."
       APP_CONFIG_FILE: /dev/null
+      CSV_NAME: PdM_machines
   service:
       type: ClusterIP
-      targetPort: 8083
+      targetPort: 8084
       ports:
-        - port: 8083
+        - port: 8084
           targetPort: http
           protocol: TCP
           name: http
@@ -47,9 +53,9 @@ frontend:
   affinity: {}
   env:
     - name: APP_MODELNAME
-      value: "llama2_70b"
+      value: "mixtral_8x7b"
     - name: APP_SERVERPORT
-      value: "8083"
+      value: "8084"
     - name: APP_SERVERURL
       value: http://query-router
     - name: RIVA_API_URI
@@ -62,9 +68,53 @@ frontend:
       value: 48000
   service:
       type: NodePort
-      targetPort: 8092
+      targetPort: 8093
       ports:
-        - port: 8092
+        - port: 8093
           targetPort: http
           protocol: TCP
           name: http
+
+pgvector:
+  image: ankane/pgvector:v0.5.1
+  replicas: 1
+  resources:
+    limits:
+      nvidia.com/gpu: 1  # Number of GPUs to present to the running service
+  nodeSelector: {}
+  tolerations: {}
+  affinity: {}
+  env:
+    - name: POSTGRES_DB
+      value: csv-rag
+    - name: POSTGRES_PASSWORD
+      value: password
+    - name: POSTGRES_USER
+      value: postgres
+    - name: PGDATA
+      value: /var/lib/postgresql/data/pgdata
+  service:
+      type: ClusterIP
+      targetPort: 5432
+      ports:
+        - port: 5432
+          targetPort: http
+          protocol: TCP
+          name: http
+
+  # persist data to a persistent volume
+  persistence:
+    enabled: true
+    existingClaim: ""
+    # Persistent Volume Storage Class
+    # If defined, storageClassName: <storageClass>
+    # If set to "-", storageClassName: "", which disables dynamic provisioning.
+    # If undefined (the default) or set to null, no storageClassName spec is
+    #   set, choosing the default provisioner.
+    storageClass: ""
+    accessMode: ReadWriteOnce  # If using an NFS or similar setup, you can use ReadWriteMany
+    size: 50Gi  # size of claim in bytes (e.g. 8Gi)
+    annotations: {}
+  hostPath:
+    enabled: false
+    path: /pgvector-data-store  # Only required if hostPath is enabled -- path to the pgvector data-store
