@@ -108,7 +108,7 @@ class CSVChatbot(BaseExample):
         logger.info("Using prompt for response: %s", prompt)
 
         chain = prompt | get_llm() | StrOutputParser()
-        return chain.stream({"context_str": context, "query_str": question})
+        return chain.stream({"input": question})
 
     def rag_chain(self, prompt: str, num_tokens: int) -> Generator[str, None, None]:
         """Execute a Retrieval Augmented Generation chain using the components defined above."""
