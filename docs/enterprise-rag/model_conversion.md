@@ -65,7 +65,7 @@ trt_llm:
     ```
 4. Run the conversion script to generate engine
     ```
-    docker run --rm -ti --gpus=1 -v $PWD/model-store:/model-store -v $PWD/Llama-2-13b-chat-hf:/engine_dir -v $PWD/model_config.yaml:/model_config.yaml nvcr.io/ohlfw0olaadg/ea-participants/nemollm-inference-ms:23.10 bash -c "model_repo_generator llm --verbose --yaml_config_file=/model_config.yaml"
+    docker run --rm -ti --gpus=1 -v $PWD/model-store:/model-store -v $PWD/Llama-2-13b-chat-hf:/engine_dir -v $PWD/model_config.yaml:/model_config.yaml nvcr.io/ohlfw0olaadg/ea-participants/nemollm-inference-ms:24.01 bash -c "model_repo_generator llm --verbose --yaml_config_file=/model_config.yaml"
     ```
 
     Note: If you've downloaded model to any other path change `$PWD/Llama-2-13b-chat-hf` to absolute path of your hf model repo.
@@ -82,17 +82,8 @@ trt_llm:
 For deploying other models like llama completion you will need to follow similar steps as the llama-chat model. Detailed instruction for deploying other models can be found by following these steps:
 1. Download the required model like [llama-7b](https://huggingface.co/meta-llama/Llama-2-7b) completion model checkpoint from huggingface.
 
-2. Once you have the checkpoints downloaded, follow these steps from [Nemo Inference Microservice](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms) to access required documentation:
+2. Once you have the checkpoints downloaded, follow these steps from [Nemo Inference Microservice](https://developer.nvidia.com/docs/nemo-microservices/model-repo-generator.html) to access required documentation:
 
-
-    - Launch container hosting the document:
-        ```
-        export DOCS_PORT=8999
-        export VERSION=23.10
-        docker run -p $DOCS_PORT:80 nvcr.io/ohlfw0olaadg/ea-participants/nemollm-inference-ms:docs-$VERSION
-        ```
-
-    -  Once the container is up, you will be able to see steps at `http://<workstation-ip>:8999/model-repo-generator.html#model-repo-generator`
 
 3. After you generate the model repository, [You can now follow these steps to deploy the end to end pipeline.](../../RetrievalAugmentedGeneration/README.md#install-guide)
 
