@@ -58,7 +58,8 @@ services:
       APP_CONFIG_FILE: ${APP_CONFIG_FILE}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_DB: ${POSTGRES_DB:-api}
+      POSTGRES_DB: ${POSTGRES_DB:-api} # Will be deprecated
+      COLLECTION_NAME: ${POSTGRES_DB:-api}
     volumes:
       - ${APP_CONFIG_FILE}:${APP_CONFIG_FILE}
     ports:
