@@ -7,7 +7,7 @@ imagePullSecret:
   # If set to false, the chart expects either a imagePullSecret
   # with the name configured above to be present on the cluster or that no
   # credentials are needed.
-  create: false
+  create: true
   username: '$oauthtoken'
   password: ""
 
@@ -23,7 +23,7 @@ query:
   env:
       APP_VECTORSTORE_URL: "pgvector:5432"
       APP_VECTORSTORE_NAME: "pgvector"
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: password
       POSTGRES_USER: postgres
       POSTGRES_DB: csv-rag
       APP_LLM_MODELNAME: mixtral_8x7b
