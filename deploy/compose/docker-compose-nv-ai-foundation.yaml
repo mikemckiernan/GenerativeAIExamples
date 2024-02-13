@@ -22,6 +22,7 @@ services:
       APP_CONFIG_FILE: ${APP_CONFIG_FILE}
       CSV_NAME: ${CSV_NAME}
       APP_VECTORSTORE_NAME: "faiss"
+      COLLECTION_NAME: ${RAG_EXAMPLE}
     volumes:
       - ${APP_CONFIG_FILE}:${APP_CONFIG_FILE}
     ports:

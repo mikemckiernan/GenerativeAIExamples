@@ -46,11 +46,23 @@ spec:
             value: {{ .Values.query.env.APP_PROMPTS_CHATTEMPLATE | quote }}
           - name: APP_PROMPTS_RAGTEMPLATE
             value: {{ .Values.query.env.APP_PROMPTS_RAGTEMPLATE | quote }}
+          - name: CSV_NAME
+            value: {{ .Values.query.env.CSV_NAME | quote }}
           - name: NVIDIA_API_KEY
             valueFrom:
               secretKeyRef:
                 name: nv-ai-foundation-secret
                 key: NVIDIA_API_KEY
+          - name: POSTGRES_PASSWORD
+            value: {{ .Values.query.env.POSTGRES_PASSWORD | quote }}
+          - name: POSTGRES_USER
+            value: {{ .Values.query.env.POSTGRES_USER | quote }}
+          - name: POSTGRES_DB
+            value: {{ .Values.query.env.POSTGRES_DB | quote }}
+          - name: APP_VECTORSTORE_URL
+            value: {{ .Values.query.env.APP_VECTORSTORE_URL | quote }}
+          - name: APP_VECTORSTORE_NAME
+            value: {{ .Values.query.env.APP_VECTORSTORE_NAME | quote }}
         ports:
         - name: http
           containerPort: {{ .Values.query.service.targetPort }}

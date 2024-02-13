@@ -7,12 +7,12 @@ imagePullSecret:
   # If set to false, the chart expects either a imagePullSecret
   # with the name configured above to be present on the cluster or that no
   # credentials are needed.
-  create: false
+  create: true
   username: '$oauthtoken'
   password: ""
 
 query:
-  image: nvcr.io/ea-botmaker/dev/chain-server:query-decomposition-rag-0.4.0-rc1
+  image: nvcr.io/ohlfw0olaadg/ea-rag-examples/chain-server:query-decomposition-rag-0.4.0-rc2
   replicas: 1
   resources:
     limits:
@@ -21,6 +21,11 @@ query:
   tolerations: {}
   affinity: {}
   env:
+      APP_VECTORSTORE_URL: "pgvector:5432"
+      APP_VECTORSTORE_NAME: "pgvector"
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: query_decomposition
       APP_LLM_MODELNAME: llama2_70b
       APP_LLM_MODELENGINE: nv-ai-foundation
       APP_EMBEDDINGS_MODELNAME: nvolveqa_40k
@@ -40,7 +45,7 @@ query:
           name: http
 
 frontend:
-  image: nvcr.io/ea-botmaker/dev/llm-playground:0.4.0-rc1
+  image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-playground:0.4.0-rc1
   replicas: 1
   nodeSelector: {}
   tolerations: {}
@@ -68,3 +73,47 @@ frontend:
           targetPort: http
           protocol: TCP
           name: http
+
+pgvector:
+  image: ankane/pgvector:v0.5.1
+  replicas: 1
+  resources:
+    limits:
+      nvidia.com/gpu: 1  # Number of GPUs to present to the running service
+  nodeSelector: {}
+  tolerations: {}
+  affinity: {}
+  env:
+    - name: POSTGRES_DB
+      value: query_decomposition
+    - name: POSTGRES_PASSWORD
+      value: password
+    - name: POSTGRES_USER
+      value: postgres
+    - name: PGDATA
+      value: /var/lib/postgresql/data/pgdata
+  service:
+      type: ClusterIP
+      targetPort: 5432
+      ports:
+        - port: 5432
+          targetPort: http
+          protocol: TCP
+          name: http
+
+  # persist data to a persistent volume
+  persistence:
+    enabled: true
+    existingClaim: ""
+    # Persistent Volume Storage Class
+    # If defined, storageClassName: <storageClass>
+    # If set to "-", storageClassName: "", which disables dynamic provisioning.
+    # If undefined (the default) or set to null, no storageClassName spec is
+    #   set, choosing the default provisioner.
+    storageClass: ""
+    accessMode: ReadWriteOnce  # If using an NFS or similar setup, you can use ReadWriteMany
+    size: 50Gi  # size of claim in bytes (e.g. 8Gi)
+    annotations: {}
+  hostPath:
+    enabled: false
+    path: /pgvector-data-store  # Only required if hostPath is enabled -- path to the pgvector data-store

@@ -83,6 +83,9 @@ services:
       APP_TEXTSPLITTER_CHUNKOVERLAP: 200
       NVIDIA_API_KEY: ${NVIDIA_API_KEY}
       APP_CONFIG_FILE: ${APP_CONFIG_FILE}
+      APP_VECTORSTORE_URL: "http://milvus:19530"
+      APP_VECTORSTORE_NAME: "milvus"
+      COLLECTION_NAME: ${RAG_EXAMPLE}
     volumes:
       - ${APP_CONFIG_FILE}:${APP_CONFIG_FILE}
     ports:
