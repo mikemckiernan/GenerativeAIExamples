@@ -12,7 +12,7 @@ imagePullSecret:
   password: ""
 
 query:
-  image: nvcr.io/ohlfw0olaadg/ea-rag-examples/chain-server:csv-rag-0.4.0-rc2
+  image: nvcr.io/ohlfw0olaadg/ea-rag-examples/chain-server:csv-rag-0.4.0
   replicas: 1
   resources:
     limits:
@@ -47,7 +47,7 @@ query:
           name: http
 
 frontend:
-  image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-playground:0.4.0-rc1
+  image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-playground:0.4.0
   replicas: 1
   nodeSelector: {}
   tolerations: {}
