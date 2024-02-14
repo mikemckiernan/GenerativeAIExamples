@@ -59,6 +59,8 @@ spec:
             value: {{ .Values.query.env.POSTGRES_USER | quote }}
           - name: POSTGRES_DB
             value: {{ .Values.query.env.POSTGRES_DB | quote }}
+          - name: COLLECTION_NAME
+            value: {{ .Values.query.env.COLLECTION_NAME | quote }}
           - name: APP_VECTORSTORE_URL
             value: {{ .Values.query.env.APP_VECTORSTORE_URL | quote }}
           - name: APP_VECTORSTORE_NAME

@@ -143,10 +143,9 @@ def get_vector_index() -> VectorStoreIndex:
 
     if config.vector_store.name == "pgvector":
         db_name = os.getenv('POSTGRES_DB', None)
-        if db_name is None:
-            db_name = os.getenv('COLLECTION_NAME', "vector_db")
+        collection_name = os.getenv('COLLECTION_NAME', "vector_db")
         connection_string = f"postgresql://{os.getenv('POSTGRES_USER', '')}:{os.getenv('POSTGRES_PASSWORD', '')}@{config.vector_store.url}/{db_name}"
-        logger.info(f"Using PGVector collection: {db_name}")
+        logger.info(f"Using PGVector collection: {collection_name}")
 
         conn = psycopg2.connect(connection_string)
         conn.autocommit = True
@@ -165,8 +164,8 @@ def get_vector_index() -> VectorStoreIndex:
             password=url.password,
             port=url.port,
             user=url.username,
-            table_name="document_store",
-            embed_dim=config.embeddings.dimensions,
+            table_name=collection_name,
+            embed_dim=config.embeddings.dimensions
         )
     elif config.vector_store.name == "milvus":
         db_name = os.getenv('COLLECTION_NAME', "vector_db")
@@ -191,14 +190,13 @@ def get_vectorstore_langchain(documents, document_embedder) -> VectorStore:
         vectorstore = FAISS.from_documents(documents, document_embedder)
     elif config.vector_store.name == "pgvector":
         db_name = os.getenv('POSTGRES_DB', None)
-        if db_name is None:
-            db_name = os.getenv('COLLECTION_NAME', "vector_db")
-        logger.info(f"Using PGVector collection: {db_name}")
+        collection_name = os.getenv('COLLECTION_NAME', "vector_db")
+        logger.info(f"Using PGVector collection: {collection_name}")
         connection_string = f"postgresql://{os.getenv('POSTGRES_USER', '')}:{os.getenv('POSTGRES_PASSWORD', '')}@{config.vector_store.url}/{db_name}"
         vectorstore = PGVector.from_documents(
             embedding=document_embedder,
             documents=documents,
-            collection_name="document_store",
+            collection_name=collection_name,
             connection_string=connection_string,
         )
     elif config.vector_store.name == "milvus":

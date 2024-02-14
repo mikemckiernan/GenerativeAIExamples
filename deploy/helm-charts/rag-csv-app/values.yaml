@@ -25,7 +25,8 @@ query:
       APP_VECTORSTORE_NAME: "pgvector"
       POSTGRES_PASSWORD: password
       POSTGRES_USER: postgres
-      POSTGRES_DB: csv-rag
+      POSTGRES_DB: api
+      COLLECTION_NAME: csv-rag
       APP_LLM_MODELNAME: mixtral_8x7b
       APP_LLM_MODELENGINE: nv-ai-foundation
       APP_EMBEDDINGS_MODELNAME: nvolveqa_40k
@@ -86,7 +87,7 @@ pgvector:
   affinity: {}
   env:
     - name: POSTGRES_DB
-      value: csv-rag
+      value: api
     - name: POSTGRES_PASSWORD
       value: password
     - name: POSTGRES_USER

@@ -83,8 +83,8 @@ services:
       APP_CONFIG_FILE: ${APP_CONFIG_FILE}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_DB: ${POSTGRES_DB:-api} # Will be deprecated
-      COLLECTION_NAME: ${POSTGRES_DB:-api}
+      POSTGRES_DB: ${POSTGRES_DB:-api}
+      COLLECTION_NAME: ${RAG_EXAMPLE}
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
       ENABLE_TRACING: false
