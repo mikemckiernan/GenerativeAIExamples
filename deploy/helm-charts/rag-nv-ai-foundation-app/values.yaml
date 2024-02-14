@@ -1,5 +1,16 @@
 # Default values for rag-llm-pipeline
 
+imagePullSecret:
+  # Leave blank, if no imagePullSecret is needed.
+  registry: "nvcr.io"
+  name: "ngc-secret-nv-ai-foundation"
+  # If set to false, the chart expects either a imagePullSecret
+  # with the name configured above to be present on the cluster or that no
+  # credentials are needed.
+  create: true
+  username: '$oauthtoken'
+  password: ""
+
 query:
   image: nvcr.io/ohlfw0olaadg/ea-rag-examples/chain-server:ai-foundation-rag-0.4.0
   name: query-router-ai-foundation
@@ -11,7 +22,7 @@ query:
   tolerations: {}
   affinity: {}
   env:
-      APP_VECTORSTORE_URL: "pgvector:5432"
+      APP_VECTORSTORE_URL: "pgvector.rag-sample:5432"
       APP_VECTORSTORE_NAME: "pgvector"
       POSTGRES_PASSWORD: password
       POSTGRES_USER: postgres

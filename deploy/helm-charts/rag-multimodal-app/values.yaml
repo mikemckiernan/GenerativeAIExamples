@@ -1,5 +1,16 @@
 # Default values for rag-llm-pipeline
 
+imagePullSecret:
+  # Leave blank, if no imagePullSecret is needed.
+  registry: "nvcr.io"
+  name: "ngc-secret-multimodal"
+  # If set to false, the chart expects either a imagePullSecret
+  # with the name configured above to be present on the cluster or that no
+  # credentials are needed.
+  create: true
+  username: '$oauthtoken'
+  password: ""
+
 query:
   image: nvcr.io/ohlfw0olaadg/ea-rag-examples/chain-server:multimodal-rag-0.4.0
   name: query-router-multimodal
@@ -11,7 +22,7 @@ query:
   tolerations: {}
   affinity: {}
   env:
-      APP_VECTORSTORE_URL: "http://milvus:19530"
+      APP_VECTORSTORE_URL: "http://milvus.rag-sample:19530"
       APP_VECTORSTORE_NAME: "milvus"
       COLLECTION_NAME: "multimodal-rag"
       APP_LLM_MODELNAME: mixtral_8x7b
