@@ -324,17 +324,20 @@ class QueryDecompositionChatbot(BaseExample):
         """Search for the most relevant documents for the given search parameters."""
 
         try:
-            retriever = get_doc_retriever(num_nodes=num_docs)
-            nodes = retriever.retrieve(content)
-            output = []
-            for node in nodes:
-                file_name = nodes[0].metadata["filename"]
-                decoded_filename = base64.b64decode(file_name.encode("utf-8")).decode("utf-8")
-                entry = {"score": node.score, "source": decoded_filename, "content": node.text}
-                output.append(entry)
+            if vectorstore != None:
+                retriever = vectorstore.as_retriever()
+                docs = retriever.get_relevant_documents(content)
 
-            return output
-
+                result = []
+                for doc in docs:
+                    result.append(
+                        {
+                        "source": os.path.basename(doc.metadata.get('source', '')),
+                        "content": doc.page_content
+                        }
+                    )
+                return result
+            return []
         except Exception as e:
             logger.error(f"Error from /documentSearch endpoint. Error details: {e}")
             return []
