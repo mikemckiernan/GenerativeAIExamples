@@ -48,8 +48,6 @@ spec:
             value: {{ .Values.query.env.APP_EMBEDDINGS_MODELENGINE | quote }}
           - name: APP_CONFIG_FILE
             value: {{ .Values.query.env.APP_CONFIG_FILE | quote }}
-          - name: NVAPI_KEY
-            value: {{ .Values.query.env.NVAPI_KEY | quote }}
           - name: POSTGRES_PASSWORD
             value: {{ .Values.query.env.POSTGRES_PASSWORD | quote }}
           - name: POSTGRES_USER
