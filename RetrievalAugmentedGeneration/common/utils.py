@@ -73,9 +73,13 @@ except Exception as e:
 
 try:
     from langchain_nvidia_ai_endpoints import ChatNVIDIA, NVIDIAEmbeddings
+    from langchain_community.chat_models import ChatOpenAI
 except Exception as e:
     logger.error(f"NVIDIA AI connector import failed with error: {e}")
 
+from langchain_core.embeddings import Embeddings
+from langchain_core.language_models.chat_models import SimpleChatModel
+from langchain.llms.base import LLM
 from integrations.langchain.llms.triton_trt_llm import TensorRTLLM
 from integrations.langchain.llms.nemo_infer import NemoInfer
 from integrations.langchain.embeddings.nemo_embed import NemoEmbeddings
@@ -117,8 +121,10 @@ class LimitRetrievedNodesLength(BaseNodePostprocessor):
 @lru_cache
 def set_service_context() -> None:
     """Set the global service context."""
+    llm = LangChainLLM(get_llm())
+    embedding = LangchainEmbedding(get_embedding_model())
     service_context = ServiceContext.from_defaults(
-        llm=get_llm(), embed_model=get_embedding_model()
+        llm=llm, embed_model=embedding
     )
     set_global_service_context(service_context)
 
@@ -134,7 +140,7 @@ def get_config() -> "ConfigWizard":
 
 
 @lru_cache
-def get_vector_index() -> VectorStoreIndex:
+def get_vector_index(collection_name: str = "") -> VectorStoreIndex:
     """Create the vector db index."""
     config = get_config()
     vector_store = None
@@ -143,7 +149,8 @@ def get_vector_index() -> VectorStoreIndex:
 
     if config.vector_store.name == "pgvector":
         db_name = os.getenv('POSTGRES_DB', None)
-        collection_name = os.getenv('COLLECTION_NAME', "vector_db")
+        if not collection_name:
+            collection_name = os.getenv('COLLECTION_NAME', "vector_db")
         connection_string = f"postgresql://{os.getenv('POSTGRES_USER', '')}:{os.getenv('POSTGRES_PASSWORD', '')}@{config.vector_store.url}/{db_name}"
         logger.info(f"Using PGVector collection: {collection_name}")
 
@@ -168,11 +175,12 @@ def get_vector_index() -> VectorStoreIndex:
             embed_dim=config.embeddings.dimensions
         )
     elif config.vector_store.name == "milvus":
-        db_name = os.getenv('COLLECTION_NAME', "vector_db")
-        logger.info(f"Using milvus collection: {db_name}")
+        if not collection_name:
+            collection_name = os.getenv('COLLECTION_NAME', "vector_db")
+        logger.info(f"Using milvus collection: {collection_name}")
         vector_store = MilvusVectorStore(uri=config.vector_store.url,
             dim=config.embeddings.dimensions,
-            collection_name=db_name,
+            collection_name=collection_name,
             index_config={"index_type": "GPU_IVF_FLAT", "nlist": config.vector_store.nlist},
             search_config={"nprobe": config.vector_store.nprobe},
             overwrite=False)
@@ -181,7 +189,7 @@ def get_vector_index() -> VectorStoreIndex:
     return VectorStoreIndex.from_vector_store(vector_store)
 
 
-def get_vectorstore_langchain(documents, document_embedder) -> VectorStore:
+def get_vectorstore_langchain(documents, document_embedder, collection_name: str = "") -> VectorStore:
     """Create the vector db index for langchain."""
 
     config = get_config()
@@ -190,7 +198,8 @@ def get_vectorstore_langchain(documents, document_embedder) -> VectorStore:
         vectorstore = FAISS.from_documents(documents, document_embedder)
     elif config.vector_store.name == "pgvector":
         db_name = os.getenv('POSTGRES_DB', None)
-        collection_name = os.getenv('COLLECTION_NAME', "vector_db")
+        if not collection_name:
+            collection_name = os.getenv('COLLECTION_NAME', "vector_db")
         logger.info(f"Using PGVector collection: {collection_name}")
         connection_string = f"postgresql://{os.getenv('POSTGRES_USER', '')}:{os.getenv('POSTGRES_PASSWORD', '')}@{config.vector_store.url}/{db_name}"
         vectorstore = PGVector.from_documents(
@@ -200,13 +209,14 @@ def get_vectorstore_langchain(documents, document_embedder) -> VectorStore:
             connection_string=connection_string,
         )
     elif config.vector_store.name == "milvus":
-        db_name = os.getenv('COLLECTION_NAME', "vector_db")
-        logger.info(f"Using milvus collection: {db_name}")
+        if not collection_name:
+            collection_name = os.getenv('COLLECTION_NAME', "vector_db")
+        logger.info(f"Using milvus collection: {collection_name}")
         url = urlparse(config.vector_store.url)
         vectorstore = Milvus.from_documents(
             documents,
             document_embedder,
-            collection_name=db_name,
+            collection_name=collection_name,
             connection_args={"host": url.hostname, "port": url.port}
         )
     else:
@@ -223,7 +233,7 @@ def get_doc_retriever(num_nodes: int = 4) -> "BaseRetriever":
 
 
 @lru_cache
-def get_llm() -> LangChainLLM:
+def get_llm() -> LLM | SimpleChatModel:
     """Create the LLM connection."""
     settings = get_config()
 
@@ -234,7 +244,7 @@ def get_llm() -> LangChainLLM:
             model_name=settings.llm.model_name,
             tokens=DEFAULT_NUM_TOKENS,
         )
-        return LangChainLLM(llm=trtllm)
+        return trtllm
     elif settings.llm.model_engine == "nv-ai-foundation":
         return ChatNVIDIA(model=settings.llm.model_name)
     elif settings.llm.model_engine == "nemo-infer":
@@ -243,13 +253,21 @@ def get_llm() -> LangChainLLM:
             model=settings.llm.model_name,
             tokens=DEFAULT_NUM_TOKENS,
         )
-        return LangChainLLM(llm=nemo_infer)
+        return nemo_infer
+    elif settings.llm.model_engine == "nemo-infer-openai":
+        nemo_infer = ChatOpenAI(
+            openai_api_base=f"http://{settings.llm.server_url}/v1/",
+            openai_api_key="xyz",
+            model_name=settings.llm.model_name,
+            max_tokens=DEFAULT_NUM_TOKENS,
+        )
+        return nemo_infer
     else:
         raise RuntimeError("Unable to find any supported Large Language Model server. Supported engines are triton-trt-llm and nv-ai-foundation.")
 
 
 @lru_cache
-def get_embedding_model() -> LangchainEmbedding:
+def get_embedding_model() -> Embeddings:
     """Create the embedding model."""
     model_kwargs = {"device": "cpu"}
     if torch.cuda.is_available():
@@ -266,7 +284,7 @@ def get_embedding_model() -> LangchainEmbedding:
             encode_kwargs=encode_kwargs,
         )
         # Load in a specific embedding model
-        return LangchainEmbedding(hf_embeddings)
+        return hf_embeddings
     elif settings.embeddings.model_engine == "nv-ai-foundation":
         return NVIDIAEmbeddings(model=settings.embeddings.model_name, model_type="passage")
     elif settings.embeddings.model_engine == "nemo-embed":
@@ -274,7 +292,7 @@ def get_embedding_model() -> LangchainEmbedding:
             server_url=f"http://{settings.embeddings.server_url}/v1/embeddings",
             model_name=settings.embeddings.model_name,
         )
-        return LangchainEmbedding(nemo_embed)
+        return nemo_embed
     else:
         raise RuntimeError("Unable to find any supported embedding model. Supported engine is huggingface.")
 

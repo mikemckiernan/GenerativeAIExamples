@@ -100,7 +100,6 @@ class CSVChatbot(BaseExample):
         """Execute a simple LLM chain using the components defined above."""
 
         logger.info("Using llm to generate response directly without knowledge base.")
-        set_service_context()
         prompt = ChatPromptTemplate.from_messages(
             [("system", get_config().prompts.chat_template), ("user", "{input}")]
         )
@@ -114,7 +113,6 @@ class CSVChatbot(BaseExample):
         """Execute a Retrieval Augmented Generation chain using the components defined above."""
 
         logger.info("Using rag to generate response from document")
-        set_service_context()
         llm = get_llm()
 
         df = self.read_and_concatenate_csv(file_paths_txt="ingested_csv_files.txt")
