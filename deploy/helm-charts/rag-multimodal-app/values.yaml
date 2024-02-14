@@ -22,7 +22,7 @@ query:
   tolerations: {}
   affinity: {}
   env:
-      APP_VECTORSTORE_URL: "http://milvus.rag-sample:19530"
+      APP_VECTORSTORE_URL: "http://milvus:19530"
       APP_VECTORSTORE_NAME: "milvus"
       COLLECTION_NAME: "multimodal-rag"
       APP_LLM_MODELNAME: mixtral_8x7b
