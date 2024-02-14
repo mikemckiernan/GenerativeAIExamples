@@ -127,6 +127,7 @@ class PromptsConfig(ConfigWizard):
 
     :cvar chat_template: Prompt template for chat.
     :cvar rag_template: Prompt template for rag.
+    :cvar multi_turn_rag_template: Prompt template for multi-turn rag.
     """
 
     chat_template: str = configfield(
@@ -150,6 +151,18 @@ class PromptsConfig(ConfigWizard):
             "<</SYS>>"
             "<s>[INST] Context: {context_str} Question: {query_str} Only return the helpful"
             " answer below and nothing else. Helpful answer:[/INST]"
+        ),
+        help_txt="Prompt template for rag.",
+    )
+    multi_turn_rag_template: str = configfield(
+        "multi_turn_rag_template",
+        default=(
+            "You are a document chatbot. Help the user as they ask questions about documents."
+            " User messaged just asked: {input}\n\n"
+            " From this, we have retrieved the following potentially-useful info: "
+            " Conversation History Retrieval:\n{history}\n\n"
+            " Document Retrieval:\n{context}\n\n"
+            " (Answer only from retrieval. Only cite sources that are used. Make your response conversational.)"
         ),
         help_txt="Prompt template for rag.",
     )

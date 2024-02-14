@@ -78,3 +78,8 @@ prompts:
     "<s>[INST] <<SYS>>Use the following context to answer the user's question. If you don't know the answer,just say that you don't know, don't try to make up an answer.<</SYS>><s>[INST] Context: {context_str} Question: {query_str} Only return the helpful answer below and nothing else. Helpful answer:[/INST]"
   # The RAG prompt template instructs the model to generate responses for queries while utilizing knowledge base.
   # Type: str
+
+  multi_turn_rag_template:
+    "You are a document chatbot. Help the user as they ask questions about documents. User messaged just asked: {input}. From this, we have retrieved the following potentially-useful info: Conversation History Retrieval: {history}. Document Retrieval: {context} (Answer only from retrieval. Only cite sources that are used. Make your response conversational.)"
+  # The Muti-turn RAG prompt template instructs the model to generate responses for queries while utilizing knowledge base and conversation history.
+  # Type: str
