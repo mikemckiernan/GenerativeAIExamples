@@ -3,16 +3,17 @@
 imagePullSecret:
   # Leave blank, if no imagePullSecret is needed.
   registry: "nvcr.io"
-  name: "ngc-secret"
+  name: "ngc-secret-multi-turn"
   # If set to false, the chart expects either a imagePullSecret
   # with the name configured above to be present on the cluster or that no
   # credentials are needed.
-  create: false
+  create: true
   username: '$oauthtoken'
   password: ""
 
 query:
   image: nvcr.io/ohlfw0olaadg/ea-rag-examples/chain-server:multi-turn-rag-0.4.0
+  name: query-router-multi-turn
   replicas: 1
   resources:
     limits:
@@ -21,16 +22,15 @@ query:
   tolerations: {}
   affinity: {}
   env:
-      APP_VECTORSTORE_URL: "pgvector:5432"
+      APP_VECTORSTORE_URL: "pgvector.rag-sample:5432"
       APP_VECTORSTORE_NAME: "pgvector"
-      APP_LLM_SERVERURL: "nemollm-inference:8005" # openai_port of inference service
+      APP_LLM_SERVERURL: "nemollm-inference.rag-sample:8005" # openai_port of inference service
       APP_LLM_MODELNAME: llama-2-13b-chat
       APP_LLM_MODELENGINE: nemo-infer-openai
-      APP_EMBEDDINGS_SERVERURL: "nemollm-embedding:8080"
+      APP_EMBEDDINGS_SERVERURL: "nemollm-embedding.rag-sample:8080"
       APP_EMBEDDINGS_MODELNAME: NV-Embed-QA
       APP_EMBEDDINGS_MODELENGINE: nemo-embed
       APP_CONFIG_FILE: /dev/null
-      NVAPI_KEY: ""
       POSTGRES_PASSWORD: password
       POSTGRES_USER: postgres
       POSTGRES_DB: api
@@ -46,6 +46,7 @@ query:
 
 frontend:
   image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-playground:0.4.0
+  name: rag-playground-multi-turn
   replicas: 1
   nodeSelector: {}
   tolerations: {}
@@ -56,7 +57,7 @@ frontend:
     - name: APP_SERVERPORT
       value: "8085"
     - name: APP_SERVERURL
-      value: http://query-router
+      value: http://query-router-multi-turn
     - name: RIVA_API_URI
       value: ""
     - name: RIVA_API_KEY
@@ -67,51 +68,9 @@ frontend:
       value: 48000
   service:
       type: NodePort
-      targetPort: 8094
+      targetPort: 8095
       ports:
-        - port: 8094
+        - port: 8095
           targetPort: http
           protocol: TCP
           name: http
-
-pgvector:
-  image: ankane/pgvector:v0.5.1
-  replicas: 1
-  resources: {}
-  nodeSelector: {}
-  tolerations: {}
-  affinity: {}
-  env:
-    - name: POSTGRES_DB
-      value: api
-    - name: POSTGRES_PASSWORD
-      value: password
-    - name: POSTGRES_USER
-      value: postgres
-    - name: PGDATA
-      value: /var/lib/postgresql/data/pgdata
-  service:
-      type: ClusterIP
-      targetPort: 5432
-      ports:
-        - port: 5432
-          targetPort: http
-          protocol: TCP
-          name: http
-
-  # persist data to a persistent volume
-  persistence:
-    enabled: true
-    existingClaim: ""
-    # Persistent Volume Storage Class
-    # If defined, storageClassName: <storageClass>
-    # If set to "-", storageClassName: "", which disables dynamic provisioning.
-    # If undefined (the default) or set to null, no storageClassName spec is
-    #   set, choosing the default provisioner.
-    storageClass: ""
-    accessMode: ReadWriteOnce  # If using an NFS or similar setup, you can use ReadWriteMany
-    size: 50Gi  # size of claim in bytes (e.g. 8Gi)
-    annotations: {}
-  hostPath:
-    enabled: false
-    path: /pgvector-data-store  # Only required if hostPath is enabled -- path to the pgvector data-store
