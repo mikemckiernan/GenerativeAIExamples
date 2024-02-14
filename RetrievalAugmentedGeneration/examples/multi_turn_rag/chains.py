@@ -121,7 +121,7 @@ class MultiTurnChatbot(BaseExample):
         stream_chain = chat_prompt | llm | StrOutputParser()
 
         convstore = get_vectorstore_langchain(
-            [], document_embedder, pg_collection_name="conv_store"
+            [], document_embedder, collection_name="conv_store"
         )
 
         resp_str = ""

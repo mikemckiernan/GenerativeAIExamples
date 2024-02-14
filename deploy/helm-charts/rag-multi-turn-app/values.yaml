@@ -28,17 +28,18 @@ query:
       APP_LLM_MODELENGINE: nemo-infer-openai
       APP_EMBEDDINGS_SERVERURL: "nemollm-embedding:8080"
       APP_EMBEDDINGS_MODELNAME: NV-Embed-QA
-      APP_EMBEDDINGS_MODELENGINE: nemo-embed-langchain
+      APP_EMBEDDINGS_MODELENGINE: nemo-embed
       APP_CONFIG_FILE: /dev/null
       NVAPI_KEY: ""
       POSTGRES_PASSWORD: password
       POSTGRES_USER: postgres
       POSTGRES_DB: api
+      COLLECTION_NAME: csv-rag
   service:
       type: ClusterIP
-      targetPort: 8081
+      targetPort: 8085
       ports:
-        - port: 8081
+        - port: 8085
           targetPort: http
           protocol: TCP
           name: http
@@ -53,7 +54,7 @@ frontend:
     - name: APP_MODELNAME
       value: "llama-2-13b-chat"
     - name: APP_SERVERPORT
-      value: "8081"
+      value: "8085"
     - name: APP_SERVERURL
       value: http://query-router
     - name: RIVA_API_URI
@@ -66,9 +67,9 @@ frontend:
       value: 48000
   service:
       type: NodePort
-      targetPort: 8090
+      targetPort: 8094
       ports:
-        - port: 8090
+        - port: 8094
           targetPort: http
           protocol: TCP
           name: http
