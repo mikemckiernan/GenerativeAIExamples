@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: {{ .Values.frontend.name }}
   labels:
     app.kubernetes.io/name: frontend
 spec:
@@ -54,7 +54,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend
+  name: {{ .Values.frontend.name }}
 spec:
   type: {{ .Values.frontend.service.type }}
   selector:
