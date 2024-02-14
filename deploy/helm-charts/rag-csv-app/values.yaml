@@ -1,18 +1,8 @@
 # Default values for rag-llm-pipeline
 
-imagePullSecret:
-  # Leave blank, if no imagePullSecret is needed.
-  registry: "nvcr.io"
-  name: "ngc-secret"
-  # If set to false, the chart expects either a imagePullSecret
-  # with the name configured above to be present on the cluster or that no
-  # credentials are needed.
-  create: true
-  username: '$oauthtoken'
-  password: ""
-
 query:
   image: nvcr.io/ohlfw0olaadg/ea-rag-examples/chain-server:csv-rag-0.4.0
+  name: query-router-csv
   replicas: 1
   resources:
     limits:
@@ -48,6 +38,7 @@ query:
 
 frontend:
   image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-playground:0.4.0
+  name: rag-playground-csv
   replicas: 1
   nodeSelector: {}
   tolerations: {}
@@ -58,7 +49,7 @@ frontend:
     - name: APP_SERVERPORT
       value: "8084"
     - name: APP_SERVERURL
-      value: http://query-router
+      value: http://query-router-csv
     - name: RIVA_API_URI
       value: ""
     - name: RIVA_API_KEY
@@ -75,47 +66,3 @@ frontend:
           targetPort: http
           protocol: TCP
           name: http
-
-pgvector:
-  image: ankane/pgvector:v0.5.1
-  replicas: 1
-  resources:
-    limits:
-      nvidia.com/gpu: 1  # Number of GPUs to present to the running service
-  nodeSelector: {}
-  tolerations: {}
-  affinity: {}
-  env:
-    - name: POSTGRES_DB
-      value: api
-    - name: POSTGRES_PASSWORD
-      value: password
-    - name: POSTGRES_USER
-      value: postgres
-    - name: PGDATA
-      value: /var/lib/postgresql/data/pgdata
-  service:
-      type: ClusterIP
-      targetPort: 5432
-      ports:
-        - port: 5432
-          targetPort: http
-          protocol: TCP
-          name: http
-
-  # persist data to a persistent volume
-  persistence:
-    enabled: true
-    existingClaim: ""
-    # Persistent Volume Storage Class
-    # If defined, storageClassName: <storageClass>
-    # If set to "-", storageClassName: "", which disables dynamic provisioning.
-    # If undefined (the default) or set to null, no storageClassName spec is
-    #   set, choosing the default provisioner.
-    storageClass: ""
-    accessMode: ReadWriteOnce  # If using an NFS or similar setup, you can use ReadWriteMany
-    size: 50Gi  # size of claim in bytes (e.g. 8Gi)
-    annotations: {}
-  hostPath:
-    enabled: false
-    path: /pgvector-data-store  # Only required if hostPath is enabled -- path to the pgvector data-store
