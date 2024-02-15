@@ -424,11 +424,13 @@ This example showcases a minimilastic RAG usecase built using Nvidia AI Foundati
    Open browser and access the llm-playground UI using <http://localhost:30001>.
 
 # Configuring Examples
+You can configure various parameters such as prompts and vectorstore using environment variables. Modify the environment variables in the `env` section of the query service in the  [values.yaml](./rag-nv-ai-foundation-app/values.yaml) file of the respective examples.
+
 ## Configuring Prompts
 Prompts can be configured for examples using environment variables. There are two environment variables exposed:
 1. `APP_PROMPTS_CHATTEMPLATE` : Used when a query is asked without a knowledge base.
 
-2. `APP_PROMPTS_RAGTEMPLATE` : ThUsed when a query is used with a knowledge base.
+2. `APP_PROMPTS_RAGTEMPLATE` : Used when a query is used with a knowledge base.
 
 Note: Only [Nvidia AI Foundation based RAG](#05-nvidia-ai-foundation-rag) supports modifying prompts.
 
