@@ -422,3 +422,20 @@ This example showcases a minimilastic RAG usecase built using Nvidia AI Foundati
    ```
 
    Open browser and access the llm-playground UI using <http://localhost:30001>.
+
+# Configuring Examples
+## Configuring Prompts
+Prompts can be configured for examples using environment variables. There are two environment variables exposed:
+1. `APP_PROMPTS_CHATTEMPLATE` : Used when a query is asked without a knowledge base.
+
+2. `APP_PROMPTS_RAGTEMPLATE` : ThUsed when a query is used with a knowledge base.
+
+Note: Only [Nvidia AI Foundation based RAG](#05-nvidia-ai-foundation-rag) supports modifying prompts.
+
+## Configuring VectorStore
+
+The vector store can be modified from environment variables. You can update:
+1. `APP_VECTORSTORE_NAME`: This is the vector store name. Currently, we support `milvus` and `pgvector`.
+**Note**: This only specifies the vector store name. The vector store container needs to be started separately.
+
+2. `APP_VECTORSTORE_URL`: The host machine URL where the vector store is running.
