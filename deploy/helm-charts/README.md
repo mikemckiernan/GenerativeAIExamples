@@ -65,7 +65,7 @@ This example showcases multi turn usecase in a RAG pipeline. It stores the conve
 
 1. Pull in the helm chart from NGC
    ```
-   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-multi-turn-app-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
+   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-app-multiturn-chatbot-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
    ```
 
 2. Create the example namespace
@@ -135,7 +135,7 @@ This example showcases multi modal usecase in a RAG pipeline. It can understand 
 
 1. Pull in the helm chart from NGC
    ```
-   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-multimodal-app-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
+   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-app-multimodal-chatbot-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
    ```
 
 3. Create the example namespace
@@ -232,7 +232,7 @@ This example showcases a RAG usecase built using structured CSV data. It uses mo
 ## Deployment
 1. Pull in the helm chart from NGC
    ```
-   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-csv-app-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
+   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-app-structured-data-chatbot-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
    ```
 
 3. Create the example namespace
@@ -307,7 +307,7 @@ This example showcases a RAG usecase built using task decomposition paradigm. It
 
 1. Pull in the helm chart from NGC
    ```
-   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-query-decomposition-app-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
+   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-app-query-decomposition-agent-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
    ```
 
 3. Create the example namespace
@@ -381,7 +381,7 @@ This example showcases a minimilastic RAG usecase built using Nvidia AI Foundati
 ## Deployment
 1. Pull in the helm chart from NGC
    ```
-   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-nv-ai-foundation-app-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
+   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-app-ai-foundation-text-chatbot-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
    ```
 
 3. Create the example namespace
