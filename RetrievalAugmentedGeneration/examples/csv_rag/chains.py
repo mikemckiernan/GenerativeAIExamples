@@ -15,6 +15,7 @@
 
 """LLM Chains for executing Retrival Augmented Generation."""
 import logging
+import os
 from typing import Generator
 
 import pandas as pd
@@ -30,11 +31,7 @@ from pandasai.responses.response_parser import ResponseParser
 
 from integrations.pandasai.llms.nv_aiplay import NVIDIA as PandasAI_NVIDIA
 from RetrievalAugmentedGeneration.common.base import BaseExample
-from RetrievalAugmentedGeneration.common.utils import (
-    get_config,
-    get_llm,
-    set_service_context,
-)
+from RetrievalAugmentedGeneration.common.utils import get_config, get_llm
 
 # pylint: disable=no-name-in-module, disable=import-error
 from RetrievalAugmentedGeneration.example.csv_utils import (
@@ -70,6 +67,7 @@ class CSVChatbot(BaseExample):
 
         concatenated_df = pd.DataFrame()
         reference_columns = None
+        reference_file = None
 
         for i, path in enumerate(file_paths):
             df = pd.read_csv(path)
@@ -77,10 +75,11 @@ class CSVChatbot(BaseExample):
             if i == 0:
                 reference_columns = df.columns
                 concatenated_df = df
+                reference_file = path
             else:
                 if not df.columns.equals(reference_columns):
                     raise ValueError(
-                        f"Columns of the file {path} do not match the reference columns."
+                        f"Columns of the file {path} do not match the reference columns of {reference_file} file."
                     )
                 concatenated_df = pd.concat([concatenated_df, df], ignore_index=True)
 
@@ -89,8 +88,13 @@ class CSVChatbot(BaseExample):
     def ingest_docs(self, data_dir: str, filename: str):
         """Ingest documents to the VectorDB."""
 
+        if not data_dir.endswith(".csv"):
+            raise ValueError(f"{data_dir} is not a valid CSV file")
+
         with open("ingested_csv_files.txt", "a", encoding="UTF-8") as f:
             f.write(data_dir + "\n")
+
+        self.read_and_concatenate_csv(file_paths_txt="ingested_csv_files.txt")
 
         logger.info("Document %s ingested successfully", filename)
 
@@ -114,6 +118,9 @@ class CSVChatbot(BaseExample):
 
         logger.info("Using rag to generate response from document")
         llm = get_llm()
+
+        if not os.path.exists("ingested_csv_files.txt"):
+            return iter(["No CSV file ingested"])
 
         df = self.read_and_concatenate_csv(file_paths_txt="ingested_csv_files.txt")
         df = df.fillna(0)
