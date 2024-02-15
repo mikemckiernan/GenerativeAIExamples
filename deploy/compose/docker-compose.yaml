@@ -43,8 +43,6 @@ services:
             - driver: nvidia
               count: 1
               capabilities: [gpu]
-    depends_on:
-      - "llm"
 
   etcd:
     container_name: milvus-etcd
