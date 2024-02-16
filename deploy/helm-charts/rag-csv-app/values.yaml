@@ -12,7 +12,7 @@ imagePullSecret:
   password: ""
 
 query:
-  image: nvcr.io/ohlfw0olaadg/ea-rag-examples/chain-server:csv-rag-0.4.0
+  image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-application-structured-data-chatbot:0.4.0
   name: query-router-csv
   replicas: 1
   resources:
