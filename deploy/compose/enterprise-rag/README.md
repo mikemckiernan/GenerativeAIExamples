@@ -8,6 +8,56 @@ Docker compose to manage enterprise RAG applications based on NVIDIA services.
 # 01: Canonical RAG
 
 ## Pre-requisites
+1. Install [Docker Engine and Docker Compose.](https://docs.docker.com/engine/install/ubuntu/)
+
+2. Verify NVIDIA GPU driver version 535 or later is installed.
+    ``` 
+    $ nvidia-smi --query-gpu=driver_version --format=csv,noheader
+    535.129.03
+
+    $ nvidia-smi -q -d compute
+
+    ==============NVSMI LOG==============
+
+    Timestamp                                 : Sun Nov 26 21:17:25 2023
+    Driver Version                            : 535.129.03
+    CUDA Version                              : 12.2
+
+    Attached GPUs                             : 1
+    GPU 00000000:CA:00.0
+        Compute Mode                          : Default
+    ```
+    Reference: [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) and [NVIDIA Linux driver installation instructions](https://docs.nvidia.com/datacenter/tesla/tesla-installation-notes/index.html)
+
+3. Verify the NVIDIA container toolkit is installed and configured as the default container runtime.
+
+    ```
+    $ cat /etc/docker/daemon.json
+    {
+        "default-runtime": "nvidia",
+        "runtimes": {
+            "nvidia": {
+                "path": "/usr/bin/nvidia-container-runtime",
+                "runtimeArgs": []
+            }
+        }
+    }
+
+    $ sudo docker run --rm --runtime=nvidia --gpus all ubuntu nvidia-smi -L
+    GPU 0: NVIDIA A100 80GB PCIe (UUID: GPU-d8ce95c1-12f7-3174-6395-e573163a2ace)
+    ```
+
+4. Create an NGC Account and API Key. Please refer to [instructions](https://docs.nvidia.com/ngc/gpu-cloud/ngc-overview/index.html) to create account and generate NGC API key.
+
+    Login to `nvcr.io` using the following command:
+
+    ```
+    docker login nvcr.io
+    ```
+
+Reference:
+- [Docker installation instructions (Ubuntu)](https://docs.docker.com/engine/install/ubuntu/)
+- [NVIDIA Container Toolkit Installation instructions](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
 
 ## Description
 This example showcases RAG pipeline. It uses nemollm inference microservice to host trt optimized llm and nemollm retriever embedding microservice. It uses pgvector as vectorstore to store embeddings and generate response for query.
@@ -59,7 +109,7 @@ This example showcases RAG pipeline. It uses nemollm inference microservice to h
 3. Update model path in `compose.env` file with model environment variable
     - Update the absolute path of `model-store` directory of llama-2-chat model that you've downloaded and set it as `MODEL_DIRECTORY` environment variable  
       ```
-export MODEL_DIRECTORY="/home/nvidia/llama2_13b_chat_hf_v1/model-store"
+      export MODEL_DIRECTORY="/home/nvidia/llama2_13b_chat_hf_v1/model-store"
       ```
     
     - Update the absolute path of embedding model directory in environment variable `EMBEDDING_MODEL_DIRECTORY`
