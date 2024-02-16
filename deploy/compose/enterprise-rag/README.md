@@ -7,6 +7,8 @@ Docker compose to manage enterprise RAG applications based on NVIDIA services.
 
 # 01: Canonical RAG
 
+## Pre-requisites
+
 ## Description
 This example showcases RAG pipeline. It uses nemollm inference microservice to host trt optimized llm and nemollm retriever embedding microservice. It uses pgvector as vectorstore to store embeddings and generate response for query.
 
