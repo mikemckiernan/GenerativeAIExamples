@@ -153,17 +153,8 @@ Reference
 **Downloading embedding the model**
 1. You can download the embedding model from NGC.
 
-    The embedding models available in NGC are compiled for A100 and L4 machine, model conversion for any other GPU is not supported as of now. Refer to  [Nemo Retriever Embedding Microservice](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemo-retriever-embedding-microservice) to know more about this.
-
-    **Note**: List of supported model and their version are mentioned below.
-    | Model Name  | Model Version Supported |
-    | ------------- |:-------------:|
-    | [NV-Embed-QA-003](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/nv-embed-qa)      |   A100  | ohlfw0olaadg/ea-participants/nv-embed-qa:003-A100     |
-    | [NV-Embed-QA-003](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/models/nv-embed-qa)      |    L4   | ohlfw0olaadg/ea-participants/nv-embed-qa:003-L4     |
-
-    1. Download the embedding model from ngc
     ```
-    ngc registry model download-version "ohlfw0olaadg/ea-participants/nv-embed-qa:003-A100"
+    ngc registry model download-version "ohlfw0olaadg/ea-participants/nv-embed-qa:003"
     ```
 
 **Deploying the model**
