@@ -16,6 +16,7 @@
 """ Module to provide utility functions for CSV RAG example"""
 
 import os
+import json
 from typing import Dict, List
 
 import yaml
@@ -53,6 +54,15 @@ def parse_prompt_config(config_path: str) -> Dict:
                 raise ValueError(
                     "Invalid YAML structure. Expected a 'prompts' key with a list of dictionaries."
                 )
+            
+            env_prompts = None
+            if "CSV_PROMPTS" in os.environ:
+                try:
+                    env_prompts = json.loads(os.environ["CSV_PROMPTS"])
+                    if env_prompts is not None:
+                        data["prompts"]["csv_prompts"].extend(env_prompts["csv_prompts"])
+                except Exception as e:
+                    print(f"Exception in parsing CSV prompt from environment variable {e}")
 
             # return the dict
             return data["prompts"]
