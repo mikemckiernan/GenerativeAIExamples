@@ -76,7 +76,7 @@ This example showcases multi turn usecase in a RAG pipeline. It stores the conve
 3. Create the Helm pipeline instance and start the services.
 
    ```console
-   $ helm install multi-turn rag-multi-turn-app-v0.4.0.tgz -n multi-turn --set imagePullSecret.password=<NGC_API_KEY>
+   $ helm install multi-turn rag-app-multiturn-chatbot-v0.4.0.tgz -n multi-turn --set imagePullSecret.password=<NGC_API_KEY>
    ```
 
 4. Verify the pods are running and ready.
@@ -175,7 +175,7 @@ This example showcases multi modal usecase in a RAG pipeline. It can understand 
 6. Create the Helm pipeline instance for core multimodal rag services.
 
    ```console
-   $ helm install multimodal rag-multimodal-app-v0.4.0.tgz -n multimodal --set imagePullSecret.password=<NGC_API_KEY>
+   $ helm install multimodal rag-app-multimodal-chatbot-v0.4.0.tgz -n multimodal --set imagePullSecret.password=<NGC_API_KEY>
    ```
 
 7. Verify the pods are running and ready.
@@ -248,7 +248,7 @@ This example showcases a RAG usecase built using structured CSV data. It uses mo
 5. Create the Helm pipeline instance and start the services.
 
    ```console
-   $ helm install csv rag-csv-app-v0.4.0.tgz -n csv --set imagePullSecret.password=<NGC_API_KEY>
+   $ helm install csv rag-app-structured-data-chatbot-v0.4.0.tgz -n csv --set imagePullSecret.password=<NGC_API_KEY>
    ```
 
 6. Verify the pods are running and ready.
@@ -397,7 +397,7 @@ This example showcases a minimilastic RAG usecase built using Nvidia AI Foundati
 5. Create the Helm pipeline instance and start the services.
 
    ```console
-   $ helm install nvai rag-nv-ai-foundation-app-v0.4.0.tgz -n nvai --set imagePullSecret.password=<NGC_API_KEY>
+   $ helm install nvai rag-app-ai-foundation-text-chatbot-v0.4.0.tgz -n nvai --set imagePullSecret.password=<NGC_API_KEY>
    ```
 
 6. Verify the pods are running and ready.
