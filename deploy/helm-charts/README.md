@@ -37,6 +37,10 @@ The below sections demonstrate how to deploy more examples on top of the default
 
 ## Description
 This example showcases multi turn usecase in a RAG pipeline. It stores the conversation history and knowledge base in PGVector and retrieves them at runtime to understand contextual queries. It uses NeMo Inference Microservices to communicate with the embedding model and large language model.
+The example supports ingestion of PDF, .txt files. The docs are ingested in a dedicated document vectorstore. The prompt for the example is currently tuned to act as a document chat bot.
+For maintaining the conversation history, we store the previous query of user and its generated answer as a text entry in a different dedicated vectorstore for conversation history.
+Both these vectorstores are are part of a Langchain LCEL chain as Langchain Retrievers. When the chain is invoked with a query, its passed through both the retrievers. 
+The retriever retrieves context from the document vectorstore and the closest matching conversation history from conversation history vectorstore and the chunks are added into the LLM prompt as part of the chain.
 
 <table class="tg">
 <thead>
@@ -204,7 +208,13 @@ This example showcases multi modal usecase in a RAG pipeline. It can understand 
 # 03: CSV based RAG
 
 ## Description
-This example showcases a RAG usecase built using structured CSV data. It uses models from Nvidia AI Foundation to built the usecase. This example does not use any embedding models or vector database solution and uses PandasAI to drive the flow.
+This example demonstrates a use case of RAG using structured CSV data. It incorporates models from the Nvidia AI Foundation to build the use case. This approach does not involve embedding models or vector database solutions, instead leveraging PandasAI to manage the workflow.
+For ingestion, the structured data is loaded from a CSV file into a Pandas dataframe. It can ingest multiple CSV files, provided they have identical columns. However, ingestion of CSV files with differing columns is not currently supported and will result in an exception.
+The core functionality utilizes a PandasAI agent to extract information from the dataframe. This agent combines the query with the structure of the dataframe into an LLM prompt. The prompt then generates Python code to extract the required information from the dataframe. Subsequently, this generated code is executed on the dataframe, yielding the output dataframe.
+To test the example, sample CSV files are available. These are part of the structured data example Helm chart and represent a subset of the [Microsoft Azure Predictive Maintenance](https://www.kaggle.com/datasets/arnabbiswas1/microsoft-azure-predictive-maintenance) from Kaggle.
+The CSV data retrieval prompt is specifically tuned for three CSV files from this dataset: PdM_machines.csv, PdM_errors.csv, and PdM_failures.csv.
+The CSV file to be used can be specified in the values.yaml file within the Helm chart by updating the environment variable CSV_NAME. By default, it is set to PdM_machines but can be changed to include PdM_errors or PdM_failures.
+Currently, customization of the CSV data retrieval prompt is not supported.
 
 <table class="tg">
 <thead>
@@ -323,7 +333,7 @@ This example showcases a RAG usecase built using task decomposition paradigm. It
 5. Create the Helm pipeline instance and start the services.
 
    ```console
-   $ helm install decompose rag-query-decomposition-app-v0.4.0.tgz -n decompose --set imagePullSecret.password=<NGC_API_KEY>
+   $ helm install decompose rag-app-query-decomposition-agent-v0.4.0.tgz -n decompose --set imagePullSecret.password=<NGC_API_KEY>
    ```
 
 6. Verify the pods are running and ready.
