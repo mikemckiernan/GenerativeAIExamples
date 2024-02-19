@@ -34,7 +34,7 @@ query:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: postgres
       POSTGRES_DB: api
-      COLLECTION_NAME: csv-rag
+      COLLECTION_NAME: multi-turn-rag
   service:
       type: ClusterIP
       targetPort: 8085
