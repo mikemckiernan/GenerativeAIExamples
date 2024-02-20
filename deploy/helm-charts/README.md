@@ -173,7 +173,7 @@ This example showcases multi modal usecase in a RAG pipeline. It can understand 
    ```
    4.4 Install the helm chart and point to the above created file using -f argument as shown below.
    ```
-   helm install milvus milvus/milvus --set cluster.enabled=false --set etcd.replicaCount=1 --set minio.mode=standalone --set pulsar.enabled=false -f custom-values.yaml -n rag-sample
+   helm install milvus milvus/milvus --set cluster.enabled=false --set etcd.replicaCount=1 --set minio.mode=standalone --set pulsar.enabled=false -f custom_value.yaml -n multimodal
    ```
 
 6. Create the Helm pipeline instance for core multimodal rag services.
