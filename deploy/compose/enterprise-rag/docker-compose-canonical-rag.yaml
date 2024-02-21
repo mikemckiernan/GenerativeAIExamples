@@ -5,7 +5,7 @@ services:
     image: nvcr.io/ohlfw0olaadg/ea-participants/nemollm-inference-ms:24.01
     volumes:
     - ${MODEL_DIRECTORY:?please update the env file and source it before running}:/model-store
-    command: nemollm_inference_ms --model ${MODEL_NAME:?please update the env file and source it before running} --openai_port 9999 --nemo_port 9998 --num_gpus=1
+    command: nemollm_inference_ms --model ${MODEL_NAME:?please update the env file and source it before running} --openai_port 9999 --nemo_port 9998 --num_gpus=${NUM_GPU:-1}
     ports:
     - "8000:8000"
     - "9998:9998"
