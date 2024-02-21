@@ -118,6 +118,11 @@ This example showcases RAG pipeline. It uses nemollm inference microservice to h
       export EMBEDDING_MODEL_DIRECTORY="/home/nvidia/nv-embed-qa_v003"
       ```
 
+    - [Optional]If your model requires more than one GPU, export the `NUM_GPU` environment variable with the desired number of GPUs.
+      ```
+      export NUM_GPU=4 # Number of GPU required
+      ```
+
 4. Run the pipeline
     ```
     source compose.env ; docker compose -f docker-compose-canonical-rag.yaml up -d
