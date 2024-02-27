@@ -104,15 +104,7 @@ class MultiTurnChatbot(BaseExample):
 
         chat_prompt = ChatPromptTemplate.from_messages(
             [
-                (
-                    "system",
-                    "You are a document chatbot. Help the user as they ask questions about documents."
-                    " User messaged just asked: {input}\n\n"
-                    " From this, we have retrieved the following potentially-useful info: "
-                    " Conversation History Retrieval:\n{history}\n\n"
-                    " Document Retrieval:\n{context}\n\n"
-                    " (Answer only from retrieval. Only cite sources that are used. Make your response conversational.)",
-                ),
+                ("system", settings.prompts.multi_turn_rag_template),
                 ("user", "{input}"),
             ]
         )
