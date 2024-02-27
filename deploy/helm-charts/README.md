@@ -37,6 +37,10 @@ The below sections demonstrate how to deploy more examples on top of the default
 
 ## Description
 This example showcases multi turn usecase in a RAG pipeline. It stores the conversation history and knowledge base in PGVector and retrieves them at runtime to understand contextual queries. It uses NeMo Inference Microservices to communicate with the embedding model and large language model.
+The example supports ingestion of PDF, .txt files. The docs are ingested in a dedicated document vectorstore. The prompt for the example is currently tuned to act as a document chat bot.
+For maintaining the conversation history, we store the previous query of user and its generated answer as a text entry in a different dedicated vectorstore for conversation history.
+Both these vectorstores are part of a Langchain [LCEL](https://python.langchain.com/docs/expression_language/) chain as Langchain Retrievers. When the chain is invoked with a query, its passed through both the retrievers. 
+The retriever retrieves context from the document vectorstore and the closest matching conversation history from conversation history vectorstore and the chunks are added into the LLM prompt as part of the chain.
 
 <table class="tg">
 <thead>
@@ -65,7 +69,7 @@ This example showcases multi turn usecase in a RAG pipeline. It stores the conve
 
 1. Pull in the helm chart from NGC
    ```
-   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-multi-turn-app-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
+   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-app-multiturn-chatbot-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
    ```
 
 2. Create the example namespace
@@ -76,7 +80,7 @@ This example showcases multi turn usecase in a RAG pipeline. It stores the conve
 3. Create the Helm pipeline instance and start the services.
 
    ```console
-   $ helm install multi-turn rag-multi-turn-app-v0.4.0.tgz -n multi-turn --set imagePullSecret.password=<NGC_API_KEY>
+   $ helm install multi-turn rag-app-multiturn-chatbot-v0.4.0.tgz -n multi-turn --set imagePullSecret.password=<NGC_API_KEY>
    ```
 
 4. Verify the pods are running and ready.
@@ -135,7 +139,7 @@ This example showcases multi modal usecase in a RAG pipeline. It can understand 
 
 1. Pull in the helm chart from NGC
    ```
-   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-multimodal-app-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
+   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-app-multimodal-chatbot-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
    ```
 
 3. Create the example namespace
@@ -169,13 +173,13 @@ This example showcases multi modal usecase in a RAG pipeline. It can understand 
    ```
    4.4 Install the helm chart and point to the above created file using -f argument as shown below.
    ```
-   helm install milvus milvus/milvus --set cluster.enabled=false --set etcd.replicaCount=1 --set minio.mode=standalone --set pulsar.enabled=false -f custom-values.yaml -n rag-sample
+   helm install milvus milvus/milvus --set cluster.enabled=false --set etcd.replicaCount=1 --set minio.mode=standalone --set pulsar.enabled=false -f custom_value.yaml -n multimodal
    ```
 
 6. Create the Helm pipeline instance for core multimodal rag services.
 
    ```console
-   $ helm install multimodal rag-multimodal-app-v0.4.0.tgz -n multimodal --set imagePullSecret.password=<NGC_API_KEY>
+   $ helm install multimodal rag-app-multimodal-chatbot-v0.4.0.tgz -n multimodal --set imagePullSecret.password=<NGC_API_KEY>
    ```
 
 7. Verify the pods are running and ready.
@@ -204,7 +208,14 @@ This example showcases multi modal usecase in a RAG pipeline. It can understand 
 # 03: CSV based RAG
 
 ## Description
-This example showcases a RAG usecase built using structured CSV data. It uses models from Nvidia AI Foundation to built the usecase. This example does not use any embedding models or vector database solution and uses PandasAI to drive the flow.
+This example demonstrates a use case of RAG using structured CSV data. It incorporates models from the Nvidia AI Foundation to build the use case. This approach does not involve embedding models or vector database solutions, instead leveraging [PandasAI](https://docs.pandas-ai.com/en/latest/) to manage the workflow.
+For ingestion, the structured data is loaded from a CSV file into a Pandas dataframe. It can ingest multiple CSV files, provided they have identical columns. However, ingestion of CSV files with differing columns is not currently supported and will result in an exception.
+The core functionality utilizes a [PandasAI](https://docs.pandas-ai.com/en/latest/) agent to extract information from the dataframe. This agent combines the query with the structure of the dataframe into an LLM prompt. The LLM then generates Python code to extract the required information from the dataframe. Subsequently, this generated code is executed on the dataframe, yielding the output dataframe.
+
+To test the example, sample CSV files are available. These are part of the structured data example Helm chart and represent a subset of the [Microsoft Azure Predictive Maintenance](https://www.kaggle.com/datasets/arnabbiswas1/microsoft-azure-predictive-maintenance) from Kaggle.
+The CSV data retrieval prompt is specifically tuned for three CSV files from this dataset: `PdM_machines.csv, PdM_errors.csv, and PdM_failures.csv`.
+The CSV file to be used can be specified in the `values.yaml` file within the Helm chart by updating the environment variable `CSV_NAME`. By default, it is set to `PdM_machines` but can be changed to `PdM_errors` or `PdM_failures`.
+Currently, customization of the CSV data retrieval prompt is not supported.
 
 <table class="tg">
 <thead>
@@ -232,7 +243,7 @@ This example showcases a RAG usecase built using structured CSV data. It uses mo
 ## Deployment
 1. Pull in the helm chart from NGC
    ```
-   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-csv-app-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
+   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-app-structured-data-chatbot-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
    ```
 
 3. Create the example namespace
@@ -248,7 +259,7 @@ This example showcases a RAG usecase built using structured CSV data. It uses mo
 5. Create the Helm pipeline instance and start the services.
 
    ```console
-   $ helm install csv rag-csv-app-v0.4.0.tgz -n csv --set imagePullSecret.password=<NGC_API_KEY>
+   $ helm install csv rag-app-structured-data-chatbot-v0.4.0.tgz -n csv --set imagePullSecret.password=<NGC_API_KEY>
    ```
 
 6. Verify the pods are running and ready.
@@ -307,7 +318,7 @@ This example showcases a RAG usecase built using task decomposition paradigm. It
 
 1. Pull in the helm chart from NGC
    ```
-   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-query-decomposition-app-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
+   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-app-query-decomposition-agent-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
    ```
 
 3. Create the example namespace
@@ -323,7 +334,7 @@ This example showcases a RAG usecase built using task decomposition paradigm. It
 5. Create the Helm pipeline instance and start the services.
 
    ```console
-   $ helm install decompose rag-query-decomposition-app-v0.4.0.tgz -n decompose --set imagePullSecret.password=<NGC_API_KEY>
+   $ helm install decompose rag-app-query-decomposition-agent-v0.4.0.tgz -n decompose --set imagePullSecret.password=<NGC_API_KEY>
    ```
 
 6. Verify the pods are running and ready.
@@ -381,7 +392,7 @@ This example showcases a minimilastic RAG usecase built using Nvidia AI Foundati
 ## Deployment
 1. Pull in the helm chart from NGC
    ```
-   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-nv-ai-foundation-app-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
+   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-app-ai-foundation-text-chatbot-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
    ```
 
 3. Create the example namespace
@@ -397,7 +408,7 @@ This example showcases a minimilastic RAG usecase built using Nvidia AI Foundati
 5. Create the Helm pipeline instance and start the services.
 
    ```console
-   $ helm install nvai rag-nv-ai-foundation-app-v0.4.0.tgz -n nvai --set imagePullSecret.password=<NGC_API_KEY>
+   $ helm install nvai rag-app-ai-foundation-text-chatbot-v0.4.0.tgz -n nvai --set imagePullSecret.password=<NGC_API_KEY>
    ```
 
 6. Verify the pods are running and ready.
@@ -422,3 +433,22 @@ This example showcases a minimilastic RAG usecase built using Nvidia AI Foundati
    ```
 
    Open browser and access the llm-playground UI using <http://localhost:30001>.
+
+# Configuring Examples
+You can configure various parameters such as prompts and vectorstore using environment variables. Modify the environment variables in the `env` section of the query service in the  [values.yaml](./rag-nv-ai-foundation-app/values.yaml) file of the respective examples.
+
+## Configuring Prompts
+Prompts can be configured for examples using environment variables. There are two environment variables exposed:
+1. `APP_PROMPTS_CHATTEMPLATE` : Used when a query is asked without a knowledge base.
+
+2. `APP_PROMPTS_RAGTEMPLATE` : Used when a query is used with a knowledge base.
+
+Note: Only [Nvidia AI Foundation based RAG](#05-nvidia-ai-foundation-rag) supports modifying prompts.
+
+## Configuring VectorStore
+
+The vector store can be modified from environment variables. You can update:
+1. `APP_VECTORSTORE_NAME`: This is the vector store name. Currently, we support `milvus` and `pgvector`.
+**Note**: This only specifies the vector store name. The vector store container needs to be started separately.
+
+2. `APP_VECTORSTORE_URL`: The host machine URL where the vector store is running.

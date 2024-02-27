@@ -12,7 +12,7 @@ imagePullSecret:
   password: ""
 
 query:
-  image: nvcr.io/ohlfw0olaadg/ea-rag-examples/chain-server:multimodal-rag-0.4.0
+  image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-application-multimodal-chatbot:0.4.0
   name: query-router-multimodal
   replicas: 1
   resources:
