@@ -15,9 +15,6 @@ query:
   image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-application-multiturn-chatbot:0.4.0
   name: query-router-multi-turn
   replicas: 1
-  resources:
-    limits:
-      nvidia.com/gpu: 1  # Number of GPUs to present to the running service
   nodeSelector: {}
   tolerations: {}
   affinity: {}

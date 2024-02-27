@@ -15,9 +15,6 @@ query:
   image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-application-query-decomposition-agent:0.4.0
   name: query-router-query-decomposition
   replicas: 1
-  resources:
-    limits:
-      nvidia.com/gpu: 1  # Number of GPUs to present to the running service
   nodeSelector: {}
   tolerations: {}
   affinity: {}
