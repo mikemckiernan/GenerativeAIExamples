@@ -67,6 +67,8 @@ services:
       COLLECTION_NAME: canonical_rag
       APP_RETRIEVER_TOPK: 4
       APP_RETRIEVER_SCORETHRESHOLD: 0.25
+      APP_TEXTSPLITTER_CHUNKSIZE: 510
+      APP_TEXTSPLITTER_CHUNKOVERLAP: 200
     ports:
     - "8081:8081"
     expose:

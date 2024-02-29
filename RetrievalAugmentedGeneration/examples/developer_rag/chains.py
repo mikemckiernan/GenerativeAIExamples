@@ -73,6 +73,7 @@ class QAChatbot(BaseExample):
 
             for document in documents:
                 document.metadata = {"filename": encoded_filename}
+                document.excluded_embed_metadata_keys = ["filename", "page_label"]
 
             index = get_vector_index()
             node_parser = LangchainNodeParser(get_text_splitter())
