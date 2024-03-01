@@ -25,6 +25,7 @@ from inspect import getmembers, isclass
 
 from fastapi import FastAPI, File, UploadFile, Request
 from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from pymilvus.exceptions import MilvusException, MilvusUnavailableException
 from RetrievalAugmentedGeneration.common import utils, tracing
@@ -34,6 +35,19 @@ logger = logging.getLogger(__name__)
 
 # create the FastAPI server
 app = FastAPI()
+
+# Allow access in browser from RAG UI and Storybook (development)
+origins = [
+    "http://localhost:3001",
+    "http://localhost:6006",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 EXAMPLE_DIR = "RetrievalAugmentedGeneration/example"
 
