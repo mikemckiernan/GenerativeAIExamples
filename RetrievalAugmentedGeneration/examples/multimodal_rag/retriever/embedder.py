@@ -19,6 +19,8 @@ from typing import Any, Optional
 
 from langchain_nvidia_ai_endpoints import NVIDIAEmbeddings
 
+from RetrievalAugmentedGeneration.common.utils import get_embedding_model
+
 class Embedder(ABC, BaseModel):
 
 
@@ -42,7 +44,7 @@ class NVIDIAEmbedders(Embedder):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.embedder = NVIDIAEmbeddings(model=self.name, model_type=self.type)
+        self.embedder = get_embedding_model()
 
 
     def embed_query(self, text):

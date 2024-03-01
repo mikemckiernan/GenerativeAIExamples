@@ -27,6 +27,9 @@ from RetrievalAugmentedGeneration.example.retriever.embedder import NVIDIAEmbedd
 from RetrievalAugmentedGeneration.example.retriever.vector import MilvusVectorClient
 from RetrievalAugmentedGeneration.example.retriever.retriever import Retriever
 from RetrievalAugmentedGeneration.example.vectorstore.vectorstore_updater import update_vectorstore
+from RetrievalAugmentedGeneration.common.utils import get_config
+
+settings = get_config()
 
 config = {
 "system_instruction": "You are a helpful and friendly multimodal intelligent AI assistant named Multimodal Chatbot Assistant. You are an expert in the content of the document provided and can provide information using both text and images. The user may also provide an image input, and you will use the image description to retrieve similar images, tables and text. The context given below will provide some technical or financial documentation and whitepapers to help you answer the question. Based on this context, answer the question truthfully. If the question is not related to this, please refrain from answering. Most importantly, if the context provided does not include information about the question from the user, reply saying that you don't know. Do not utilize any information that is not provided in the documents below. All documents will be preceded by tags, for example [[DOCUMENT 1]], [[DOCUMENT 2]], and so on. You can reference them in your reply but without the brackets, so just say document 1 or 2. The question will be preceded by a [[QUESTION]] tag. Be succinct, clear, and helpful. Remember to describe everything in detail by using the knowledge provided, or reply that you don't know the answer. Do not fabricate any responses. Note that you have the ability to reference images, tables, and other multimodal elements when necessary. You can also refer to the image provided by the user, if any.",
@@ -54,8 +57,8 @@ def get_doc_retriever(type: str = "query") -> Retriever:
     return Retriever(embedder=get_embedder(type) , vector_client=get_vector_index(embedding_size))
 
 @lru_cache()
-def get_llm(model_name):
-    return LLMClient(model_name)
+def get_llm(model_name, is_response_generator=False):
+    return LLMClient(model_name=model_name, is_response_generator=is_response_generator)
 
 
 class MultimodalRAG(BaseExample):
@@ -80,7 +83,7 @@ class MultimodalRAG(BaseExample):
 
         logger.info("Using llm to generate response directly without knowledge base.")
         system_prompt = config["system_instruction"]
-        response = get_llm(RESPONSE_PARAPHRASING_MODEL).chat_with_prompt(system_prompt, question)
+        response = get_llm(model_name=RESPONSE_PARAPHRASING_MODEL, is_response_generator=True).chat_with_prompt(settings.prompts.chat_template, question)
         return response
 
 
@@ -95,7 +98,7 @@ class MultimodalRAG(BaseExample):
             augmented_prompt = "Relevant documents:" + context + "\n\n[[QUESTION]]\n\n" + prompt
             system_prompt = config["system_instruction"]
             logger.info(f"Formulated prompt for RAG chain: {system_prompt}\n{augmented_prompt}")
-            response = get_llm(RESPONSE_PARAPHRASING_MODEL).chat_with_prompt(system_prompt, augmented_prompt)
+            response = get_llm(model_name=RESPONSE_PARAPHRASING_MODEL, is_response_generator=True).chat_with_prompt(settings.prompts.rag_template, augmented_prompt)
             return response
 
         except Exception as e:

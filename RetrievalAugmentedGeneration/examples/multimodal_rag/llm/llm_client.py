@@ -19,8 +19,8 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import HumanMessage
 
 class LLMClient:
-    def __init__(self, model_name="mixtral_8x7b", model_type="NVIDIA"):
-        self.llm = create_llm(model_name, model_type)
+    def __init__(self, model_name="mixtral_8x7b", model_type="NVIDIA", is_response_generator=False):
+        self.llm = create_llm(model_name, model_type, is_response_generator)
 
     def chat_with_prompt(self, system_prompt, prompt):
         langchain_prompt = ChatPromptTemplate.from_messages([("system", system_prompt), ("user", "{input}")])
