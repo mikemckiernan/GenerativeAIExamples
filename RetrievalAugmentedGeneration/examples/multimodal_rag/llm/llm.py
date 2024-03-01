@@ -20,10 +20,19 @@ import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from langchain_community.llms import HuggingFacePipeline
 
+from RetrievalAugmentedGeneration.common.utils import get_llm
+
 
 class NvidiaLLM:
-    def __init__(self, model_name):
-        self.llm = ChatNVIDIA(model=model_name)
+    def __init__(self, model_name, is_response_generator: bool = False):
+
+        # LLM is used for response generation as well as for generating description
+        # of images, only use llm from configuration for response generator
+        if is_response_generator:
+            self.llm = get_llm()
+        else:
+            self.llm = ChatNVIDIA(model=model_name)
+
 
 
 class LocalLLM:
@@ -49,10 +58,10 @@ class LocalLLM:
         self.llm = HuggingFacePipeline(pipeline=pipe)
 
 
-def create_llm(model_name, model_type="NVIDIA"):
+def create_llm(model_name, model_type="NVIDIA", is_response_generator=False):
     # Use LLM to generate answer
     if model_type == "NVIDIA":
-        model = NvidiaLLM(model_name)
+        model = NvidiaLLM(model_name, is_response_generator)
     elif model_type == "LOCAL":
         model = LocalLLM(model_name)
     else:
