@@ -59,6 +59,10 @@ spec:
             value: {{ .Values.query.env.APP_VECTORSTORE_NAME | quote }}
           - name: COLLECTION_NAME
             value: {{ .Values.query.env.COLLECTION_NAME | quote }}
+          - name: APP_RETRIEVER_TOPK
+            value: {{ .Values.query.env.APP_RETRIEVER_TOPK | quote }}
+          - name: APP_RETRIEVER_SCORETHRESHOLD
+            value: {{ .Values.query.env.APP_RETRIEVER_SCORETHRESHOLD | quote }}
         ports:
         - name: http
           containerPort: {{ .Values.query.service.targetPort }}

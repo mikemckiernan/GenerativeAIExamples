@@ -4,49 +4,7 @@
 
 In this section, we explore the configurations for the [Chain Server](./chat_server.md) used for the default canonical developer rag example.
 
-Chain server interaction with other components can be controlled by config. Chain Server interacts with components such as the `milvus` vector store and `triton` server, which hosts the Large Language Model (LLM). Additionally, we'll delve into customization options to fine-tune the behavior of the query server. These options include settings for the embedding model, chunk size, and prompts for generating responses.
-
-You can refer to [sample config](../../deploy/compose/config.yaml) to see the structure.
-
-#### Vector Database Configuration
-The configuration of the solution which serves as a vector database for storing embeddings.
-
-    url: Configure the HTTP URI where the vector database server is hosted.
-
-#### LLM server Configuration
-LLM Inference server hosts the Large Language Model (LLM) with triton backend.
-
-    server_url: Specify the url of the LLM Inference Server.
-
-    model_name: Provide the name of the model hosted on the Triton server.
-    Note: Changing the value of this field may need code changes.
-
-    model_engine: An enum specifying the backend name hosting the model. Options currently supported are:
-    1. `triton-trt-llm` for using locally deployed LLM models. Follow steps [here](../../RetrievalAugmentedGeneration/README.md#local-llm-setup) to understand how to deploy and use on-prem deployed models.
-    2. `nv-ai-foundation` for using NV AI Playground based models. Follow steps [here](../../RetrievalAugmentedGeneration/README.md#1-qa-chatbot----nvidia-ai-foundation-inference-endpoint) to understand how to deploy and use TRT-LLM optimized playground models from cloud.
-
-#### Text Splitter Configuration
-This section covers the settings for the Text Splitter component.
-
-    chunk_size: Define the size at which text should be split before being converted into embeddings.
-
-    chunk_overlap: Specify the overlap between two consecutive text chunks to prevent loss of context.
-
-#### Embeddings Configuration
-The Embeddings section contains information required for generating embeddings.
-
-    model_name: Indicate the name of the model used to generate embeddings.
-    model_engine: An enum specifying the backend name hosting the model, Currently huggingface and nv-ai-foundation are supported.
-    dimensions: Integer value specifying the dimensions of the embedding search model from huggingface.
-    Note: Any change in `model_name`` may also necessitate changes in the model's `dimensions`, which can be adjusted using this field.
-
-#### Prompts Configuration
-Customize prompts used for generating responses.
-
-    chat_template: The chat prompt template guides the model to generate responses for queries.
-    rag_template: The RAG prompt Template instructs the model to generate responses while leveraging a knowledge base.
-
-You set path to use this config file to be used by chain server using enviornment variable `APP_CONFIG_FILE`. You can do the same in [compose.env](../../deploy/compose/compose.env) and source the file.
+Chain server interaction with other components can be controlled by config. Chain Server interacts with components such as the `milvus` vector store and `triton` server, which hosts the Large Language Model (LLM). Additionally, we'll delve into customization options to fine-tune the behavior of the query server. These options include settings for the embedding model, chunk size, and prompts for generating responses. These configurations can be controlled using environment variables in the docker compose files.
 
 ### Configuring docker compose file for default RAG example
 In this section, we will look into the environment variables and parameters that can be configured within the [Docker Compose](../../deploy/compose/docker-compose.yaml) YAML file for the default canonical example. Our system comprises multiple microservices that interact harmoniously to generate responses. These microservices include LLM Inference Server, Jupyter Server, Milvus, Query/chain server, and Frontend.
@@ -76,6 +34,8 @@ The Query service is the core component responsible for interacting with the llm
     1. `triton-trt-llm` if you are using locally deployed LLM models.
     2. `nv-ai-foundation` if you are using NV AI Playground based models.
     APP_CONFIG_FILE: Provides the path to the configuration file used by the Chain Server or this container. Defaults to /dev/null
+    APP_RETRIEVER_TOPK: Number of relevant results to retrieve. Default value is 4.
+    APP_RETRIEVER_SCORETHRESHOLD: The minimum confidence score for the retrieved values to be considered. Default value is 0.25.
 
 #### Frontend
 The Frontend component is the UI server that interacts with the Query/Chain Server to retrieve responses and provide UI interface to ingest documents. The following environment variables are used by the frontend:

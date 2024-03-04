@@ -269,7 +269,12 @@ class QueryDecompositionChatbot(BaseExample):
         if vectorstore is None:
             return []
 
-        retriever = vectorstore.as_retriever()
+        logger.info(f"Getting retrieved top k values: {settings.retriever.top_k} with confidence threshold: {settings.retriever.score_threshold}")
+        try:
+            retriever = vectorstore.as_retriever(search_type="similarity_score_threshold", search_kwargs={"score_threshold": settings.retriever.score_threshold, "k": settings.retriever.top_k})
+        except NotImplementedError:
+            # Some retriever like milvus don't have similarity score threshold implemented
+            retriever = vectorstore.as_retriever()
         result = retriever.get_relevant_documents(query)
         logger.info(result)
         return [hit.page_content for hit in result]
@@ -325,7 +330,13 @@ class QueryDecompositionChatbot(BaseExample):
 
         try:
             if vectorstore != None:
-                retriever = vectorstore.as_retriever()
+                logger.info(f"Getting retrieved top k values: {settings.retriever.top_k} with confidence threshold: {settings.retriever.score_threshold}")
+
+                try:
+                    retriever = vectorstore.as_retriever(search_type="similarity_score_threshold", search_kwargs={"score_threshold": settings.retriever.score_threshold, "k": settings.retriever.top_k})
+                except NotImplementedError:
+                    # Some retriever like milvus don't have similarity score threshold implemented
+                    retriever = vectorstore.as_retriever()
                 docs = retriever.get_relevant_documents(content)
 
                 result = []

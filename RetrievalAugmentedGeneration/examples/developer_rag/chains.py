@@ -114,7 +114,7 @@ class QAChatbot(BaseExample):
         except Exception as e:
             logger.error(f"Exception in setting llm tokens: {e}")
 
-        retriever = get_doc_retriever(num_nodes=4)
+        retriever = get_doc_retriever(num_nodes=get_config().retriever.top_k)
         qa_template = Prompt(get_config().prompts.rag_template)
 
         logger.info(f"Prompt used for response generation: {qa_template}")
@@ -137,7 +137,7 @@ class QAChatbot(BaseExample):
         """Search for the most relevant documents for the given search parameters."""
 
         try:
-            retriever = get_doc_retriever(num_nodes=num_docs)
+            retriever = get_doc_retriever(num_nodes=get_config().retriever.top_k)
             nodes = retriever.retrieve(content)
             output = []
             for node in nodes:
