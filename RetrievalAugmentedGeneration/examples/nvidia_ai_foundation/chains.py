@@ -105,13 +105,13 @@ class NvidiaAIFoundation(BaseExample):
         try:
             if vectorstore != None:
                 try:
-                    retriever = vectorstore.as_retriever(search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.25})
+                    logger.info(f"Getting retrieved top k values: {settings.retriever.top_k} with confidence threshold: {settings.retriever.score_threshold}")
+                    retriever = vectorstore.as_retriever(search_type="similarity_score_threshold", search_kwargs={"score_threshold": settings.retriever.score_threshold, "k": settings.retriever.top_k})
                     docs = retriever.get_relevant_documents(prompt)
                 except NotImplementedError:
                     # Some retriever like milvus don't have similarity score threshold implemented
                     retriever = vectorstore.as_retriever()
                     docs = retriever.get_relevant_documents(prompt)
-
 
                 context = ""
                 for doc in docs:
@@ -139,7 +139,7 @@ class NvidiaAIFoundation(BaseExample):
         try:
             if vectorstore != None:
                 try:
-                    retriever = vectorstore.as_retriever(search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.25})
+                    retriever = vectorstore.as_retriever(search_type="similarity_score_threshold", search_kwargs={"score_threshold": settings.retriever.score_threshold, "k": settings.retriever.top_k})
                     docs = retriever.get_relevant_documents(content)
                 except NotImplementedError:
                     # Some retriever like milvus don't have similarity score threshold implemented

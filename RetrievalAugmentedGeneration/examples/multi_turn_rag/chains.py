@@ -120,14 +120,29 @@ class MultiTurnChatbot(BaseExample):
 
         try:
             if docstore:
-                retrieval_chain = (
-                    RunnableAssign(
-                        {"context": itemgetter("input") | docstore.as_retriever()}
+                logger.info(f"Getting retrieved top k values: {settings.retriever.top_k} with confidence threshold: {settings.retriever.score_threshold}")
+
+                try:
+                    retrieval_chain = (
+                        RunnableAssign(
+                            {"context": itemgetter("input") | docstore.as_retriever(search_type="similarity_score_threshold",
+                                                                                    search_kwargs={"score_threshold": settings.retriever.score_threshold, "k": settings.retriever.top_k})}
+                        )
+                        | RunnableAssign(
+                            {"history": itemgetter("input") | convstore.as_retriever(search_type="similarity_score_threshold",
+                                                                                    search_kwargs={"score_threshold": settings.retriever.score_threshold, "k": settings.retriever.top_k})}
+                        )
                     )
-                    | RunnableAssign(
-                        {"history": itemgetter("input") | convstore.as_retriever()}
+                except NotImplementedError:
+                    # Some retriever like milvus don't have similarity score threshold implemented
+                    retrieval_chain = (
+                        RunnableAssign(
+                            {"context": itemgetter("input") | docstore.as_retriever()}
+                        )
+                        | RunnableAssign(
+                            {"history": itemgetter("input") | convstore.as_retriever()}
+                        )
                     )
-                )
                 chain = retrieval_chain | stream_chain
 
                 for chunk in chain.stream({"input": prompt}):
@@ -159,13 +174,13 @@ class MultiTurnChatbot(BaseExample):
                 try:
                     retriever = docstore.as_retriever(
                         search_type="similarity_score_threshold",
-                        search_kwargs={"score_threshold": 0.25},
+                        search_kwargs={"score_threshold": settings.retriever.score_threshold, "k": settings.retriever.top_k},
                     )
-                    docs = retriever.invoke(content)
                 except NotImplementedError:
                     # Some retriever like milvus don't have similarity score threshold implemented
                     retriever = docstore.as_retriever()
-                    docs = retriever.invoke(content)
+
+                docs = retriever.invoke(content)
 
                 result = []
                 for doc in docs:

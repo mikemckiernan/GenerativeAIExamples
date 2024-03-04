@@ -122,6 +122,26 @@ class EmbeddingConfig(ConfigWizard):
 
 
 @configclass
+class RetrieverConfig(ConfigWizard):
+    """Configuration class for the Retrieval pipeline.
+
+    :cvar top_k: Number of relevant results to retrieve.
+    :cvar score_threshold: The minimum confidence score for the retrieved values to be considered.
+    """
+
+    top_k: int = configfield(
+        "top_k",
+        default=4,
+        help_txt="Number of relevant results to retrieve",
+    )
+    score_threshold: float = configfield(
+        "score_threshold",
+        default=0.25,
+        help_txt="The minimum confidence score for the retrieved values to be considered",
+    )
+
+
+@configclass
 class PromptsConfig(ConfigWizard):
     """Configuration class for the Prompts.
 
@@ -207,6 +227,12 @@ class AppConfig(ConfigWizard):
         env=False,
         help_txt="The configuration of embedding model.",
         default=EmbeddingConfig(),
+    )
+    retriever: RetrieverConfig = configfield(
+        "retriever",
+        env=False,
+        help_txt="The configuration of the retriever pipeline.",
+        default=RetrieverConfig(),
     )
     prompts: PromptsConfig = configfield(
         "prompts",

@@ -23,6 +23,8 @@ services:
       CSV_NAME: ${CSV_NAME}
       APP_VECTORSTORE_NAME: "faiss"
       COLLECTION_NAME: ${RAG_EXAMPLE}
+      APP_RETRIEVER_TOPK: 4
+      APP_RETRIEVER_SCORETHRESHOLD: 0.25
     volumes:
       - ${APP_CONFIG_FILE}:${APP_CONFIG_FILE}
     ports:
