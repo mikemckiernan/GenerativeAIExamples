@@ -23,9 +23,9 @@ services:
               count: ${INFERENCE_GPU_COUNT:-all}
               capabilities: [gpu]
 
-  nemollm-embedding:
-    container_name: nemo-retriever-embedding-microservice
-    image: nvcr.io/ohlfw0olaadg/ea-participants/nemo-retriever-embedding-microservice:24.01
+  embeddings:
+    container_name: nemo-retriever-embedding-ms
+    image: nvcr.io/ohlfw0olaadg/ea-participants/nemo-retriever-embedding-microservice:24.02-rc4
     volumes:
     - ${EMBEDDING_MODEL_DIRECTORY:?please update the env file and source it before running}:/model-checkpoint-path
     command:  bin/web -p 9080 -c /model-checkpoint-path/${EMBEDDING_MODEL_CKPT_NAME} -g model_config_templates/${EMBEDDING_MODEL_NAME}_template.yaml
