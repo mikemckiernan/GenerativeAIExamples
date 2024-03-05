@@ -182,7 +182,7 @@ class PromptsConfig(ConfigWizard):
             " From this, we have retrieved the following potentially-useful info: "
             " Conversation History Retrieval:\n{history}\n\n"
             " Document Retrieval:\n{context}\n\n"
-            " (Answer only from retrieval. Only cite sources that are used. Make your response conversational.)"
+            " (Answer only from retrieval.Make your response conversational.)"
         ),
         help_txt="Prompt template for rag.",
     )

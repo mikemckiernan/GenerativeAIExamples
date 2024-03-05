@@ -1,60 +1,58 @@
 services:
-
   query:
-    container_name: chain-server
-    image: chain-server:latest
-    build:
-      context: ../../
-      dockerfile: ./RetrievalAugmentedGeneration/Dockerfile
-      args:
-        EXAMPLE_NAME: ${RAG_EXAMPLE}
+    container_name: rag-application-ai-foundation-text-chatbot
+    image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-application-ai-foundation-text-chatbot:0.4.0
     command: --port 8081 --host 0.0.0.0
     environment:
+      APP_VECTORSTORE_URL: "${POSTGRES_HOST_IP:-pgvector}:${POSTGRES_PORT_NUMBER:-5432}"
+      APP_VECTORSTORE_NAME: "pgvector"
       APP_LLM_MODELNAME: mixtral_8x7b
       APP_LLM_MODELENGINE: nv-ai-foundation
       APP_EMBEDDINGS_MODELNAME: nvolveqa_40k
       APP_EMBEDDINGS_MODELENGINE: nv-ai-foundation
       APP_TEXTSPLITTER_CHUNKSIZE: 2000
       APP_TEXTSPLITTER_CHUNKOVERLAP: 200
+      NVIDIA_API_KEY: ${NVIDIA_API_KEY}
       APP_PROMPTS_CHATTEMPLATE: "You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. Please ensure that your responses are positive in nature."
       APP_PROMPTS_RAGTEMPLATE: "You are a helpful AI assistant named Envie. You will reply to questions only based on the context that you are provided. If something is out of context, you will refrain from replying and politely decline to respond to the user."
-      NVIDIA_API_KEY: ${NVIDIA_API_KEY}
-      APP_CONFIG_FILE: ${APP_CONFIG_FILE}
-      CSV_NAME: ${CSV_NAME}
-      APP_VECTORSTORE_NAME: "faiss"
-      COLLECTION_NAME: ${RAG_EXAMPLE}
       APP_RETRIEVER_TOPK: 4
       APP_RETRIEVER_SCORETHRESHOLD: 0.25
-    volumes:
-      - ${APP_CONFIG_FILE}:${APP_CONFIG_FILE}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-api}
+      COLLECTION_NAME: nv-ai-foundation-rag
     ports:
     - "8081:8081"
     expose:
     - "8081"
     shm_size: 5gb
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
 
   frontend:
-    container_name: llm-playground
-    image: llm-playground:latest
-    build:
-      context: ../.././RetrievalAugmentedGeneration/frontend/
-      dockerfile: Dockerfile
+    container_name: rag-playground
+    image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-playground:0.4.0
     command: --port 8090
     environment:
       APP_SERVERURL: http://query
       APP_SERVERPORT: 8081
-      APP_MODELNAME: ${MODEL_NAME:-${MODEL_ARCHITECTURE}}
-      RIVA_API_URI: ${RIVA_API_URI}
-      RIVA_API_KEY: ${RIVA_API_KEY}
-      RIVA_FUNCTION_ID: ${RIVA_FUNCTION_ID}
-      TTS_SAMPLE_RATE: ${TTS_SAMPLE_RATE}
+      APP_MODELNAME: ${MODEL_NAME:-llama2_70b}
+      RIVA_API_URI: ${RIVA_API_URI:-''}
+      RIVA_API_KEY: ${RIVA_API_KEY:-''}
+      RIVA_FUNCTION_ID: ${RIVA_FUNCTION_ID:-''}
+      TTS_SAMPLE_RATE: ${TTS_SAMPLE_RATE:-48000}
     ports:
     - "8090:8090"
     expose:
     - "8090"
     depends_on:
-      - query
+    - query
 
 networks:
   default:
-    name: nvidia-llm
+    name: nvidia-rag

@@ -46,9 +46,9 @@ $ grep NVIDIA_API_KEY deploy/compose/compose.env
 4. Deploy the developer RAG example via Docker compose.
 
 ```
-$ source deploy/compose/compose.env ; docker compose -f deploy/compose/docker-compose-nv-ai-foundation.yaml build
+$ source deploy/compose/compose.env ; docker compose -f deploy/compose/rag-app-ai-foundation-text-chatbot.yaml build
 
-$ docker compose -f deploy/compose/docker-compose-nv-ai-foundation.yaml up -d
+$ docker compose -f deploy/compose/rag-app-ai-foundation-text-chatbot.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES             STATUS
