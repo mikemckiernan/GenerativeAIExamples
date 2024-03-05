@@ -1,6 +1,0 @@
-standalone:
-  resources:
-    requests:
-      nvidia.com/gpu: "1"
-    limits:
-      nvidia.com/gpu: "1"

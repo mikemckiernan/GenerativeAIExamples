@@ -1,10 +1,10 @@
 
-# Chat Server
-A sample fastapi based server is provided in the workflow so that you can test the chat system in an interactive manner.
+# Chat/Chain Server
+A sample fastapi based server (referred to as chain-server in compose files) is provided in the workflow so that you can test the chat system in an interactive manner.
 This server wraps calls made to different components and orchestrates the entire flow for all the provided examples.
 
 This API endpoint allows for several actions:
-- [Chat Server](#chat-server)
+- [Chat/Chain Server](#chatchain-server)
     - [Upload File Endpoint](#upload-file-endpoint)
     - [Answer Generation Endpoint](#answer-generation-endpoint)
     - [Document Search Endpoint](#document-search-endpoint)
@@ -164,12 +164,12 @@ If the web frontend needs to be stood up manually for development purposes, run 
 - Build the web UI container from source
 ```
   source deploy/compose/compose.env
-  docker compose -f deploy/compose/docker-compose.yaml build query
+  docker compose -f deploy/compose/docker-compose.yaml build chain-server
 ```
 - Run the container which will start the server
 ```
   source deploy/compose/compose.env
-  docker compose -f deploy/compose/docker-compose.yaml up query
+  docker compose -f deploy/compose/docker-compose.yaml up chain-server
 ```
 
 - Open the swagger URL at ``http://host-ip:8081`` to try out the exposed endpoints.
