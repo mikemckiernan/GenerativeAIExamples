@@ -20,10 +20,11 @@ import logging
 from pathlib import Path
 from typing import Generator, List, Dict, Any
 
-from langchain.document_loaders import UnstructuredFileLoader
+from langchain_community.document_loaders import UnstructuredFileLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_core.prompts import PromptTemplate, ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts.prompt import PromptTemplate
+from langchain_core.prompts.chat import ChatPromptTemplate
+from langchain_core.output_parsers.string import StrOutputParser
 from langchain_core.runnables.passthrough import RunnableAssign
 
 # pylint: disable=no-name-in-module, disable=import-error
