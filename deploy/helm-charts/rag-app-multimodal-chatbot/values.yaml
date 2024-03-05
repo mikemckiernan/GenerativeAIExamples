@@ -13,7 +13,7 @@ imagePullSecret:
 
 query:
   image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-application-multimodal-chatbot:0.4.0
-  name: query-router-multimodal
+  name: chain-server-multimodal
   replicas: 1
   nodeSelector: {}
   tolerations: {}
@@ -55,7 +55,7 @@ frontend:
     - name: APP_SERVERPORT
       value: "8085"
     - name: APP_SERVERURL
-      value: http://query-router-multimodal
+      value: http://chain-server-multimodal
     - name: RIVA_API_URI
       value: ""
     - name: RIVA_API_KEY

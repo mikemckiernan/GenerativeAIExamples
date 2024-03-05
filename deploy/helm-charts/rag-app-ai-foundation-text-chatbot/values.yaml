@@ -13,7 +13,7 @@ imagePullSecret:
 
 query:
   image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-application-ai-foundation-text-chatbot:0.4.0
-  name: query-router-ai-foundation
+  name: chain-server-ai-foundation
   replicas: 1
   nodeSelector: {}
   tolerations: {}
@@ -58,7 +58,7 @@ frontend:
     - name: APP_SERVERPORT
       value: "8082"
     - name: APP_SERVERURL
-      value: http://query-router-ai-foundation
+      value: http://chain-server-ai-foundation
     - name: RIVA_API_URI
       value: ""
     - name: RIVA_API_KEY

@@ -13,7 +13,7 @@ imagePullSecret:
 
 query:
   image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-application-query-decomposition-agent:0.4.0
-  name: query-router-query-decomposition
+  name: chain-server-query-decomposition
   replicas: 1
   nodeSelector: {}
   tolerations: {}
@@ -58,7 +58,7 @@ frontend:
     - name: APP_SERVERPORT
       value: "8083"
     - name: APP_SERVERURL
-      value: http://query-router-query-decomposition
+      value: http://chain-server-query-decomposition
     - name: RIVA_API_URI
       value: ""
     - name: RIVA_API_KEY
