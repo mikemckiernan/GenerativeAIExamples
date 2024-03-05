@@ -1,70 +1,4 @@
 services:
-
-  etcd:
-    container_name: milvus-etcd
-    image: quay.io/coreos/etcd:v3.5.5
-    environment:
-      - ETCD_AUTO_COMPACTION_MODE=revision
-      - ETCD_AUTO_COMPACTION_RETENTION=1000
-      - ETCD_QUOTA_BACKEND_BYTES=4294967296
-      - ETCD_SNAPSHOT_COUNT=50000
-    volumes:
-      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/etcd:/etcd
-    command: etcd -advertise-client-urls=http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
-    healthcheck:
-      test: ["CMD", "etcdctl", "endpoint", "health"]
-      interval: 30s
-      timeout: 20s
-      retries: 3
-
-  minio:
-    container_name: milvus-minio
-    image: minio/minio:RELEASE.2023-03-20T20-16-18Z
-    environment:
-      MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin
-    ports:
-      - "9011:9011"
-      - "9010:9010"
-    volumes:
-      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/minio:/minio_data
-    command: minio server /minio_data --console-address ":9011" --address ":9010"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9010/minio/health/live"]
-      interval: 30s
-      timeout: 20s
-      retries: 3
-
-  milvus:
-    container_name: milvus-standalone
-    image: milvusdb/milvus:v2.4.0.1-gpu-beta
-    command: ["milvus", "run", "standalone"]
-    environment:
-      ETCD_ENDPOINTS: etcd:2379
-      MINIO_ADDRESS: minio:9010
-      KNOWHERE_GPU_MEM_POOL_SIZE: 2048;4096
-    volumes:
-      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/milvus:/var/lib/milvus
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
-      interval: 30s
-      start_period: 90s
-      timeout: 20s
-      retries: 3
-    ports:
-      - "19530:19530"
-      - "9091:9091"
-    depends_on:
-      - "etcd"
-      - "minio"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              capabilities: ["gpu"]
-              count: 1
-
   query:
     container_name: chain-server
     image: chain-server:latest
@@ -83,14 +17,13 @@ services:
       APP_TEXTSPLITTER_CHUNKOVERLAP: 200
       NVIDIA_API_KEY: ${NVIDIA_API_KEY}
       APP_CONFIG_FILE: ${APP_CONFIG_FILE}
-      APP_VECTORSTORE_URL: "http://milvus:19530"
-      APP_VECTORSTORE_NAME: "milvus"
-      COLLECTION_NAME: ${RAG_EXAMPLE}
       APP_RETRIEVER_TOPK: 4
       APP_RETRIEVER_SCORETHRESHOLD: 0.25
+      APP_VECTORSTORE_URL: "http://milvus:19530"
+      APP_VECTORSTORE_NAME: "milvus"
+      COLLECTION_NAME: multimodal_rag
       APP_PROMPTS_CHATTEMPLATE: "You are a helpful and friendly multimodal intelligent AI assistant named Multimodal Chatbot Assistant. You are an expert in the content of the document provided and can provide information using both text and images. The user may also provide an image input, and you will use the image description to retrieve similar images, tables and text. The context given below will provide some technical or financial documentation and whitepapers to help you answer the question. Based on this context, answer the question truthfully. If the question is not related to this, please refrain from answering. Most importantly, if the context provided does not include information about the question from the user, reply saying that you don't know. Do not utilize any information that is not provided in the documents below. All documents will be preceded by tags, for example [[DOCUMENT 1]], [[DOCUMENT 2]], and so on. You can reference them in your reply but without the brackets, so just say document 1 or 2. The question will be preceded by a [[QUESTION]] tag. Be succinct, clear, and helpful. Remember to describe everything in detail by using the knowledge provided, or reply that you don't know the answer. Do not fabricate any responses. Note that you have the ability to reference images, tables, and other multimodal elements when necessary. You can also refer to the image provided by the user, if any."
       APP_PROMPTS_RAGTEMPLATE: "You are a helpful and friendly multimodal intelligent AI assistant named Multimodal Chatbot Assistant. You are an expert in the content of the document provided and can provide information using both text and images. The user may also provide an image input, and you will use the image description to retrieve similar images, tables and text. The context given below will provide some technical or financial documentation and whitepapers to help you answer the question. Based on this context, answer the question truthfully. If the question is not related to this, please refrain from answering. Most importantly, if the context provided does not include information about the question from the user, reply saying that you don't know. Do not utilize any information that is not provided in the documents below. All documents will be preceded by tags, for example [[DOCUMENT 1]], [[DOCUMENT 2]], and so on. You can reference them in your reply but without the brackets, so just say document 1 or 2. The question will be preceded by a [[QUESTION]] tag. Be succinct, clear, and helpful. Remember to describe everything in detail by using the knowledge provided, or reply that you don't know the answer. Do not fabricate any responses. Note that you have the ability to reference images, tables, and other multimodal elements when necessary. You can also refer to the image provided by the user, if any."
-
     volumes:
       - ${APP_CONFIG_FILE}:${APP_CONFIG_FILE}
     ports:
@@ -123,4 +56,4 @@ services:
 
 networks:
   default:
-    name: nvidia-llm
+    name: nvidia-rag

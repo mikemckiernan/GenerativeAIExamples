@@ -10,7 +10,9 @@ Retrieval Augmented Generation (RAG) generates up-to-date and domain-specific an
 4. [QA Chatbot -- Quantized LLM model](#4-qa-chatbot-with-quantized-llm-model----a100h100l40s)
 5. [QA Chatbot -- Task Decomposition](#5-qa-chatbot-with-task-decomposition-example----a100h100l40s)
 6. [QA Chatbot -- NemoTron Model](#6-qa-chatbot----nemotron-model)
-
+7. [Structured Data RAG](#7-structured-data-rag)
+8. [Multi Modal RAG](#8-multi-modal-rag)
+9. [Multi Turn RAG](#9-multi-turn-rag)
 <hr>
 
 ### 1: QA Chatbot -- NVIDIA AI Foundation inference endpoint
@@ -246,14 +248,16 @@ export MODEL_ARCHITECTURE="llama"
 export MODEL_NAME="Llama-2-13b-chat"
 ```
 
-2. Deploy the developer RAG example via Docker compose using milvus vector store, steps to deploy RAG example with pgvector vector store is [here](#deploying-with-pgvector-vector-store).
+2. Deploy the developer RAG example via Docker compose using milvus vector store.
 
 > ⚠️ **NOTE**: It may take up to 5 minutes for the Triton server to start. The `-d` flag starts the services in the background.
 
 ```
-$ source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose.yaml build
+$ source deploy/compose/compose.env;  docker compose -f deploy/compose/rag-app-text-chatbot.yaml build
 
-$ docker compose -f deploy/compose/docker-compose.yaml up -d
+$ docker compose -f deploy/compose/docker-compose-vectordb.yaml up -d milvus
+
+$ docker compose -f deploy/compose/rag-app-text-chatbot.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES                  STATUS
@@ -341,27 +345,6 @@ source compose.env
 docker compose down
 docker compose ps -q
 ```
-
-#### Deploying with [pgvector](https://github.com/pgvector/pgvector) vector store
-2. Deploy the developer RAG example via Docker compose.
-
-> ⚠️ **NOTE**: It may take up to 5 minutes for the Triton server to start. The `-d` flag starts the services in the background.
-
-```
-$ source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose-pgvector.yaml build
-
-$ docker compose -f deploy/compose/docker-compose-pgvector.yaml up -d
-
-$ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
-CONTAINER ID   NAMES                  STATUS
-0f6f091d892e   llm-playground         Up 22 hours
-8d0ab09fcb98   chain-server           Up 22 hours
-85bd98ba3b24   notebook-server        Up 22 hours
-22f0d405b38b   llm-inference-server   Up 22 hours (healthy)
-cbd3cf65ce7e   pgvector               Up 22 hours
-```
-
-After deployment is successful, you can follow steps from [Test](#23-test) to verify workflow.
 
 <hr>
 
@@ -522,9 +505,9 @@ This example deploys a developer RAG pipeline for chat QA and serves inference v
 > ⚠️ **NOTE**: It may take up to 5 minutes for the Triton server to start. The `-d` flag starts the services in the background.
 
 ```
-$ source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose.yaml build
+$ source deploy/compose/compose.env;  docker compose -f deploy/compose/rag-app-text-chatbot.yaml build
 
-$ docker compose -f deploy/compose/docker-compose.yaml up -d
+$ docker compose -f deploy/compose/rag-app-text-chatbot.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES                  STATUS
@@ -589,34 +572,25 @@ It showcases how to perform RAG when the agent needs to access information from 
 
 #### 5.2 Deploy
 
-1.  Follow the ["Deploy" section of example 01](#downloading-the-model) to setup your API key
-
-2. Change the RAG example in `deploy/compose/compose.env`.
+1. Add ngc api key in `deploy/compose/compose.env`.
     ```shell
-    export RAG_EXAMPLE="query_decomposition_rag"
+    export NVIDIA_API_KEY="nvapi-*"
     ```
 
-3. Change the LLM in `deploy/compose/docker-compose-nv-ai-foundation.yaml` to `llama2_70b`.
-    ```yaml
-    query:
-      container_name: chain-server
-      ...
-      environment:
-        APP_LLM_MODELNAME: llama2_70b
-        ...
-    ```
-
-4. Deploy the Query Decomposition RAG example via Docker compose.
+2. Deploy the structured data RAG example via Docker compose.
 
 ```
-$ source deploy/compose/compose.env;  docker compose -f deploy/compose/docker-compose-nv-ai-foundation.yaml build
+$ source deploy/compose/compose.env; docker compose -f deploy/compose/rag-app-query-decomposition-agent.yaml build
 
-$ docker compose -f deploy/compose/docker-compose-nv-ai-foundation.yaml up -d
+$ docker compose -f deploy/compose/docker-compose-vectordb.yaml up -d pgvector
+
+$ docker compose -f deploy/compose/rag-app-query-decomposition-agent.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES                  STATUS
 256da0ecdb7b   llm-playground         Up 48 minutes
 2974aa4fb2ce   chain-server           Up 48 minutes
+79b10c7fb0be   pgvector               Up 48 minutes
 ```
 
 #### 5.3 Test
@@ -688,6 +662,170 @@ I0107 03:03:38.679626 260 http_server.cc:187] Started Metrics Service at 0.0.0.0
 - Nemotron models do not support streaming in this release.
 
 <hr>
+
+### 7: Structured Data RAG
+
+#### 7.1 Description
+This example demonstrates a use case of RAG using structured CSV data. It incorporates models from the Nvidia AI Foundation to build the use case. This approach does not involve embedding models or vector database solutions, instead leveraging [PandasAI](https://docs.pandas-ai.com/en/latest/) to manage the workflow.
+For ingestion, the structured data is loaded from a CSV file into a Pandas dataframe. It can ingest multiple CSV files, provided they have identical columns. However, ingestion of CSV files with differing columns is not currently supported and will result in an exception.
+The core functionality utilizes a [PandasAI](https://docs.pandas-ai.com/en/latest/) agent to extract information from the dataframe. This agent combines the query with the structure of the dataframe into an LLM prompt. The LLM then generates Python code to extract the required information from the dataframe. Subsequently, this generated code is executed on the dataframe, yielding the output dataframe.
+
+To test the example, sample CSV files are available. These are part of the structured data example Helm chart and represent a subset of the [Microsoft Azure Predictive Maintenance](https://www.kaggle.com/datasets/arnabbiswas1/microsoft-azure-predictive-maintenance) from Kaggle.
+The CSV data retrieval prompt is specifically tuned for three CSV files from this dataset: `PdM_machines.csv, PdM_errors.csv, and PdM_failures.csv`.
+The CSV file to be used can be specified in the `values.yaml` file within the Helm chart by updating the environment variable `CSV_NAME`. By default, it is set to `PdM_machines` but can be changed to `PdM_errors` or `PdM_failures`.
+Currently, customization of the CSV data retrieval prompt is not supported.
+
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-6ydv">LLM Model</th>
+    <th class="tg-6ydv">Embedding</th>
+    <th class="tg-6ydv">Framework</th>
+    <th class="tg-6ydv">Document Type</th>
+    <th class="tg-6ydv">Vector Database</th>
+    <th class="tg-6ydv">Model deployment platform</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-knyo">NV-Llama2-70B-RLHF</td>
+    <td class="tg-knyo">Not Used</td>
+    <td class="tg-knyo">PandasAI</td>
+    <td class="tg-knyo">CSV</td>
+    <td class="tg-knyo">Not Used</td>
+    <td class="tg-knyo">Cloud - NVIDIA AI Foundation</td>
+  </tr>
+</tbody>
+</table>
+
+#### 7.2 Deploy
+1. Add ngc api key in `deploy/compose/compose.env`.
+    ```shell
+    export NVIDIA_API_KEY="nvapi-*"
+    ```
+
+2. Deploy the structured data RAG example via Docker compose.
+
+```
+$ source deploy/compose/compose.env; docker compose -f deploy/compose/rag-app-structured-data-chatbot.yaml build
+
+$ docker compose -f deploy/compose/rag-app-structured-data-chatbot.yaml up -d
+
+$ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
+CONTAINER ID   NAMES                  STATUS
+256da0ecdb7b   llm-playground         Up 48 minutes
+2974aa4fb2ce   chain-server           Up 48 minutes
+```
+
+### 8: Multi Modal RAG
+
+#### 8.1 Description
+
+This example showcases multi modal usecase in a RAG pipeline. It can understand any kind of images in PDF (like graphs and plots) alongside text and tables. It uses multimodal models from NVIDIA AI Foundation to answer queries.
+
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-6ydv">LLM Model</th>
+    <th class="tg-6ydv">Embedding</th>
+    <th class="tg-6ydv">Framework</th>
+    <th class="tg-6ydv">Document Type</th>
+    <th class="tg-6ydv">Vector Database</th>
+    <th class="tg-6ydv">Model deployment platform</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-knyo">mixtral_8x7b for response generation, Deplot for graph to text convertion, Neva 22B for image to text convertion</td>
+    <td class="tg-knyo">nvolveqa_40k</td>
+    <td class="tg-knyo">Custom Python</td>
+    <td class="tg-knyo">PDF with images</td>
+    <td class="tg-knyo">Milvus</td>
+    <td class="tg-knyo">Cloud - NVIDIA AI Foundation</td>
+  </tr>
+</tbody>
+</table>
+
+#### 8.2 Deploy
+
+1. Add ngc api key in `deploy/compose/compose.env`.
+    ```shell
+    export NVIDIA_API_KEY="nvapi-*"
+    ```
+
+2. Deploy the structured data RAG example via Docker compose.
+
+```
+$ source deploy/compose/compose.env; docker compose -f deploy/compose/rag-app-multimodal-chatbot.yaml build
+
+$ docker compose -f deploy/compose/docker-compose-vectordb.yaml up -d milvus
+
+$ docker compose -f deploy/compose/rag-app-multimodal-chatbot.yaml up -d
+
+$ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
+CONTAINER ID   NAMES                  STATUS
+256da0ecdb7b   llm-playground         Up 48 minutes
+2974aa4fb2ce   chain-server           Up 48 minutes
+55135224e8fd   milvus-standalone      Up 48 minutes (healthy)
+5844248a08df   milvus-minio           Up 48 minutes (healthy)
+c42df344bb25   milvus-etcd            Up 48 minutes (healthy)
+```
+
+
+### 9: Multi Turn RAG
+
+#### 9.1 Description
+This example showcases multi turn usecase in a RAG pipeline. It stores the conversation history and knowledge base in PGVector and retrieves them at runtime to understand contextual queries. It uses NeMo Inference Microservices to communicate with the embedding model and large language model.
+The example supports ingestion of PDF, .txt files. The docs are ingested in a dedicated document vectorstore. The prompt for the example is currently tuned to act as a document chat bot.
+For maintaining the conversation history, we store the previous query of user and its generated answer as a text entry in a different dedicated vectorstore for conversation history.
+Both these vectorstores are part of a Langchain [LCEL](https://python.langchain.com/docs/expression_language/) chain as Langchain Retrievers. When the chain is invoked with a query, its passed through both the retrievers. 
+The retriever retrieves context from the document vectorstore and the closest matching conversation history from conversation history vectorstore and the chunks are added into the LLM prompt as part of the chain.
+
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-6ydv">LLM Model</th>
+    <th class="tg-6ydv">Embedding</th>
+    <th class="tg-6ydv">Framework</th>
+    <th class="tg-6ydv">Document Type</th>
+    <th class="tg-6ydv">Vector Database</th>
+    <th class="tg-6ydv">Model deployment platform</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-knyo">llama-2-13b-chat</td>
+    <td class="tg-knyo">nv-embed-qa</td>
+    <td class="tg-knyo">Langchain Expression Language</td>
+    <td class="tg-knyo">PDF/Text</td>
+    <td class="tg-knyo">PGVector</td>
+    <td class="tg-knyo">NVIDIA AI Foundation</td>
+  </tr>
+</tbody>
+</table>
+
+#### 9.2 Deploy
+
+1. Add ngc api key in `deploy/compose/compose.env`.
+    ```shell
+    export NVIDIA_API_KEY="nvapi-*"
+    ```
+
+2. Deploy the structured data RAG example via Docker compose.
+
+```
+$ source deploy/compose/compose.env; docker compose -f deploy/compose/rag-app-multiturn-chatbot.yaml build
+
+$ docker compose -f deploy/compose/docker-compose-vectordb.yaml up -d pgvector
+
+$ docker compose -f deploy/compose/rag-app-multiturn-chatbot.yaml up -d
+
+$ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
+CONTAINER ID   NAMES                  STATUS
+256da0ecdb7b   llm-playground         Up 48 minutes
+2974aa4fb2ce   chain-server           Up 48 minutes
+79b10c7fb0be   pgvector               Up 48 minutes
+```
 
 ### Learn More
 

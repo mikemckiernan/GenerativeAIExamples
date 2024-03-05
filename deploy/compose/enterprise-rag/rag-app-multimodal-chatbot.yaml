@@ -9,12 +9,10 @@ services:
     - "8000:8000"
     - "9998:9998"
     - "9999:9999"
-    - "30009:9999"
     expose:
     - "8000"
     - "9998"
     - "9999"
-    - "30009"
     shm_size: 20gb
     deploy:
       resources:
@@ -32,10 +30,8 @@ services:
     command:  bin/web -p 9080 -c /model-checkpoint-path/${EMBEDDING_MODEL_CKPT_NAME} -g model_config_templates/${EMBEDDING_MODEL_NAME}_template.yaml
     ports:
     - "9080:9080"
-    - "30010:9080"
     expose:
     - "9080"
-    - "30010"
     shm_size: 8gb
     deploy:
       resources:
@@ -53,7 +49,7 @@ services:
       start_period: 10m
 
   query:
-    container_name: rag-application-ai-foundation-text-chatbot
+    container_name: rag-application-multimodal-chatbot
     image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-application-multimodal-chatbot:0.4.0
     command: --port 8081 --host 0.0.0.0
     environment:
@@ -88,7 +84,7 @@ services:
   frontend:
     container_name: rag-playground
     image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-playground:0.4.0
-    command: --port 8095
+    command: --port 8090
     environment:
       APP_SERVERURL: http://query
       APP_SERVERPORT: 8081
@@ -98,9 +94,9 @@ services:
       RIVA_FUNCTION_ID: ${RIVA_FUNCTION_ID:-''}
       TTS_SAMPLE_RATE: ${TTS_SAMPLE_RATE:-48000}
     ports:
-    - "8095:8095"
+    - "8090:8090"
     expose:
-    - "8095"
+    - "8090"
     depends_on:
     - query
 
