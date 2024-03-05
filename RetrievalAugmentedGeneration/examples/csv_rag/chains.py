@@ -25,7 +25,7 @@ from langchain.prompts import (
     PromptTemplate,
     SystemMessagePromptTemplate,
 )
-from langchain_core.output_parsers import StrOutputParser
+from langchain_core.output_parsers.string import StrOutputParser
 from pandasai import Agent as PandasAI_Agent
 from pandasai.responses.response_parser import ResponseParser
 

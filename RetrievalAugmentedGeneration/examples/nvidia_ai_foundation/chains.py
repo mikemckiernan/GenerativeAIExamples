@@ -18,11 +18,11 @@ import os
 from functools import lru_cache
 from typing import Generator, List, Dict, Any
 
-from langchain.document_loaders import UnstructuredFileLoader
+from langchain_community.document_loaders import UnstructuredFileLoader
 from langchain.text_splitter import CharacterTextSplitter
-from langchain.vectorstores import FAISS
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_community.vectorstores.faiss import FAISS
+from langchain_core.output_parsers.string import StrOutputParser
+from langchain_core.prompts.chat import ChatPromptTemplate
 from langchain_nvidia_ai_endpoints import ChatNVIDIA, NVIDIAEmbeddings
 from RetrievalAugmentedGeneration.common.base import BaseExample
 from RetrievalAugmentedGeneration.common.utils import get_config, get_llm, get_embedding_model, get_vectorstore_langchain
