@@ -835,7 +835,7 @@ You can switch between Milvus and PGVector, the two vector database options avai
 1. Update Docker Compose file: Locate the Docker Compose file for the specific example where you want to switch from PGVector to Milvus. Within the query service configuration, update the following environment variables:
     - `APP_VECTORSTORE_NAME`: Change the value to "milvus".
     - `APP_VECTORSTORE_URL`: Update this to the IP address of your Milvus microservice. If you're using the provided `docker-compose-vectordb.yaml` file in same system, you can keep the value as `"http://milvus:19530"`.
-1. Update docker compose file for respective example where you want to switch from pgvector to milvus. In query service update `APP_VECTORSTORE_NAME` to `milvus` and `APP_VECTORSTORE_URL` to the IP where milvus microservice is running. If you're using [docker-compose-vectordb.yaml](../deploy/compose/docker-compose-vectordb.yaml) then you can keep value to `"http://milvus:19530"`
+
 ```
 services:
   query:
