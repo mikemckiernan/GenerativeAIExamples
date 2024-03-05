@@ -827,6 +827,68 @@ CONTAINER ID   NAMES                  STATUS
 79b10c7fb0be   pgvector               Up 48 minutes
 ```
 
+### Switching Vector Databases
+You can switch between Milvus and PGVector, the two vector database options available. While some examples use Milvus and others use PGVector by default, you can freely switch between them, except for the Multimodal RAG functionality which is currently limited to Milvus.
+
+#### Switching from pgvector to Milvus Vector DB
+
+1. Update Docker Compose file: Locate the Docker Compose file for the specific example where you want to switch from PGVector to Milvus. Within the query service configuration, update the following environment variables:
+    - `APP_VECTORSTORE_NAME`: Change the value to "milvus".
+    - `APP_VECTORSTORE_URL`: Update this to the IP address of your Milvus microservice. If you're using the provided `docker-compose-vectordb.yaml` file in same system, you can keep the value as `"http://milvus:19530"`.
+1. Update docker compose file for respective example where you want to switch from pgvector to milvus. In query service update `APP_VECTORSTORE_NAME` to `milvus` and `APP_VECTORSTORE_URL` to the IP where milvus microservice is running. If you're using [docker-compose-vectordb.yaml](../deploy/compose/docker-compose-vectordb.yaml) then you can keep value to `"http://milvus:19530"`
+```
+services:
+  query:
+    container_name: chain-server
+    environment:
+      APP_VECTORSTORE_NAME: "milvus"
+      APP_VECTORSTORE_URL: "http://milvus:19530"
+```
+
+2. `Start Vector Database`: Once you've made the configuration changes, start the Milvus microservice using the following command:
+
+```
+docker compose -f deploy/compose/docker-compose-vectordb.yaml up -d  milvus
+```
+
+3. `Start the example server`: Finally, start the chain server for your specific example using the following command, replacing <example.yaml> with the actual filename:
+
+```
+docker compose -f deploy/compose<example.yaml> up -d
+```
+
+#### Switching from Milvus to PGVector Vector DB
+
+1. `Update Docker Compose file`: Locate the Docker Compose file for the specific example and update the environment variables within the query service:
+    - APP_VECTORSTORE_NAME: Change the value to "pgvector".
+    - APP_VECTORSTORE_URL: Update this to the IP address of your PGVector microservice. You can also update additional details like password, username, and database name in the following environment variables:
+    - POSTGRES_PASSWORD (default: "password")
+    - POSTGRES_USER (default: "postgres")
+    - POSTGRES_DB (default: "api")
+
+```
+services:
+  query:
+    container_name: chain-server
+    environment:
+      APP_VECTORSTORE_NAME: "pgvector"
+      APP_VECTORSTORE_URL: "pgvector:5432"
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-api}
+```
+
+2. `Start Vector Database`: After making the configuration changes, start the PGVector microservice using the following command:
+
+```
+docker compose -f deploy/compose/docker-compose-vectordb.yaml up -d  pgvector
+```
+
+3. `Start the example server`: Finally, start the chain server for your specific example using the following command, replacing <example.yaml> with the actual filename:
+```
+docker compose -f deploy/compose<example.yaml> up -d
+```
+
 ### Learn More
 
 To deep dive into different components and workflow used by the examples, please refer to the [Developer Guide.](../docs/README.md)
