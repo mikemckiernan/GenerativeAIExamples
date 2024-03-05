@@ -80,6 +80,11 @@ class TextSplitterConfig(ConfigWizard):
     :cvar chunk_overlap: Text overlap in text splitter.
     """
 
+    model_name: str = configfield(
+        "model_name",
+        default="intfloat/e5-large-v2",
+        help_txt="The name of Sentence Transformer model used for SentenceTransformer TextSplitter.",
+    )
     chunk_size: int = configfield(
         "chunk_size",
         default=510,

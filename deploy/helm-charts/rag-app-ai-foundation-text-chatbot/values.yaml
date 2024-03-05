@@ -29,7 +29,7 @@ query:
       APP_LLM_MODELENGINE: nv-ai-foundation
       APP_EMBEDDINGS_MODELNAME: nvolveqa_40k
       APP_EMBEDDINGS_MODELENGINE: nv-ai-foundation
-      APP_TEXTSPLITTER_CHUNKSIZE: 510
+      APP_TEXTSPLITTER_CHUNKSIZE: 2000
       APP_TEXTSPLITTER_CHUNKOVERLAP: 200
       APP_PROMPTS_CHATTEMPLATE: "You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. Please ensure that your responses are positive in nature."
       APP_PROMPTS_RAGTEMPLATE: "You are a helpful AI assistant named Envie. You will reply to questions only based on the context that you are provided. If something is out of context, you will refrain from replying and politely decline to respond to the user."

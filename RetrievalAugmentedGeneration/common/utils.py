@@ -316,8 +316,8 @@ def get_text_splitter() -> SentenceTransformersTokenTextSplitter:
     """Return the token text splitter instance from langchain."""
 
     embedding_model_name = TEXT_SPLITTER_EMBEDDING_MODEL
-    if "TEXT_SPLITTER_EMBEDDING_MODEL" in os.environ():
-        embedding_model_name = os.environ("TEXT_SPLITTER_EMBEDDING_MODEL")
+    if get_config().text_splitter.model_name:
+        embedding_model_name = get_config().text_splitter.model_name
 
     return SentenceTransformersTokenTextSplitter(
         model_name=embedding_model_name,
