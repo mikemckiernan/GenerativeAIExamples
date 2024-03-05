@@ -14,7 +14,7 @@ Docker compose to manage enterprise RAG applications based on NVIDIA services.
 1. Install [Docker Engine and Docker Compose.](https://docs.docker.com/engine/install/ubuntu/)
 
 2. Verify NVIDIA GPU driver version 535 or later is installed.
-    ``` 
+    ```
     $ nvidia-smi --query-gpu=driver_version --format=csv,noheader
     535.129.03
 
@@ -110,11 +110,11 @@ This example showcases RAG pipeline. It uses nemollm inference microservice to h
     ```
 
 3. Update model path in `compose.env` file with model environment variable
-    - Update the absolute path of `model-store` directory of llama-2-chat model that you've downloaded and set it as `MODEL_DIRECTORY` environment variable  
+    - Update the absolute path of `model-store` directory of llama-2-chat model that you've downloaded and set it as `MODEL_DIRECTORY` environment variable
       ```
       export MODEL_DIRECTORY="/home/nvidia/llama2_13b_chat_hf_v1/model-store"
       ```
-    
+
     - Update the absolute path of embedding model directory in environment variable `EMBEDDING_MODEL_DIRECTORY`
 
       ```
@@ -143,7 +143,7 @@ This example showcases RAG pipeline. It uses nemollm inference microservice to h
     4f191fbeda4a   pgvector                                Up 27 minutes
     ```
 
-6. Open browser and interact with llm-playground at http://<host-ip>:8090
+6. Open browser and interact with rag-playground at http://<host-ip>:8090
 
 
 # 02: No-GPU using NVIDIA AI Foundation
@@ -218,13 +218,13 @@ This example showcases a minimilastic RAG usecase built using Nvidia AI Foundati
     4f191fbeda4a   pgvector                                Up 27 minutes
     ```
 
-6. Open browser and interact with llm-playground at http://<host-ip>:8090
+6. Open browser and interact with rag-playground at http://<host-ip>:8090
 
 # 03: Multi Modal RAG
 
 ## Pre-requisites
 
-Follow pre-requisites of [canonical rag](#pre-requisites) to install required dependency 
+Follow pre-requisites of [canonical rag](#pre-requisites) to install required dependency
 
 ## Description
 This example showcases multi modal usecase in a RAG pipeline. It can understand any kind of images in PDF (like graphs and plots) alongside text and tables. It uses multimodal models from NVIDIA AI Foundation to answer queries.
@@ -275,17 +275,17 @@ This example showcases multi modal usecase in a RAG pipeline. It can understand 
     ```
 
 3. Update model path in `compose.env` file with model environment variable
-    - Update the absolute path of `model-store` directory of llama-2-chat model that you've downloaded and set it as `MODEL_DIRECTORY` environment variable  
+    - Update the absolute path of `model-store` directory of llama-2-chat model that you've downloaded and set it as `MODEL_DIRECTORY` environment variable
       ```
       export MODEL_DIRECTORY="/home/nvidia/mixtral/model-store"
       ```
-    
+
     - Update the absolute path of embedding model directory in environment variable `EMBEDDING_MODEL_DIRECTORY`
 
       ```
       export EMBEDDING_MODEL_DIRECTORY="/home/nvidia/nv-embed-qa_v003"
       ```
-    
+
     - Mixtral 8x7B model uses multiple gpu, update `EMBEDDING_MS_GPU_ID` with free GPU device id
 
       ```
@@ -317,7 +317,7 @@ This example showcases multi modal usecase in a RAG pipeline. It can understand 
     c42df344bb25   milvus-etcd                             Up 48 minutes (healthy)
     ```
 
-6. Open browser and interact with llm-playground at http://<host-ip>:8090
+6. Open browser and interact with rag-playground at http://<host-ip>:8090
 
 
 
@@ -325,13 +325,13 @@ This example showcases multi modal usecase in a RAG pipeline. It can understand 
 
 ## Pre-requisites
 
-Follow pre-requisites of [canonical rag](#pre-requisites) to install required dependency 
+Follow pre-requisites of [canonical rag](#pre-requisites) to install required dependency
 
 ## Description
 This example showcases multi turn usecase in a RAG pipeline. It stores the conversation history and knowledge base in PGVector and retrieves them at runtime to understand contextual queries. It uses NeMo Inference Microservices to communicate with the embedding model and large language model.
 The example supports ingestion of PDF, .txt files. The docs are ingested in a dedicated document vectorstore. The prompt for the example is currently tuned to act as a document chat bot.
 For maintaining the conversation history, we store the previous query of user and its generated answer as a text entry in a different dedicated vectorstore for conversation history.
-Both these vectorstores are part of a Langchain [LCEL](https://python.langchain.com/docs/expression_language/) chain as Langchain Retrievers. When the chain is invoked with a query, its passed through both the retrievers. 
+Both these vectorstores are part of a Langchain [LCEL](https://python.langchain.com/docs/expression_language/) chain as Langchain Retrievers. When the chain is invoked with a query, its passed through both the retrievers.
 The retriever retrieves context from the document vectorstore and the closest matching conversation history from conversation history vectorstore and the chunks are added into the LLM prompt as part of the chain.
 
 <table class="tg">
@@ -380,17 +380,17 @@ The retriever retrieves context from the document vectorstore and the closest ma
     ```
 
 3. Update model path in `compose.env` file with model environment variable
-    - Update the absolute path of `model-store` directory of llama-2-chat model that you've downloaded and set it as `MODEL_DIRECTORY` environment variable  
+    - Update the absolute path of `model-store` directory of llama-2-chat model that you've downloaded and set it as `MODEL_DIRECTORY` environment variable
       ```
       export MODEL_DIRECTORY="/home/nvidia/mixtral/model-store"
       ```
-    
+
     - Update the absolute path of embedding model directory in environment variable `EMBEDDING_MODEL_DIRECTORY`
 
       ```
       export EMBEDDING_MODEL_DIRECTORY="/home/nvidia/nv-embed-qa_v003"
       ```
-    
+
     - Mixtral 8x7B model uses multiple gpu, update `EMBEDDING_MS_GPU_ID` with free GPU device id
 
       ```
@@ -420,5 +420,5 @@ The retriever retrieves context from the document vectorstore and the closest ma
     55135224e8fd   pgvector                                Up 27 minutes
     ```
 
-6. Open browser and interact with llm-playground at http://<host-ip>:8090
+6. Open browser and interact with rag-playground at http://<host-ip>:8090
 

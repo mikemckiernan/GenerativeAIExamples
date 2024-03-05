@@ -85,9 +85,9 @@ services:
     depends_on:
       - "llm"
 
-  frontend:
-    container_name: llm-playground
-    image: llm-playground:latest
+  rag-playground:
+    container_name: rag-playground
+    image: rag-playground:latest
     build:
       context: ../.././RetrievalAugmentedGeneration/frontend/
       dockerfile: Dockerfile

@@ -34,7 +34,7 @@ services:
               count: 1
               capabilities: [gpu]
 
-  frontend:
+  rag-playground:
     container_name: rag-playground
     image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-playground:0.4.0
     command: --port 8090

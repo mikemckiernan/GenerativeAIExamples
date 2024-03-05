@@ -19,7 +19,7 @@ spec:
         - name: {{ .Values.imagePullSecret.name }}
       {{- end }}
       containers:
-      - name: llm-playground
+      - name: rag-playground
         imagePullPolicy: IfNotPresent
         image: {{ .Values.frontend.image }}
         command:
@@ -28,7 +28,7 @@ spec:
         - frontend
         - --port
         - {{ .Values.frontend.service.targetPort | quote }}
-        env: 
+        env:
         {{- range .Values.frontend.env }}
           - name: {{ .name }}
             value: {{ .value | quote }}

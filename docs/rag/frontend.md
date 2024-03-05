@@ -9,7 +9,7 @@ The web frontend provides a UI on top of the [RAG chat server APIs](./chat_serve
 
 # Frontend structure
 
-At its core, llm-playground is a FastAPI server written in Python. This FastAPI server hosts two [Gradio](https://www.gradio.app/) applications, one for conversing with the model and another for uploading documents. These Gradio pages are wrapped in a static frame created with the Kaizen UI React+Next.js framework and compiled down to static pages. Iframes are used to mount the Gradio applications into the outer frame.
+At its core, rag-playground is a FastAPI server written in Python. This FastAPI server hosts two [Gradio](https://www.gradio.app/) applications, one for conversing with the model and another for uploading documents. These Gradio pages are wrapped in a static frame created with the Kaizen UI React+Next.js framework and compiled down to static pages. Iframes are used to mount the Gradio applications into the outer frame.
 
 # Running the web UI
 If the web frontend needs to be stood up manually for development purposes, run the following commands:
@@ -17,12 +17,12 @@ If the web frontend needs to be stood up manually for development purposes, run 
 - Build the web UI container from source
 ```
   source deploy/compose/compose.env
-  docker compose -f deploy/compose/docker-compose.yaml build frontend
+  docker compose -f deploy/compose/docker-compose.yaml build rag-playground
 ```
 - Run the container which will start the server
 ```
   source deploy/compose/compose.env
-  docker compose -f deploy/compose/docker-compose.yaml up frontend
+  docker compose -f deploy/compose/docker-compose.yaml up rag-playground
 ```
 
 - Open the web application at ``http://host-ip:8090``

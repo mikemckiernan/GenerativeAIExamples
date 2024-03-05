@@ -261,7 +261,7 @@ $ docker compose -f deploy/compose/rag-app-text-chatbot.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES                  STATUS
-256da0ecdb7b   llm-playground         Up 48 minutes
+256da0ecdb7b   rag-playground         Up 48 minutes
 2974aa4fb2ce   chain-server           Up 48 minutes
 4a8c4aebe4ad   notebook-server        Up 48 minutes
 5be2b57bb5c1   milvus-standalone      Up 48 minutes (healthy)
@@ -511,7 +511,7 @@ $ docker compose -f deploy/compose/rag-app-text-chatbot.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES                  STATUS
-256da0ecdb7b   llm-playground         Up 48 minutes
+256da0ecdb7b   rag-playground         Up 48 minutes
 2974aa4fb2ce   chain-server           Up 48 minutes
 4a8c4aebe4ad   notebook-server        Up 48 minutes
 5be2b57bb5c1   milvus-standalone      Up 48 minutes (healthy)
@@ -588,7 +588,7 @@ $ docker compose -f deploy/compose/rag-app-query-decomposition-agent.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES                  STATUS
-256da0ecdb7b   llm-playground         Up 48 minutes
+256da0ecdb7b   rag-playground         Up 48 minutes
 2974aa4fb2ce   chain-server           Up 48 minutes
 79b10c7fb0be   pgvector               Up 48 minutes
 ```
@@ -713,7 +713,7 @@ $ docker compose -f deploy/compose/rag-app-structured-data-chatbot.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES                  STATUS
-256da0ecdb7b   llm-playground         Up 48 minutes
+256da0ecdb7b   rag-playground         Up 48 minutes
 2974aa4fb2ce   chain-server           Up 48 minutes
 ```
 
@@ -764,7 +764,7 @@ $ docker compose -f deploy/compose/rag-app-multimodal-chatbot.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES                  STATUS
-256da0ecdb7b   llm-playground         Up 48 minutes
+256da0ecdb7b   rag-playground         Up 48 minutes
 2974aa4fb2ce   chain-server           Up 48 minutes
 55135224e8fd   milvus-standalone      Up 48 minutes (healthy)
 5844248a08df   milvus-minio           Up 48 minutes (healthy)
@@ -822,7 +822,7 @@ $ docker compose -f deploy/compose/rag-app-multiturn-chatbot.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES                  STATUS
-256da0ecdb7b   llm-playground         Up 48 minutes
+256da0ecdb7b   rag-playground         Up 48 minutes
 2974aa4fb2ce   chain-server           Up 48 minutes
 79b10c7fb0be   pgvector               Up 48 minutes
 ```

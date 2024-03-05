@@ -56,7 +56,7 @@ $ docker compose -f deploy/compose/docker-compose.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES               STATUS
-d11e35ee69f4   llm-playground      Up 5 minutes
+d11e35ee69f4   rag-playground      Up 5 minutes
 68f22b3842cb   chain-server        Up 5 minutes
 751dd4fd80ec   milvus-standalone   Up 5 minutes (healthy)
 b435006c95c1   milvus-minio        Up 6 minutes (healthy)
@@ -74,7 +74,7 @@ $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES               STATUS
 beb1582320d6   jaeger              Up 5 minutes
 674c7bbb367e   cassandra           Up 6 minutes
-d11e35ee69f4   llm-playground      Up 5 minutes
+d11e35ee69f4   rag-playground      Up 5 minutes
 68f22b3842cb   chain-server        Up 5 minutes
 751dd4fd80ec   milvus-standalone   Up 5 minutes (healthy)
 b435006c95c1   milvus-minio        Up 6 minutes (healthy)
