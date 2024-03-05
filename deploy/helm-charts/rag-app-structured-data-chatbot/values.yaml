@@ -24,7 +24,7 @@ query:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: postgres
       POSTGRES_DB: api
-      COLLECTION_NAME: csv-rag
+      COLLECTION_NAME: csv_rag
       APP_LLM_MODELNAME: mixtral_8x7b
       APP_LLM_MODELENGINE: nv-ai-foundation
       APP_EMBEDDINGS_MODELNAME: nvolveqa_40k

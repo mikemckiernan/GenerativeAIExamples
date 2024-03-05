@@ -20,7 +20,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-api}
-      COLLECTION_NAME: nv-ai-foundation-rag
+      COLLECTION_NAME: nv_ai_foundation_rag
     ports:
     - "8081:8081"
     expose:
