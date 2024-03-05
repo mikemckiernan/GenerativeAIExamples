@@ -65,7 +65,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-api}
-      COLLECTION_NAME: multi-turn-rag
+      COLLECTION_NAME: multi_turn_rag
       APP_RETRIEVER_TOPK: 4
       APP_RETRIEVER_SCORETHRESHOLD: 0.25
     ports:
