@@ -2,7 +2,7 @@
 
 ### Chain Server Configuration
 
-In this section, we explore the configurations for the [Chain Server](./chat_server.md) used for the default canonical developer rag example.
+In this section, we explore the configurations for the [Chain Server](./chain-server.md) used for the default canonical developer rag example.
 
 Chain server interaction with other components can be controlled by config. Chain Server interacts with components such as the `milvus` vector store and `triton` server, which hosts the Large Language Model (LLM). Additionally, we'll delve into customization options to fine-tune the behavior of the query server. These options include settings for the embedding model, chunk size, and prompts for generating responses. These configurations can be controlled using environment variables in the docker compose files.
 

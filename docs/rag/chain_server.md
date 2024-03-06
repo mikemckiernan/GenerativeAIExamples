@@ -1,10 +1,10 @@
 
-# Chat/Chain Server
+# Chain Server
 A sample fastapi based server (referred to as chain-server in compose files) is provided in the workflow so that you can test the chat system in an interactive manner.
 This server wraps calls made to different components and orchestrates the entire flow for all the provided examples.
 
 This API endpoint allows for several actions:
-- [Chat/Chain Server](#chatchain-server)
+- [Chain Server](#chain-server)
     - [Upload File Endpoint](#upload-file-endpoint)
     - [Answer Generation Endpoint](#answer-generation-endpoint)
     - [Document Search Endpoint](#document-search-endpoint)
