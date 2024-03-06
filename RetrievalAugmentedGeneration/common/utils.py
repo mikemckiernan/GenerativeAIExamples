@@ -314,8 +314,13 @@ def is_base64_encoded(s: str) -> bool:
 
 def get_text_splitter() -> SentenceTransformersTokenTextSplitter:
     """Return the token text splitter instance from langchain."""
+
+    embedding_model_name = TEXT_SPLITTER_EMBEDDING_MODEL
+    if get_config().text_splitter.model_name:
+        embedding_model_name = get_config().text_splitter.model_name
+
     return SentenceTransformersTokenTextSplitter(
-        model_name=TEXT_SPLITTER_EMBEDDING_MODEL,
-        tokens_per_chunk=get_config().text_splitter.chunk_size,
+        model_name=embedding_model_name,
+        tokens_per_chunk=get_config().text_splitter.chunk_size - 2,
         chunk_overlap=get_config().text_splitter.chunk_overlap,
     )

@@ -67,6 +67,8 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
       ENABLE_TRACING: false
+      APP_TEXTSPLITTER_CHUNKSIZE: 510
+      APP_TEXTSPLITTER_CHUNKOVERLAP: 200
     ports:
     - "8081:8081"
     expose:
