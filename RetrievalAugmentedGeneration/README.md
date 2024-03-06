@@ -560,7 +560,7 @@ It showcases how to perform RAG when the agent needs to access information from 
     <td class="tg-knyo">NO</td>
     <td class="tg-knyo">YES</td>
     <td class="tg-knyo">NO</td>
-    <td class="tg-knyo">PGVector</td>
+    <td class="tg-knyo">FAISS</td>
   </tr>
 </tbody>
 </table>
@@ -832,7 +832,7 @@ You can switch between Milvus and PGVector, the two vector database options avai
 
 #### Switching from pgvector to Milvus Vector DB
 
-1. Update Docker Compose file: Locate the Docker Compose file for the specific example where you want to switch from PGVector to Milvus. Within the   service configuration, update the following environment variables:
+1. Update Docker Compose file: Locate the Docker Compose file for the specific example where you want to switch from PGVector to Milvus. Within the chain server service configuration, update the following environment variables:
     - `APP_VECTORSTORE_NAME`: Change the value to "milvus".
     - `APP_VECTORSTORE_URL`: Update this to the IP address of your Milvus microservice. If you're using the provided `docker-compose-vectordb.yaml` file in same system, you can keep the value as `"http://milvus:19530"`.
 
@@ -859,7 +859,7 @@ docker compose -f deploy/compose<example.yaml> up -d
 
 #### Switching from Milvus to PGVector Vector DB
 
-1. `Update Docker Compose file`: Locate the Docker Compose file for the specific example and update the environment variables within the query service:
+1. `Update Docker Compose file`: Locate the Docker Compose file for the specific example and update the environment variables within the chain server service:
     - APP_VECTORSTORE_NAME: Change the value to "pgvector".
     - APP_VECTORSTORE_URL: Update this to the IP address of your PGVector microservice. You can also update additional details like password, username, and database name in the following environment variables:
     - POSTGRES_PASSWORD (default: "password")
