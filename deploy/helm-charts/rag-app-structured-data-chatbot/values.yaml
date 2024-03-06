@@ -13,7 +13,7 @@ imagePullSecret:
 
 query:
   image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-application-structured-data-chatbot:0.4.0
-  name: query-router-csv
+  name: chain-server-csv
   replicas: 1
   nodeSelector: {}
   tolerations: {}
@@ -59,7 +59,7 @@ frontend:
     - name: APP_SERVERPORT
       value: "8084"
     - name: APP_SERVERURL
-      value: http://query-router-csv
+      value: http://chain-server-csv
     - name: RIVA_API_URI
       value: ""
     - name: RIVA_API_KEY

@@ -24,11 +24,11 @@ Kubernetes Operator to manage enterprise RAG applications based on NVIDIA servic
 
    ```output
    NAME                                   READY   STATUS    RESTARTS   AGE
-   frontend-7ff9c9b59c-knmk9              1/1     Running   0          53m
+   rag-playground-7ff9c9b59c-knmk9              1/1     Running   0          53m
    nemollm-embedding-5bbc63f38d3b911f-0   1/1     Running   0          53m
    nemollm-inference-5bbc63f38d3b911f-0   1/1     Running   0          50m
    pgvector-0                             1/1     Running   0          53m
-   query-router-66f8c9f6f-tvgx7           1/1     Running   0          53m
+   chain-server-66f8c9f6f-tvgx7           1/1     Running   0          53m
    ```
 
 The below sections demonstrate how to deploy more examples on top of the default canonical RAG example, running in `rag-sample` namespace. By following the instuctions below, you will be able to deploy these prebuilt examples in different namespaces and talk with `pgvector`, `nemollm-embedding` and `nemollm-inference` services deployed in `rag-sample` namespace.
@@ -39,7 +39,7 @@ The below sections demonstrate how to deploy more examples on top of the default
 This example showcases multi turn usecase in a RAG pipeline. It stores the conversation history and knowledge base in PGVector and retrieves them at runtime to understand contextual queries. It uses NeMo Inference Microservices to communicate with the embedding model and large language model.
 The example supports ingestion of PDF, .txt files. The docs are ingested in a dedicated document vectorstore. The prompt for the example is currently tuned to act as a document chat bot.
 For maintaining the conversation history, we store the previous query of user and its generated answer as a text entry in a different dedicated vectorstore for conversation history.
-Both these vectorstores are part of a Langchain [LCEL](https://python.langchain.com/docs/expression_language/) chain as Langchain Retrievers. When the chain is invoked with a query, its passed through both the retrievers. 
+Both these vectorstores are part of a Langchain [LCEL](https://python.langchain.com/docs/expression_language/) chain as Langchain Retrievers. When the chain is invoked with a query, its passed through both the retrievers.
 The retriever retrieves context from the document vectorstore and the closest matching conversation history from conversation history vectorstore and the chunks are added into the LLM prompt as part of the chain.
 
 <table class="tg">
@@ -93,7 +93,7 @@ The retriever retrieves context from the document vectorstore and the closest ma
 
    ```output
       NAME                                   READY   STATUS    RESTARTS   AGE
-      query-router-multi-turn-5bdcd6b848-ps2ht     1/1     Running   0          74m
+      chain-server-multi-turn-5bdcd6b848-ps2ht     1/1     Running   0          74m
       rag-playground-multi-turn-6d7ff8ddf6-kgtcn   1/1     Running   0          74m
 
    ```
@@ -104,7 +104,7 @@ The retriever retrieves context from the document vectorstore and the closest ma
    $ kubectl port-forward service/rag-playground-multi-turn -n multi-turn 30005:8095
    ```
 
-   Open browser and access the llm-playground UI using <http://localhost:30005>.
+   Open browser and access the rag-playground UI using <http://localhost:30005>.
 
 
 # 02: Multi Modal RAG
@@ -192,7 +192,7 @@ This example showcases multi modal usecase in a RAG pipeline. It can understand 
 
    ```output
       NAME                                   READY   STATUS    RESTARTS   AGE
-      query-router-multimodal-5bdcd6b848-ps2ht     1/1     Running   0          74m
+      chain-server-multimodal-5bdcd6b848-ps2ht     1/1     Running   0          74m
       rag-playground-multimodal-6d7ff8ddf6-kgtcn   1/1     Running   0          74m
    ```
 
@@ -202,7 +202,7 @@ This example showcases multi modal usecase in a RAG pipeline. It can understand 
    $ kubectl port-forward service/rag-playground-multimodal -n multimodal 30004:8094
    ```
 
-   Open browser and access the llm-playground UI using <http://localhost:30004>.
+   Open browser and access the rag-playground UI using <http://localhost:30004>.
 
 
 # 03: CSV based RAG
@@ -272,7 +272,7 @@ Currently, customization of the CSV data retrieval prompt is not supported.
 
    ```output
       NAME                                   READY   STATUS    RESTARTS   AGE
-      query-router-csv-5bdcd6b848-ps2ht     1/1     Running   0          74m
+      chain-server-csv-5bdcd6b848-ps2ht     1/1     Running   0          74m
       rag-playground-csv-6d7ff8ddf6-kgtcn   1/1     Running   0          74m
 
    ```
@@ -283,7 +283,7 @@ Currently, customization of the CSV data retrieval prompt is not supported.
    $ kubectl port-forward service/rag-playground-csv -n csv 30003:8093
    ```
 
-   Open browser and access the llm-playground UI using <http://localhost:30003>.
+   Open browser and access the rag-playground UI using <http://localhost:30003>.
 
 
 # 04: Query Decomposition RAG
@@ -347,7 +347,7 @@ This example showcases a RAG usecase built using task decomposition paradigm. It
 
    ```output
       NAME                                   READY   STATUS    RESTARTS   AGE
-      query-router-query-decomposition-5bdcd6b848-ps2ht     1/1     Running   0          74m
+      chain-server-query-decomposition-5bdcd6b848-ps2ht     1/1     Running   0          74m
       rag-playground-query-decomposition-6d7ff8ddf6-kgtcn   1/1     Running   0          74m
 
    ```
@@ -358,7 +358,7 @@ This example showcases a RAG usecase built using task decomposition paradigm. It
    $ kubectl port-forward service/rag-playground-query-decomposition -n decompose 30002:8092
    ```
 
-   Open browser and access the llm-playground UI using <http://localhost:30002>.
+   Open browser and access the rag-playground UI using <http://localhost:30002>.
 
 
 # 05: Nvidia AI Foundation RAG
@@ -421,7 +421,7 @@ This example showcases a minimilastic RAG usecase built using Nvidia AI Foundati
 
    ```output
       NAME                                   READY   STATUS    RESTARTS   AGE
-      query-router-ai-foundation-5bdcd6b848-ps2ht     1/1     Running   0          74m
+      chain-server-ai-foundation-5bdcd6b848-ps2ht     1/1     Running   0          74m
       rag-playground-ai-foundation-6d7ff8ddf6-kgtcn   1/1     Running   0          74m
 
    ```
@@ -432,7 +432,7 @@ This example showcases a minimilastic RAG usecase built using Nvidia AI Foundati
    $ kubectl port-forward service/rag-playground-ai-foundation -n nvai 30001:8091
    ```
 
-   Open browser and access the llm-playground UI using <http://localhost:30001>.
+   Open browser and access the rag-playground UI using <http://localhost:30001>.
 
 # Configuring Examples
 You can configure various parameters such as prompts and vectorstore using environment variables. Modify the environment variables in the `env` section of the query service in the  [values.yaml](./rag-nv-ai-foundation-app/values.yaml) file of the respective examples.

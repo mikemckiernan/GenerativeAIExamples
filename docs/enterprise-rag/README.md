@@ -186,7 +186,7 @@ $ source deploy/compose/compose.env; docker compose -f deploy/compose/docker-com
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES                     STATUS
-256da0ecdb7b   llm-playground               Up 48 minutes
+256da0ecdb7b   rag-playground               Up 48 minutes
 2974aa4fb2ce   chain-server                 Up 48 minutes
 0069c5e0b373   nemollm-inference-ms         Up 48 minutes
 6044c2b8b421   nemo-retriever-embedding-ms  Up 48 minutes
@@ -238,7 +238,7 @@ $ docker compose -f deploy/compose/docker-compose-pgvector.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES                  STATUS
-0f6f091d892e   llm-playground               Up 22 hours
+0f6f091d892e   rag-playground               Up 22 hours
 8d0ab09fcb98   chain-server                 Up 22 hours
 0069c5e0b373   nemollm-inference-ms         Up 22 hours
 6044c2b8b421   nemo-retriever-embedding-ms  Up 22 hours

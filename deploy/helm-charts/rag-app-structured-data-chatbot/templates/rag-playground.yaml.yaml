@@ -3,23 +3,23 @@ kind: Deployment
 metadata:
   name: {{ .Values.frontend.name }}
   labels:
-    app.kubernetes.io/name: frontend
+    app.kubernetes.io/name: rag-playground
 spec:
   replicas: {{ .Values.frontend.replicas | default 1 }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: frontend
+      app.kubernetes.io/name: rag-playground
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: frontend
+        app.kubernetes.io/name: rag-playground
     spec:
       {{- if .Values.imagePullSecret.name }}
       imagePullSecrets:
         - name: {{ .Values.imagePullSecret.name }}
       {{- end }}
       containers:
-      - name: llm-playground
+      - name: rag-playground
         imagePullPolicy: IfNotPresent
         image: {{ .Values.frontend.image }}
         command:
@@ -28,7 +28,7 @@ spec:
         - frontend
         - --port
         - {{ .Values.frontend.service.targetPort | quote }}
-        env: 
+        env:
         {{- range .Values.frontend.env }}
           - name: {{ .name }}
             value: {{ .value | quote }}
@@ -58,7 +58,7 @@ metadata:
 spec:
   type: {{ .Values.frontend.service.type }}
   selector:
-    app.kubernetes.io/name: frontend
+    app.kubernetes.io/name: rag-playground
 {{- with .Values.frontend.service.ports }}
   ports:
   {{- toYaml . | nindent 4 }}

@@ -261,7 +261,7 @@ $ docker compose -f deploy/compose/rag-app-text-chatbot.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES                  STATUS
-256da0ecdb7b   llm-playground         Up 48 minutes
+256da0ecdb7b   rag-playground         Up 48 minutes
 2974aa4fb2ce   chain-server           Up 48 minutes
 4a8c4aebe4ad   notebook-server        Up 48 minutes
 5be2b57bb5c1   milvus-standalone      Up 48 minutes (healthy)
@@ -511,7 +511,7 @@ $ docker compose -f deploy/compose/rag-app-text-chatbot.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES                  STATUS
-256da0ecdb7b   llm-playground         Up 48 minutes
+256da0ecdb7b   rag-playground         Up 48 minutes
 2974aa4fb2ce   chain-server           Up 48 minutes
 4a8c4aebe4ad   notebook-server        Up 48 minutes
 5be2b57bb5c1   milvus-standalone      Up 48 minutes (healthy)
@@ -588,7 +588,7 @@ $ docker compose -f deploy/compose/rag-app-query-decomposition-agent.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES                  STATUS
-256da0ecdb7b   llm-playground         Up 48 minutes
+256da0ecdb7b   rag-playground         Up 48 minutes
 2974aa4fb2ce   chain-server           Up 48 minutes
 79b10c7fb0be   pgvector               Up 48 minutes
 ```
@@ -672,7 +672,7 @@ The core functionality utilizes a [PandasAI](https://docs.pandas-ai.com/en/lates
 
 To test the example, sample CSV files are available. These are part of the structured data example Helm chart and represent a subset of the [Microsoft Azure Predictive Maintenance](https://www.kaggle.com/datasets/arnabbiswas1/microsoft-azure-predictive-maintenance) from Kaggle.
 The CSV data retrieval prompt is specifically tuned for three CSV files from this dataset: `PdM_machines.csv, PdM_errors.csv, and PdM_failures.csv`.
-The CSV file to be used can be specified in the `values.yaml` file within the Helm chart by updating the environment variable `CSV_NAME`. By default, it is set to `PdM_machines` but can be changed to `PdM_errors` or `PdM_failures`.
+The CSV file to be used can be specified in the `rag-app-structured-data-chatbot.yaml` file by updating the environment variable `CSV_NAME`. By default, it is set to `PdM_machines` but can be changed to `PdM_errors` or `PdM_failures`.
 Currently, customization of the CSV data retrieval prompt is not supported.
 
 <table class="tg">
@@ -713,7 +713,7 @@ $ docker compose -f deploy/compose/rag-app-structured-data-chatbot.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES                  STATUS
-256da0ecdb7b   llm-playground         Up 48 minutes
+256da0ecdb7b   rag-playground         Up 48 minutes
 2974aa4fb2ce   chain-server           Up 48 minutes
 ```
 
@@ -764,7 +764,7 @@ $ docker compose -f deploy/compose/rag-app-multimodal-chatbot.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES                  STATUS
-256da0ecdb7b   llm-playground         Up 48 minutes
+256da0ecdb7b   rag-playground         Up 48 minutes
 2974aa4fb2ce   chain-server           Up 48 minutes
 55135224e8fd   milvus-standalone      Up 48 minutes (healthy)
 5844248a08df   milvus-minio           Up 48 minutes (healthy)
@@ -778,7 +778,7 @@ c42df344bb25   milvus-etcd            Up 48 minutes (healthy)
 This example showcases multi turn usecase in a RAG pipeline. It stores the conversation history and knowledge base in PGVector and retrieves them at runtime to understand contextual queries. It uses NeMo Inference Microservices to communicate with the embedding model and large language model.
 The example supports ingestion of PDF, .txt files. The docs are ingested in a dedicated document vectorstore. The prompt for the example is currently tuned to act as a document chat bot.
 For maintaining the conversation history, we store the previous query of user and its generated answer as a text entry in a different dedicated vectorstore for conversation history.
-Both these vectorstores are part of a Langchain [LCEL](https://python.langchain.com/docs/expression_language/) chain as Langchain Retrievers. When the chain is invoked with a query, its passed through both the retrievers. 
+Both these vectorstores are part of a Langchain [LCEL](https://python.langchain.com/docs/expression_language/) chain as Langchain Retrievers. When the chain is invoked with a query, its passed through both the retrievers.
 The retriever retrieves context from the document vectorstore and the closest matching conversation history from conversation history vectorstore and the chunks are added into the LLM prompt as part of the chain.
 
 <table class="tg">
@@ -822,7 +822,7 @@ $ docker compose -f deploy/compose/rag-app-multiturn-chatbot.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES                  STATUS
-256da0ecdb7b   llm-playground         Up 48 minutes
+256da0ecdb7b   rag-playground         Up 48 minutes
 2974aa4fb2ce   chain-server           Up 48 minutes
 79b10c7fb0be   pgvector               Up 48 minutes
 ```

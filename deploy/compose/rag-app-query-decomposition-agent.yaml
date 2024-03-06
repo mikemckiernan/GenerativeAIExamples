@@ -1,5 +1,5 @@
 services:
-  query:
+  chain-server:
     container_name: chain-server
     image: chain-server:latest
     build:
@@ -41,15 +41,15 @@ services:
               count: 1
               capabilities: [gpu]
 
-  frontend:
-    container_name: llm-playground
-    image: llm-playground:latest
+  rag-playground:
+    container_name: rag-playground
+    image: rag-playground:latest
     build:
       context: ../.././RetrievalAugmentedGeneration/frontend/
       dockerfile: Dockerfile
     command: --port 8090
     environment:
-      APP_SERVERURL: http://query
+      APP_SERVERURL: http://chain-server
       APP_SERVERPORT: 8081
       APP_MODELNAME: ${MODEL_NAME:-llama2_70b}
       RIVA_API_URI: ${RIVA_API_URI:-''}
@@ -61,7 +61,7 @@ services:
     expose:
     - "8090"
     depends_on:
-    - query
+    - chain-server
 
 networks:
   default:

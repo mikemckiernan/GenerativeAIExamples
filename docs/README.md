@@ -22,7 +22,7 @@ The user guides cover the core details of the provided sample canonical develope
 * [Integration with Nvidia AI Playground](./rag/aiplayground.md): Understand how to access **NVIDIA AI Playground** on NGC which allows developers to experience state of the art LLMs and embedding models accelerated on NVIDIA DGX Cloud with NVIDIA TensorRT and Triton Inference Server.
 * [Configuration Guide](./rag/configuration.md): The complete guide to all the configuration options available in the `config.yaml` file.
 * [Frontend](./rag/frontend.md): Learn more about the sample playground provided as part of the workflow used by all the examples.
-* [Chat Server Guide](./rag/chat_server.md): Learn about the chat server which exposes core API's for the end user. All the different examples are deployed behind these standardized API's, exposed by this server.
+* [Chat Server Guide](./rag/chain_server.md): Learn about the chat server which exposes core API's for the end user. All the different examples are deployed behind these standardized API's, exposed by this server.
 * [Notebooks Guide](./rag/jupyter_server.md): Learn about the different notebooks available and the server which can be used to access them.
 
 ## Architecture Guide

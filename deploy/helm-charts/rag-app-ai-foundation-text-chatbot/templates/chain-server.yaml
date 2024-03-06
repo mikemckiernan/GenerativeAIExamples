@@ -3,23 +3,23 @@ kind: Deployment
 metadata:
   name: {{ .Values.query.name }}
   labels:
-    app.kubernetes.io/name: query-router
+    app.kubernetes.io/name: chain-server
 spec:
   replicas: {{ .Values.query.replicas | default 1 }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: query-router
+      app.kubernetes.io/name: chain-server
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: query-router
+        app.kubernetes.io/name: chain-server
     spec:
       {{- if .Values.imagePullSecret.name }}
       imagePullSecrets:
         - name: {{ .Values.imagePullSecret.name }}
       {{- end }}
       containers:
-      - name: query-router
+      - name: chain-server
         imagePullPolicy: IfNotPresent
         image:  {{ .Values.query.image }}
         command:
@@ -40,14 +40,10 @@ spec:
             value: {{ .Values.query.env.APP_EMBEDDINGS_MODELNAME | quote }}
           - name: APP_EMBEDDINGS_MODELENGINE
             value: {{ .Values.query.env.APP_EMBEDDINGS_MODELENGINE | quote }}
-          - name: APP_CONFIG_FILE
-            value: {{ .Values.query.env.APP_CONFIG_FILE | quote }}
           - name: APP_PROMPTS_CHATTEMPLATE
             value: {{ .Values.query.env.APP_PROMPTS_CHATTEMPLATE | quote }}
           - name: APP_PROMPTS_RAGTEMPLATE
             value: {{ .Values.query.env.APP_PROMPTS_RAGTEMPLATE | quote }}
-          - name: CSV_NAME
-            value: {{ .Values.query.env.CSV_NAME | quote }}
           - name: NVIDIA_API_KEY
             valueFrom:
               secretKeyRef:
@@ -103,7 +99,7 @@ metadata:
 spec:
   type: {{ .Values.query.service.type }}
   selector:
-    app.kubernetes.io/name: query-router
+    app.kubernetes.io/name: chain-server
 {{- with .Values.query.service.ports }}
   ports:
   {{- toYaml . | nindent 4 }}

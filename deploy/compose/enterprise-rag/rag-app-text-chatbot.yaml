@@ -48,7 +48,7 @@ services:
       retries: 3
       start_period: 10m
 
-  query:
+  chain-server:
     container_name: rag-application-text-chatbot
     image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-application-text-chatbot:0.4.0
     command: --port 8081 --host 0.0.0.0
@@ -83,12 +83,12 @@ services:
       - "nemollm-inference"
       - "nemollm-embedding"
 
-  frontend:
+  rag-playground:
     container_name: rag-playground
     image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-playground:0.4.0
     command: --port 8090
     environment:
-      APP_SERVERURL: http://query
+      APP_SERVERURL: http://chain-server
       APP_SERVERPORT: 8081
       APP_MODELNAME: ${MODEL_NAME:-llama-2-13b-chat}
       RIVA_API_URI: ${RIVA_API_URI:-''}
@@ -100,7 +100,7 @@ services:
     expose:
     - "8090"
     depends_on:
-    - query
+    - chain-server
 
 networks:
   default:
