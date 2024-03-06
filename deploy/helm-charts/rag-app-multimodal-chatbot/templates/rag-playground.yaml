@@ -23,7 +23,7 @@ spec:
         imagePullPolicy: IfNotPresent
         image: {{ .Values.frontend.image }}
         command:
-        - python3
+        - python3.10
         - -m
         - frontend
         - --port
