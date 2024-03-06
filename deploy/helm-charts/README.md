@@ -149,7 +149,7 @@ This example showcases multi modal usecase in a RAG pipeline. It can understand 
 
 4. Set the NVIDIA AI Foundation API key
    ```
-   kubectl create secret -n multimodal generic nv-ai-foundation-secret --from-literal=NVIDIA_API_KEY="<NGC_API_KEY>"
+   kubectl create secret -n multimodal generic nv-ai-foundation-secret --from-literal=NVIDIA_API_KEY="<NVIDIA_AI_FOUNDATION_KEY>"
    ```
 
 5. Create the Milvus Vector DB services.
@@ -255,7 +255,7 @@ Currently, customization of the CSV data retrieval prompt is not supported.
 
 4. Set the NVIDIA AI Foundation API key
    ```
-   kubectl create secret -n csv generic nv-ai-foundation-secret --from-literal=NVIDIA_API_KEY="<NGC_API_KEY>"
+   kubectl create secret -n csv generic nv-ai-foundation-secret --from-literal=NVIDIA_API_KEY="<NVIDIA_AI_FOUNDATION_KEY>"
    ```
 
 5. Create the Helm pipeline instance and start the services.
@@ -330,7 +330,7 @@ This example showcases a RAG usecase built using task decomposition paradigm. It
 
 4. Set the NVIDIA AI Foundation API key
    ```
-   kubectl create secret -n decompose generic nv-ai-foundation-secret --from-literal=NVIDIA_API_KEY="<NGC_API_KEY>"
+   kubectl create secret -n decompose generic nv-ai-foundation-secret --from-literal=NVIDIA_API_KEY="<NVIDIA_AI_FOUNDATION_KEY>"
    ```
 
 5. Create the Helm pipeline instance and start the services.
@@ -404,7 +404,7 @@ This example showcases a minimilastic RAG usecase built using Nvidia AI Foundati
 
 4. Set the NVIDIA AI Foundation API key
    ```
-   kubectl create secret -n nvai generic nv-ai-foundation-secret --from-literal=NVIDIA_API_KEY="<NGC_API_KEY>"
+   kubectl create secret -n nvai generic nv-ai-foundation-secret --from-literal=NVIDIA_API_KEY="<NVIDIA_AI_FOUNDATION_KEY>"
    ```
 
 5. Create the Helm pipeline instance and start the services.
