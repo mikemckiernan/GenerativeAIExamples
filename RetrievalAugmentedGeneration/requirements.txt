@@ -7,7 +7,7 @@ sentence-transformers==2.5.1
 llama-index==0.9.22
 pymilvus==2.3.1
 dataclass-wizard==0.22.3
-opencv-python==4.9.0.80
+opencv-python==4.8.0.74
 minio==7.2.5
 asyncpg==0.29.0
 psycopg2-binary==2.9.9
