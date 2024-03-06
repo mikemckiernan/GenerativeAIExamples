@@ -58,7 +58,6 @@ services:
       APP_LLM_SERVERURL: "llm:8001"
       APP_LLM_MODELNAME: ensemble
       APP_LLM_MODELENGINE: triton-trt-llm
-      APP_CONFIG_FILE: ${APP_CONFIG_FILE}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-api}
@@ -68,8 +67,6 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
       ENABLE_TRACING: false
-    volumes:
-      - ${APP_CONFIG_FILE}:${APP_CONFIG_FILE}
     ports:
     - "8081:8081"
     expose:

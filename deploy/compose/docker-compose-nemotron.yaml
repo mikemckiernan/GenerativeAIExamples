@@ -111,7 +111,7 @@ services:
               capabilities: ["gpu"]
               count: 1
 
-  chain-server
+  chain-server:
     container_name: chain-server
     image: chain-server:latest
     build:
@@ -128,14 +128,11 @@ services:
       APP_LLM_SERVERURL: "llm:8001"
       APP_LLM_MODELNAME: ensemble
       APP_LLM_MODELENGINE: triton-trt-llm
-      APP_CONFIG_FILE: ${APP_CONFIG_FILE}
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
       ENABLE_TRACING: false
       APP_RETRIEVER_TOPK: 4
       APP_RETRIEVER_SCORETHRESHOLD: 0.25
-    volumes:
-      - ${APP_CONFIG_FILE}:${APP_CONFIG_FILE}
     ports:
     - "8081:8081"
     expose:

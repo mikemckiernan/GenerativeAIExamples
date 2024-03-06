@@ -33,7 +33,6 @@ query:
       APP_TEXTSPLITTER_CHUNKOVERLAP: 200
       APP_PROMPTS_CHATTEMPLATE: "You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. Please ensure that your responses are positive in nature."
       APP_PROMPTS_RAGTEMPLATE: "You are a helpful AI assistant named Envie. You will reply to questions only based on the context that you are provided. If something is out of context, you will refrain from replying and politely decline to respond to the user."
-      APP_CONFIG_FILE: /dev/null
       CSV_NAME: PdM_machines
       APP_RETRIEVER_TOPK: 4
       APP_RETRIEVER_SCORETHRESHOLD: 0.25

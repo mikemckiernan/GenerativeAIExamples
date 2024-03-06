@@ -26,8 +26,6 @@ services:
       APP_RETRIEVER_TOPK: 4
       APP_RETRIEVER_SCORETHRESHOLD: 0.25
       COLLECTION_NAME: query_decomposition
-    volumes:
-      - ${APP_CONFIG_FILE}:${APP_CONFIG_FILE}
     ports:
     - "8081:8081"
     expose:

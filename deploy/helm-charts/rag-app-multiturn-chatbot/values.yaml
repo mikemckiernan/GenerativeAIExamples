@@ -27,7 +27,6 @@ query:
       APP_EMBEDDINGS_SERVERURL: "nemollm-embedding.rag-sample:8080"
       APP_EMBEDDINGS_MODELNAME: NV-Embed-QA
       APP_EMBEDDINGS_MODELENGINE: nemo-embed
-      APP_CONFIG_FILE: /dev/null
       POSTGRES_PASSWORD: password
       POSTGRES_USER: postgres
       POSTGRES_DB: api
