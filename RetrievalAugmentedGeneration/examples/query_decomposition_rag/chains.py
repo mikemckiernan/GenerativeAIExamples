@@ -272,12 +272,10 @@ class QueryDecompositionChatbot(BaseExample):
         if vectorstore is None:
             return []
 
-        logger.info(f"Getting retrieved top k values: {settings.retriever.top_k} with confidence threshold: {settings.retriever.score_threshold}")
-        try:
-            retriever = vectorstore.as_retriever(search_type="similarity_score_threshold", search_kwargs={"score_threshold": settings.retriever.score_threshold, "k": settings.retriever.top_k})
-        except NotImplementedError:
-            # Some retriever like milvus don't have similarity score threshold implemented
-            retriever = vectorstore.as_retriever()
+        logger.info(f"Skipping top k and confidence threshold for query decomposition rag")
+        # TODO: Use similarity score threshold and top k provided in config
+        # Currently it's raising an error during invoke.
+        retriever = vectorstore.as_retriever()
         result = retriever.get_relevant_documents(query)
         logger.info(result)
         return [hit.page_content for hit in result]
@@ -334,13 +332,10 @@ class QueryDecompositionChatbot(BaseExample):
 
         try:
             if vectorstore != None:
-                logger.info(f"Getting retrieved top k values: {settings.retriever.top_k} with confidence threshold: {settings.retriever.score_threshold}")
+                logger.info(f"Skipping top k and confidence threshold for query decomposition rag")
 
-                try:
-                    retriever = vectorstore.as_retriever(search_type="similarity_score_threshold", search_kwargs={"score_threshold": settings.retriever.score_threshold, "k": settings.retriever.top_k})
-                except NotImplementedError:
-                    # Some retriever like milvus don't have similarity score threshold implemented
-                    retriever = vectorstore.as_retriever()
+                # TODO: Use top k and confidence threshold once retriever issue is resolved
+                retriever = vectorstore.as_retriever()
                 docs = retriever.get_relevant_documents(content)
 
                 result = []
