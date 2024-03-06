@@ -56,7 +56,7 @@ def get_doc_retriever(type: str = "query") -> Retriever:
 @lru_cache()
 @utils_cache
 def get_llm(model_name, is_response_generator=False, **kwargs):
-    return LLMClient(model_name=model_name, is_response_generator=is_response_generator=model_name, **kwargs)
+    return LLMClient(model_name=model_name, is_response_generator=is_response_generator, **kwargs)
 
 
 class MultimodalRAG(BaseExample):
