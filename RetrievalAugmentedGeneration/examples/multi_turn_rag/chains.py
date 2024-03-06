@@ -33,6 +33,8 @@ from RetrievalAugmentedGeneration.common.utils import (
     get_llm,
     get_vectorstore_langchain,
     get_embedding_model,
+    get_docs_vectorstore_langchain, 
+    del_docs_vectorstore_langchain
 )
 from RetrievalAugmentedGeneration.common.base import BaseExample
 from operator import itemgetter
@@ -85,20 +87,28 @@ class MultiTurnChatbot(BaseExample):
             )
 
     def llm_chain(
-        self, context: str, question: str, num_tokens: str
+        self, query: str, chat_history: List["Message"], **kwargs
     ) -> Generator[str, None, None]:
         """Execute a simple LLM chain using the components defined above."""
 
         logger.info("Using llm to generate response directly without knowledge base.")
-        prompt_template = PromptTemplate.from_template(settings.prompts.chat_template)
+        system_message = [("system", settings.prompts.chat_template)]
+        conversation_history = [(msg.role, msg.content) for msg in chat_history]
 
-        llm = get_llm()
+        # Checking if conversation_history is not None and not empty
+        prompt_template = ChatPromptTemplate.from_messages(
+            system_message + conversation_history
+        ) if conversation_history else ChatPromptTemplate.from_messages(
+            system_message 
+        )
+
+        llm = get_llm(**kwargs)
 
         chain = prompt_template | llm | StrOutputParser()
 
-        return chain.stream({"context_str": context, "query_str": question})
+        return chain.stream({"context_str": "", "query_str": query})
 
-    def rag_chain(self, prompt: str, num_tokens: int) -> Generator[str, None, None]:
+    def rag_chain(self, query: str, chat_history: List["Message"], **kwargs) -> Generator[str, None, None]:
         """Execute a Retrieval Augmented Generation chain using the components defined above."""
 
         logger.info("Using rag to generate response from document")
@@ -110,7 +120,7 @@ class MultiTurnChatbot(BaseExample):
             ]
         )
 
-        llm = get_llm()
+        llm = get_llm(**kwargs)
         stream_chain = chat_prompt | llm | StrOutputParser()
 
         convstore = get_vectorstore_langchain(
@@ -118,7 +128,7 @@ class MultiTurnChatbot(BaseExample):
         )
 
         resp_str = ""
-
+        # TODO Integrate chat_history
         try:
             if docstore:
                 logger.info(f"Getting retrieved top k values: {settings.retriever.top_k} with confidence threshold: {settings.retriever.score_threshold}")
@@ -146,15 +156,15 @@ class MultiTurnChatbot(BaseExample):
                     )
                 chain = retrieval_chain | stream_chain
 
-                for chunk in chain.stream({"input": prompt}):
+                for chunk in chain.stream({"input": query}):
                     yield chunk
                     resp_str += chunk
 
                 self.save_memory_and_get_output(
-                    {"input": prompt, "output": resp_str}, convstore
+                    {"input": query, "output": resp_str}, convstore
                 )
 
-                return chain.stream(prompt)
+                return chain.stream(query)
 
         except Exception as e:
             logger.warning(f"Failed to generate response due to exception {e}")
@@ -196,3 +206,21 @@ class MultiTurnChatbot(BaseExample):
         except Exception as e:
             logger.error(f"Error from /documentSearch endpoint. Error details: {e}")
             return []
+
+    def get_documents(self) -> List[str]:
+        """Retrieves filenames stored in the vector store."""
+        try:
+            if docstore:
+                return get_docs_vectorstore_langchain(docstore)
+        except Exception as e:
+            logger.error(f"Vectorstore not initialized. Error details: {e}")
+            return []
+
+
+    def delete_documents(self, filenames: List[str]):
+        """Delete documents from the vector index."""
+        try:
+            if docstore:
+                return del_docs_vectorstore_langchain(docstore, filenames)
+        except Exception as e:
+            logger.error(f"Vectorstore not initialized. Error details: {e}")

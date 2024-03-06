@@ -25,7 +25,7 @@ from langchain_core.output_parsers.string import StrOutputParser
 from langchain_core.prompts.chat import ChatPromptTemplate
 from langchain_nvidia_ai_endpoints import ChatNVIDIA, NVIDIAEmbeddings
 from RetrievalAugmentedGeneration.common.base import BaseExample
-from RetrievalAugmentedGeneration.common.utils import get_config, get_llm, get_embedding_model, get_vectorstore_langchain
+from RetrievalAugmentedGeneration.common.utils import get_config, get_llm, get_embedding_model, get_vectorstore_langchain, get_docs_vectorstore_langchain, del_docs_vectorstore_langchain
 
 logger = logging.getLogger(__name__)
 DOCS_DIR = os.path.abspath("./uploaded_files")
@@ -61,45 +61,47 @@ class NvidiaAIFoundation(BaseExample):
             raise ValueError("Failed to upload document. Please upload an unstructured text document.")
 
     def llm_chain(
-        self, context: str, question: str, num_tokens: str
+        self, query: str, chat_history: List["Message"], **kwargs
     ) -> Generator[str, None, None]:
         """Execute a simple LLM chain using the components defined above."""
 
         logger.info("Using llm to generate response directly without knowledge base.")
+        system_message = [("system", settings.prompts.chat_template)]
+        conversation_history = [(msg.role, msg.content) for msg in chat_history]
+        user_input = [("user", "{input}")]
+
+        # Checking if conversation_history is not None and not empty
         prompt_template = ChatPromptTemplate.from_messages(
-            [
-                (
-                    "system",
-                    settings.prompts.chat_template,
-                ),
-                ("user", "{input}"),
-            ]
+            system_message + conversation_history + user_input
+        ) if conversation_history else ChatPromptTemplate.from_messages(
+            system_message + user_input
         )
 
-        llm = get_llm()
+        llm = get_llm(**kwargs)
 
         chain = prompt_template | llm | StrOutputParser()
         augmented_user_input = (
-            "Context: " + context + "\n\nQuestion: " + question + "\n"
+            "\n\nQuestion: " + query + "\n"
         )
         return chain.stream({"input": augmented_user_input})
 
-    def rag_chain(self, prompt: str, num_tokens: int) -> Generator[str, None, None]:
+    def rag_chain(self, query: str, chat_history: List["Message"], **kwargs) -> Generator[str, None, None]:
         """Execute a Retrieval Augmented Generation chain using the components defined above."""
 
         logger.info("Using rag to generate response from document")
-
+        system_message = [("system", settings.prompts.rag_template)]
+        conversation_history = [(msg.role, msg.content) for msg in chat_history]
+        user_input = [("user", "{input}")]
+        
+        # Checking if conversation_history is not None and not empty
         prompt_template = ChatPromptTemplate.from_messages(
-            [
-                (
-                    "system",
-                    settings.prompts.rag_template,
-                ),
-                ("user", "{input}"),
-            ]
+            system_message + conversation_history + user_input
+        ) if conversation_history else ChatPromptTemplate.from_messages(
+            system_message + user_input
         )
-        llm = get_llm()
-
+        
+        llm = get_llm(**kwargs)
+        
         chain = prompt_template | llm | StrOutputParser()
 
         try:
@@ -107,18 +109,18 @@ class NvidiaAIFoundation(BaseExample):
                 try:
                     logger.info(f"Getting retrieved top k values: {settings.retriever.top_k} with confidence threshold: {settings.retriever.score_threshold}")
                     retriever = vectorstore.as_retriever(search_type="similarity_score_threshold", search_kwargs={"score_threshold": settings.retriever.score_threshold, "k": settings.retriever.top_k})
-                    docs = retriever.get_relevant_documents(prompt)
+                    docs = retriever.get_relevant_documents(query)
                 except NotImplementedError:
                     # Some retriever like milvus don't have similarity score threshold implemented
                     retriever = vectorstore.as_retriever()
-                    docs = retriever.get_relevant_documents(prompt)
+                    docs = retriever.get_relevant_documents(query)
 
                 context = ""
                 for doc in docs:
                     context += doc.page_content + "\n\n"
-
+                
                 augmented_user_input = (
-                    "Context: " + context + "\n\nQuestion: " + prompt + "\n"
+                    "Context: " + context + "\n\nQuestion: " + query + "\n"
                 )
 
                 return chain.stream({"input": augmented_user_input})
@@ -158,4 +160,21 @@ class NvidiaAIFoundation(BaseExample):
             return []
         except Exception as e:
             logger.error(f"Error from /documentSearch endpoint. Error details: {e}")
+    
+    def get_documents(self) -> List[str]:
+        """Retrieves filenames stored in the vector store."""
+        try:
+            if vectorstore:
+                return get_docs_vectorstore_langchain(vectorstore)
+        except Exception as e:
+            logger.error(f"Vectorstore not initialized. Error details: {e}")
             return []
+
+
+    def delete_documents(self, filenames: List[str]):
+        """Delete documents from the vector index."""
+        try:
+            if vectorstore:
+                return del_docs_vectorstore_langchain(vectorstore, filenames)
+        except Exception as e:
+            logger.error(f"Vectorstore not initialized. Error details: {e}")

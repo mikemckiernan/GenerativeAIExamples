@@ -16,7 +16,7 @@
 """LLM Chains for executing Retrival Augmented Generation."""
 import logging
 import os
-from typing import Generator
+from typing import Generator, List
 
 import pandas as pd
 from langchain.prompts import (
@@ -99,25 +99,33 @@ class CSVChatbot(BaseExample):
         logger.info("Document %s ingested successfully", filename)
 
     def llm_chain(
-        self, context: str, question: str, num_tokens: int
+        self, query: str, chat_history: List["Message"], **kwargs
     ) -> Generator[str, None, None]:
         """Execute a simple LLM chain using the components defined above."""
 
         logger.info("Using llm to generate response directly without knowledge base.")
+
+        system_message = [("system", get_config().prompts.chat_template)]
+        conversation_history = [(msg.role, msg.content) for msg in chat_history]
+        user_input = [("user", "{input}")]
+
+        # Checking if conversation_history is not None and not empty
         prompt = ChatPromptTemplate.from_messages(
-            [("system", get_config().prompts.chat_template), ("user", "{input}")]
+            system_message + conversation_history + user_input
+        ) if conversation_history else ChatPromptTemplate.from_messages(
+            system_message + user_input
         )
 
         logger.info("Using prompt for response: %s", prompt)
 
-        chain = prompt | get_llm() | StrOutputParser()
-        return chain.stream({"input": question})
+        chain = prompt | get_llm(**kwargs) | StrOutputParser()
+        return chain.stream({"input": query})
 
-    def rag_chain(self, prompt: str, num_tokens: int) -> Generator[str, None, None]:
+    def rag_chain(self, query: str, chat_history: List["Message"], **kwargs) -> Generator[str, None, None]:
         """Execute a Retrieval Augmented Generation chain using the components defined above."""
 
         logger.info("Using rag to generate response from document")
-        llm = get_llm()
+        llm = get_llm(**kwargs)
 
         if not os.path.exists("ingested_csv_files.txt"):
             return iter(["No CSV file ingested"])
@@ -143,7 +151,6 @@ class CSVChatbot(BaseExample):
         agent_data_retrieval = PandasAI_Agent(
             [df], config=config_data_retrieval, memory_size=20
         )
-
         data_retrieval_prompt = ChatPromptTemplate(
             messages=[
                 SystemMessagePromptTemplate.from_template(
@@ -153,13 +160,18 @@ class CSVChatbot(BaseExample):
             ],
             input_variables=["description", "instructions", "data_frame", "query"],
         )
+        conversation_history = [(msg.role, msg.content) for msg in chat_history]
+        conversation_history_messages =  ChatPromptTemplate.from_messages(conversation_history).messages
+        # Insert conversation_history between data_retrieval_prompt's SystemMessage & HumanMessage (query)
+        if conversation_history_messages:
+            data_retrieval_prompt.messages[1:1] = conversation_history_messages
 
         result_df = agent_data_retrieval.chat(
             data_retrieval_prompt.format_prompt(
                 description=data_retrieval_prompt_params.get("description"),
                 instructions=data_retrieval_prompt_params.get("instructions"),
                 data_frame=df_desc,
-                query=prompt,
+                query=query,
             ).to_string()
         )
         logger.info("Result Data Frame: %s", result_df)
@@ -168,9 +180,19 @@ class CSVChatbot(BaseExample):
             template=prompt_config.get("csv_response_template", []),
             input_variables=["query", "data"],
         )
-        response_prompt = response_prompt_template.format(query=prompt, data=result_df)
+        response_prompt = response_prompt_template.format(query=query, data=result_df)
 
         logger.info("Using prompt for response: %s", response_prompt)
 
         chain = response_prompt_template | llm | StrOutputParser()
-        return chain.stream({"query": prompt, "data": result_df})
+        return chain.stream({"query": query, "data": result_df})
+    
+    def get_documents(self):
+        """Retrieves filenames stored in the vector store."""
+        decoded_filenames = []
+        logger.error("get_documents not implemented")
+        return decoded_filenames
+
+    def delete_documents(self, filenames: List[str]):
+        """Delete documents from the vector index."""
+        logger.error("delete_documents not implemented")
