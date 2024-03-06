@@ -172,14 +172,8 @@ Modify ``compose.env`` in the ``deploy/compose`` directory to set your environme
     # full path to the model store directory storing the nemo embedding model
     export EMBEDDING_MODEL_DIRECTORY="/home/nvidia/nv-embed-qa_v003-A100"
 
-2. [OPTIONAL] the config file for chain server can be updated in compose.env
-    ```
-    APP_CONFIG_FILE=/dev/null
-    ```
 
-    Note: If you're using `NV-GPT-8B-base`, use [nemotron_config.yaml](../../deploy/compose/nemotron_config.yaml) as `APP_CONFIG_FILE` in [compose.env](../../deploy/compose/compose.env) for proper response.
-
-3. Deploy the enterprise RAG example via Docker compose using milvus vector store, steps to deploy RAG example with pgvector vector store is [here](#deploying-with-pgvector-vector-store).
+2. Deploy the enterprise RAG example via Docker compose using milvus vector store, steps to deploy RAG example with pgvector vector store is [here](#deploying-with-pgvector-vector-store).
 
 ```
 $ source deploy/compose/compose.env; docker compose -f deploy/compose/docker-compose-enterprise.yaml up -d

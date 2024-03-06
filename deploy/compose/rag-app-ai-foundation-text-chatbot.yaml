@@ -26,8 +26,6 @@ services:
       COLLECTION_NAME: nvidia_ai_foundation
       APP_RETRIEVER_TOPK: 4
       APP_RETRIEVER_SCORETHRESHOLD: 0.25
-    volumes:
-      - ${APP_CONFIG_FILE}:${APP_CONFIG_FILE}
     ports:
     - "8081:8081"
     expose:
