@@ -20,15 +20,16 @@ It uses OpenAI's GPT-4 model for sub-answer formation, tool prediction and math 
 Search tool is a RAG pipeline, whereas the math tool uses an LLM call to perform mathematical calculations.
 """
 
-from langchain.vectorstores import FAISS
-from langchain.document_loaders import UnstructuredFileLoader
+from langchain_community.vectorstores.faiss import FAISS
+from langchain_community.document_loaders import UnstructuredFileLoader
 from langchain.text_splitter import CharacterTextSplitter
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
-from langchain.chains import LLMChain
-from langchain.prompts import BaseChatPromptTemplate
-from langchain.schema import HumanMessage
-from langchain.agents import LLMSingleActionAgent, AgentOutputParser, AgentExecutor, Tool
+from langchain_core.prompts.chat import ChatPromptTemplate
+from langchain_core.output_parsers.string import StrOutputParser
+from langchain.chains.llm import LLMChain
+from langchain_core.prompts.chat import BaseChatPromptTemplate
+from langchain_core.messages.human import HumanMessage
+from langchain.agents.agent import LLMSingleActionAgent, AgentOutputParser, AgentExecutor
+from langchain.tools import Tool
 from langchain.schema.agent import AgentFinish, AgentAction
 from typing import List, Union, Dict, Any
 import json
