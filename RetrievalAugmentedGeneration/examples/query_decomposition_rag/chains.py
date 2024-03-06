@@ -206,7 +206,7 @@ class QueryDecompositionChatbot(BaseExample):
 
         logger.info("Using rag to generate response from document")
         set_service_context()
-        final_context = self.run_agent(query)
+        final_context = self.run_agent(query, **kwargs)
         logger.info(f"Final Answer from agent: {final_context}")
         # TODO Add chat_history
         final_prompt_template = ChatPromptTemplate.from_messages(
@@ -220,7 +220,7 @@ class QueryDecompositionChatbot(BaseExample):
         return chain.stream({})
 
 
-    def create_agent(self) -> AgentExecutor:
+    def create_agent(self, **kwargs) -> AgentExecutor:
         """
         Creates the tools, chain, output parser and agent used to fetch the full context.
         """
@@ -235,6 +235,7 @@ class QueryDecompositionChatbot(BaseExample):
 
         prompt = CustomPromptTemplate(template=template, tools=tools, input_variables=["question"], ledger=self.ledger)
         output_parser = CustomOutputParser(ledger=self.ledger)
+        llm = get_llm(**kwargs)
         llm_chain = LLMChain(llm=llm, prompt=prompt)
 
         recursive_decomposition_agent = LLMSingleActionAgent(
@@ -245,12 +246,12 @@ class QueryDecompositionChatbot(BaseExample):
         return agent_executor
 
 
-    def run_agent(self, question: str):
+    def run_agent(self, question: str, **kwargs):
         """
         Run question on the agent
         """
 
-        agent_executor = self.create_agent()
+        agent_executor = self.create_agent(**kwargs)
         agent_executor.invoke({"question": question})
 
         ##### LLM call to get final answer ######

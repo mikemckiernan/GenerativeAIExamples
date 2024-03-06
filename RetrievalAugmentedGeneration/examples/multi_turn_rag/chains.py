@@ -144,6 +144,8 @@ class MultiTurnChatbot(BaseExample):
                                                                                     search_kwargs={"score_threshold": settings.retriever.score_threshold, "k": settings.retriever.top_k})}
                         )
                     )
+                    chain = retrieval_chain | stream_chain
+
                     for chunk in chain.stream({"input": query}):
                         yield chunk
                         resp_str += chunk
