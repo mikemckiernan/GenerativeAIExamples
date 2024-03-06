@@ -9,8 +9,8 @@ services:
         EXAMPLE_NAME: nvidia_ai_foundation
     command: --port 8081 --host 0.0.0.0
     environment:
-      APP_VECTORSTORE_URL: "${POSTGRES_HOST_IP:-pgvector}:${POSTGRES_PORT_NUMBER:-5432}"
-      APP_VECTORSTORE_NAME: "pgvector"
+      APP_VECTORSTORE_URL: "http://milvus:19530"
+      APP_VECTORSTORE_NAME: "milvus"
       APP_LLM_MODELNAME: mixtral_8x7b
       APP_LLM_MODELENGINE: nv-ai-foundation
       APP_EMBEDDINGS_MODELNAME: nvolveqa_40k

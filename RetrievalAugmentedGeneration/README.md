@@ -588,9 +588,9 @@ $ docker compose -f deploy/compose/rag-app-query-decomposition-agent.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
 CONTAINER ID   NAMES                  STATUS
-256da0ecdb7b   rag-playground         Up 48 minutes
-2974aa4fb2ce   chain-server           Up 48 minutes
-79b10c7fb0be   pgvector               Up 48 minutes
+256da0ecdb7b   rag-playground         Up 15 minutes
+2974aa4fb2ce   chain-server           Up 15 minutes
+3163cc088bde   pgvector               Up 15 minutes
 ```
 
 #### 5.3 Test
@@ -775,7 +775,7 @@ c42df344bb25   milvus-etcd            Up 48 minutes (healthy)
 ### 9: Multi Turn RAG
 
 #### 9.1 Description
-This example showcases multi turn usecase in a RAG pipeline. It stores the conversation history and knowledge base in PGVector and retrieves them at runtime to understand contextual queries. It uses NeMo Inference Microservices to communicate with the embedding model and large language model.
+This example showcases multi turn usecase in a RAG pipeline. It stores the conversation history and knowledge base in Milvus and retrieves them at runtime to understand contextual queries. It uses NeMo Inference Microservices to communicate with the embedding model and large language model.
 The example supports ingestion of PDF, .txt files. The docs are ingested in a dedicated document vectorstore. The prompt for the example is currently tuned to act as a document chat bot.
 For maintaining the conversation history, we store the previous query of user and its generated answer as a text entry in a different dedicated vectorstore for conversation history.
 Both these vectorstores are part of a Langchain [LCEL](https://python.langchain.com/docs/expression_language/) chain as Langchain Retrievers. When the chain is invoked with a query, its passed through both the retrievers.
@@ -832,7 +832,7 @@ You can switch between Milvus and PGVector, the two vector database options avai
 
 #### Switching from pgvector to Milvus Vector DB
 
-1. Update Docker Compose file: Locate the Docker Compose file for the specific example where you want to switch from PGVector to Milvus. Within the query service configuration, update the following environment variables:
+1. Update Docker Compose file: Locate the Docker Compose file for the specific example where you want to switch from PGVector to Milvus. Within the chain server service configuration, update the following environment variables:
     - `APP_VECTORSTORE_NAME`: Change the value to "milvus".
     - `APP_VECTORSTORE_URL`: Update this to the IP address of your Milvus microservice. If you're using the provided `docker-compose-vectordb.yaml` file in same system, you can keep the value as `"http://milvus:19530"`.
 
@@ -859,7 +859,7 @@ docker compose -f deploy/compose<example.yaml> up -d
 
 #### Switching from Milvus to PGVector Vector DB
 
-1. `Update Docker Compose file`: Locate the Docker Compose file for the specific example and update the environment variables within the query service:
+1. `Update Docker Compose file`: Locate the Docker Compose file for the specific example and update the environment variables within the chain server service:
     - APP_VECTORSTORE_NAME: Change the value to "pgvector".
     - APP_VECTORSTORE_URL: Update this to the IP address of your PGVector microservice. You can also update additional details like password, username, and database name in the following environment variables:
     - POSTGRES_PASSWORD (default: "password")

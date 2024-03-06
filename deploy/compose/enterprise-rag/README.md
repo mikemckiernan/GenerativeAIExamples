@@ -198,24 +198,24 @@ This example showcases a minimilastic RAG usecase built using Nvidia AI Foundati
 </table>
 
 ## Deployment
-1. Add ngc api key in `deploy/compose/compose.env`.
+1. Add ngc api key in `compose.env`.
     ```shell
     export NVIDIA_API_KEY="nvapi-*"
     ```
 
 2. Run the pipeline
     ```
-    docker compose -f deploy/compose/docker-compose-vectordb.yaml up -d pgvector
+    docker compose -f docker-compose-vectordb.yaml up -d pgvector
     source compose.env ; docker compose -f rag-app-ai-foundation-text-chatbot.yaml up -d
     ```
 
 3. Check status of container
     ```
     $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
-    CONTAINER ID   NAMES                                   STATUS
-    32515fcb8ad2   rag-playground                          Up 26 minutes
-    d60e0cee49f7   rag-application-text-chatbot            Up 27 minutes
-    4f191fbeda4a   pgvector                                Up 27 minutes
+    CONTAINER ID   NAMES                                          STATUS
+    32515fcb8ad2   rag-playground                                 Up 26 minutes
+    d60e0cee49f7   rag-application-ai-foundation-text-chatbot     Up 27 minutes
+    4f191fbeda4a   pgvector                                       Up 27 minutes
     ```
 
 6. Open browser and interact with rag-playground at http://<host-ip>:8090
@@ -414,7 +414,7 @@ The retriever retrieves context from the document vectorstore and the closest ma
     $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
     CONTAINER ID   NAMES                                   STATUS
     32515fcb8ad2   rag-playground                          Up 26 minutes
-    d60e0cee49f7   rag-application-multimodal-chatbot      Up 27 minutes
+    d60e0cee49f7   rag-application-multiturn-chatbot       Up 27 minutes
     02c8062f15da   nemo-retriever-embedding-microservice   Up 27 minutes (healthy)
     7bd4d94dc7a7   nemollm-inference-ms                    Up 27 minutes
     55135224e8fd   pgvector                                Up 27 minutes

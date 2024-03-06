@@ -39,21 +39,22 @@ $ grep NVIDIA_API_KEY deploy/compose/compose.env
  export NVIDIA_API_KEY="nvapi-*"
 ```
 
-3. Set the nv-ai-foundation example in <i>compose.env</i>.
-```
- export RAG_EXAMPLE="nvidia_ai_foundation"
-```
-4. Deploy the developer RAG example via Docker compose.
+3. Deploy the developer RAG example via Docker compose.
 
 ```
 $ source deploy/compose/compose.env ; docker compose -f deploy/compose/rag-app-ai-foundation-text-chatbot.yaml build
 
+$ docker compose -f deploy/compose/docker-compose-vectordb.yaml up -d milvus
+
 $ docker compose -f deploy/compose/rag-app-ai-foundation-text-chatbot.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
-CONTAINER ID   NAMES             STATUS
-70ef27ae4c91   rag-playground    Up 56 seconds
-4aacfbe89464   chain-server      Up 56 seconds
+CONTAINER ID   NAMES               STATUS
+b09fa8a01e19   rag-playground      Up 3 minutes
+5743d8ebd5c7   chain-server        Up 3 minutes
+3163cc088bde   milvus-standalone   Up 3 minutes
+c05205243882   milvus-minio        Up 3 minutes (healthy)
+ded69d51ae70   milvus-etcd         Up 3 minutes (healthy)
 ```
 
 ## Test
