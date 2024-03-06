@@ -69,7 +69,7 @@ The retriever retrieves context from the document vectorstore and the closest ma
 
 1. Pull in the helm chart from NGC
    ```
-   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-app-multiturn-chatbot-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
+   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-app-multiturn-chatbot-v0.5.0-rc1.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
    ```
 
 2. Create the example namespace
@@ -80,7 +80,7 @@ The retriever retrieves context from the document vectorstore and the closest ma
 3. Create the Helm pipeline instance and start the services.
 
    ```console
-   $ helm install multi-turn rag-app-multiturn-chatbot-v0.4.0.tgz -n multi-turn --set imagePullSecret.password=<NGC_API_KEY>
+   $ helm install multi-turn rag-app-multiturn-chatbot-v0.5.0-rc1.tgz -n multi-turn --set imagePullSecret.password=<NGC_API_KEY>
    ```
 
 4. Verify the pods are running and ready.
@@ -139,7 +139,7 @@ This example showcases multi modal usecase in a RAG pipeline. It can understand 
 
 1. Pull in the helm chart from NGC
    ```
-   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-app-multimodal-chatbot-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
+   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-app-multimodal-chatbot-v0.5.0-rc1.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
    ```
 
 3. Create the example namespace
@@ -179,7 +179,7 @@ This example showcases multi modal usecase in a RAG pipeline. It can understand 
 6. Create the Helm pipeline instance for core multimodal rag services.
 
    ```console
-   $ helm install multimodal rag-app-multimodal-chatbot-v0.4.0.tgz -n multimodal --set imagePullSecret.password=<NGC_API_KEY>
+   $ helm install multimodal rag-app-multimodal-chatbot-v0.5.0-rc1.tgz -n multimodal --set imagePullSecret.password=<NGC_API_KEY>
    ```
 
 7. Verify the pods are running and ready.
@@ -245,7 +245,7 @@ Currently, customization of the CSV data retrieval prompt is not supported.
 ## Deployment
 1. Pull in the helm chart from NGC
    ```
-   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-app-structured-data-chatbot-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
+   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-app-structured-data-chatbot-v0.5.0-rc1.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
    ```
 
 3. Create the example namespace
@@ -261,7 +261,7 @@ Currently, customization of the CSV data retrieval prompt is not supported.
 5. Create the Helm pipeline instance and start the services.
 
    ```console
-   $ helm install csv rag-app-structured-data-chatbot-v0.4.0.tgz -n csv --set imagePullSecret.password=<NGC_API_KEY>
+   $ helm install csv rag-app-structured-data-chatbot-v0.5.0-rc1.tgz -n csv --set imagePullSecret.password=<NGC_API_KEY>
    ```
 
 6. Verify the pods are running and ready.
@@ -320,7 +320,7 @@ This example showcases a RAG usecase built using task decomposition paradigm. It
 
 1. Pull in the helm chart from NGC
    ```
-   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-app-query-decomposition-agent-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
+   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-app-query-decomposition-agent-v0.5.0-rc1.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
    ```
 
 3. Create the example namespace
@@ -336,7 +336,7 @@ This example showcases a RAG usecase built using task decomposition paradigm. It
 5. Create the Helm pipeline instance and start the services.
 
    ```console
-   $ helm install decompose rag-app-query-decomposition-agent-v0.4.0.tgz -n decompose --set imagePullSecret.password=<NGC_API_KEY>
+   $ helm install decompose rag-app-query-decomposition-agent-v0.5.0-rc1.tgz -n decompose --set imagePullSecret.password=<NGC_API_KEY>
    ```
 
 6. Verify the pods are running and ready.
@@ -394,7 +394,7 @@ This example showcases a minimilastic RAG usecase built using Nvidia AI Foundati
 ## Deployment
 1. Pull in the helm chart from NGC
    ```
-   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-app-ai-foundation-text-chatbot-v0.4.0.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
+   helm fetch https://helm.ngc.nvidia.com/ohlfw0olaadg/ea-rag-examples/charts/rag-app-ai-foundation-text-chatbot-v0.5.0-rc1.tgz --username='$oauthtoken' --password=<YOUR NGC API KEY>
    ```
 
 3. Create the example namespace
@@ -410,7 +410,7 @@ This example showcases a minimilastic RAG usecase built using Nvidia AI Foundati
 5. Create the Helm pipeline instance and start the services.
 
    ```console
-   $ helm install nvai rag-app-ai-foundation-text-chatbot-v0.4.0.tgz -n nvai --set imagePullSecret.password=<NGC_API_KEY>
+   $ helm install nvai rag-app-ai-foundation-text-chatbot-v0.5.0-rc1.tgz -n nvai --set imagePullSecret.password=<NGC_API_KEY>
    ```
 
 6. Verify the pods are running and ready.
