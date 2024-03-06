@@ -244,7 +244,8 @@ async def generate_answer(request: Request, prompt: Prompt) -> StreamingResponse
             message=Message(
                 role="assistant",
                 content=exception_msg
-            )
+            ),
+            finish_reason="[DONE]"
         )
         chain_response.choices.append(response_choice)
         logger.error(f"Error from Milvus database in /generate endpoint. Please ensure you have ingested some documents. Error details: {e}")
@@ -258,7 +259,8 @@ async def generate_answer(request: Request, prompt: Prompt) -> StreamingResponse
             message=Message(
                 role="assistant",
                 content=exception_msg
-            )
+            ),
+            finish_reason="[DONE]"
         )
         chain_response.choices.append(response_choice)
         logger.error(f"Error from /generate endpoint. Error details: {e}")
