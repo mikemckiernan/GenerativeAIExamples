@@ -12,7 +12,7 @@ imagePullSecret:
   password: ""
 
 query:
-  image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-application-multiturn-chatbot:0.4.0
+  image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-application-multiturn-chatbot:0.5.0-rc1
   name: chain-server-multi-turn
   replicas: 1
   nodeSelector: {}
@@ -43,7 +43,7 @@ query:
           name: http
 
 frontend:
-  image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-playground:0.4.0
+  image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-playground:0.5.0-rc1
   name: rag-playground-multi-turn
   replicas: 1
   nodeSelector: {}
