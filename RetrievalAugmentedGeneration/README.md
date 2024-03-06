@@ -560,7 +560,7 @@ It showcases how to perform RAG when the agent needs to access information from 
     <td class="tg-knyo">NO</td>
     <td class="tg-knyo">YES</td>
     <td class="tg-knyo">NO</td>
-    <td class="tg-knyo">FAISS</td>
+    <td class="tg-knyo">milvus</td>
   </tr>
 </tbody>
 </table>
@@ -582,15 +582,17 @@ It showcases how to perform RAG when the agent needs to access information from 
 ```
 $ source deploy/compose/compose.env; docker compose -f deploy/compose/rag-app-query-decomposition-agent.yaml build
 
-$ docker compose -f deploy/compose/docker-compose-vectordb.yaml up -d pgvector
+$ docker compose -f deploy/compose/docker-compose-vectordb.yaml up -d milvus
 
 $ docker compose -f deploy/compose/rag-app-query-decomposition-agent.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
-CONTAINER ID   NAMES                  STATUS
-256da0ecdb7b   rag-playground         Up 15 minutes
-2974aa4fb2ce   chain-server           Up 15 minutes
-3163cc088bde   pgvector               Up 15 minutes
+CONTAINER ID   NAMES               STATUS
+c3f80b450df9   rag-playground      Up 7 minutes
+08ace747cb97   chain-server        Up 7 minutes
+3163cc088bde   milvus-standalone   Up 7 minutes
+c05205243882   milvus-minio        Up 7 minutes (healthy)
+ded69d51ae70   milvus-etcd         Up 7 minutes (healthy)
 ```
 
 #### 5.3 Test
@@ -816,15 +818,17 @@ The retriever retrieves context from the document vectorstore and the closest ma
 ```
 $ source deploy/compose/compose.env; docker compose -f deploy/compose/rag-app-multiturn-chatbot.yaml build
 
-$ docker compose -f deploy/compose/docker-compose-vectordb.yaml up -d pgvector
+$ docker compose -f deploy/compose/docker-compose-vectordb.yaml up -d milvus
 
 $ docker compose -f deploy/compose/rag-app-multiturn-chatbot.yaml up -d
 
 $ docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
-CONTAINER ID   NAMES                  STATUS
-256da0ecdb7b   rag-playground         Up 48 minutes
-2974aa4fb2ce   chain-server           Up 48 minutes
-79b10c7fb0be   pgvector               Up 48 minutes
+CONTAINER ID   NAMES               STATUS
+831cc85a2ce4   rag-playground      Up 4 minutes
+028b9e2ec6ea   chain-server        Up 4 minutes
+3163cc088bde   milvus-standalone   Up About an hour
+c05205243882   milvus-minio        Up About an hour (healthy)
+ded69d51ae70   milvus-etcd         Up About an hour (healthy)
 ```
 
 ### Switching Vector Databases

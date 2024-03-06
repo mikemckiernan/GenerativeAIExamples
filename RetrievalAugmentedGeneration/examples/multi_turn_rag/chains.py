@@ -131,9 +131,9 @@ class MultiTurnChatbot(BaseExample):
         # TODO Integrate chat_history
         try:
             if docstore:
-                logger.info(f"Getting retrieved top k values: {settings.retriever.top_k} with confidence threshold: {settings.retriever.score_threshold}")
 
                 try:
+                    logger.info(f"Getting retrieved top k values: {settings.retriever.top_k} with confidence threshold: {settings.retriever.score_threshold}")
                     retrieval_chain = (
                         RunnableAssign(
                             {"context": itemgetter("input") | docstore.as_retriever(search_type="similarity_score_threshold",
@@ -144,7 +144,22 @@ class MultiTurnChatbot(BaseExample):
                                                                                     search_kwargs={"score_threshold": settings.retriever.score_threshold, "k": settings.retriever.top_k})}
                         )
                     )
+                    chain = retrieval_chain | stream_chain
+
+                    for chunk in chain.stream({"input": query}):
+                        yield chunk
+                        resp_str += chunk
+
+                    self.save_memory_and_get_output(
+                        {"input": query, "output": resp_str}, convstore
+                    )
+
+                    return chain.stream(query)
+
                 except NotImplementedError:
+                    # TODO: Optimize it, currently error is raised during stream
+                    # check if there is better way to handle this similarity case
+                    logger.info(f"Skipping similarity score as it's not supported by retriever")
                     # Some retriever like milvus don't have similarity score threshold implemented
                     retrieval_chain = (
                         RunnableAssign(
@@ -154,17 +169,16 @@ class MultiTurnChatbot(BaseExample):
                             {"history": itemgetter("input") | convstore.as_retriever()}
                         )
                     )
-                chain = retrieval_chain | stream_chain
+                    chain = retrieval_chain | stream_chain
+                    for chunk in chain.stream({"input": query}):
+                        yield chunk
+                        resp_str += chunk
 
-                for chunk in chain.stream({"input": query}):
-                    yield chunk
-                    resp_str += chunk
+                    self.save_memory_and_get_output(
+                        {"input": query, "output": resp_str}, convstore
+                    )
 
-                self.save_memory_and_get_output(
-                    {"input": query, "output": resp_str}, convstore
-                )
-
-                return chain.stream(query)
+                    return chain.stream(query)
 
         except Exception as e:
             logger.warning(f"Failed to generate response due to exception {e}")
@@ -187,11 +201,11 @@ class MultiTurnChatbot(BaseExample):
                         search_type="similarity_score_threshold",
                         search_kwargs={"score_threshold": settings.retriever.score_threshold, "k": settings.retriever.top_k},
                     )
+                    docs = retriever.invoke(content)
                 except NotImplementedError:
                     # Some retriever like milvus don't have similarity score threshold implemented
                     retriever = docstore.as_retriever()
-
-                docs = retriever.invoke(content)
+                    docs = retriever.invoke(content)
 
                 result = []
                 for doc in docs:
