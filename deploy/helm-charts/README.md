@@ -220,7 +220,8 @@ Currently, customization of the CSV data retrieval prompt is not supported.
 <table class="tg">
 <thead>
   <tr>
-    <th class="tg-6ydv">LLM Model</th>
+    <th class="tg-6ydv">LLM Model (Data Retrieval)</th>
+    <th class="tg-6ydv">LLM Model (Response Paraphrasing)</th>
     <th class="tg-6ydv">Embedding</th>
     <th class="tg-6ydv">Framework</th>
     <th class="tg-6ydv">Document Type</th>
@@ -231,6 +232,7 @@ Currently, customization of the CSV data retrieval prompt is not supported.
 <tbody>
   <tr>
     <td class="tg-knyo">NV-Llama2-70B-RLHF</td>
+    <td class="tg-knyo">Mixtral-8x7b</td>
     <td class="tg-knyo">Not Used</td>
     <td class="tg-knyo">PandasAI</td>
     <td class="tg-knyo">CSV</td>
