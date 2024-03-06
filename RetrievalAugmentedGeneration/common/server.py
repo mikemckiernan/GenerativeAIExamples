@@ -237,12 +237,34 @@ async def generate_answer(request: Request, prompt: Prompt) -> StreamingResponse
         return StreamingResponse(response_generator(), media_type="text/event-stream")
 
     except (MilvusException, MilvusUnavailableException) as e:
+        exception_msg = "Error from milvus server. Please ensure you have ingested some documents. Please check chain-server logs for more details."
+        chain_response = ChainResponse()
+        response_choice = ChainResponseChoices(
+            index=0,
+            message=Message(
+                role="assistant",
+                content=exception_msg
+            ),
+            finish_reason="[DONE]"
+        )
+        chain_response.choices.append(response_choice)
         logger.error(f"Error from Milvus database in /generate endpoint. Please ensure you have ingested some documents. Error details: {e}")
-        return StreamingResponse(iter(["Error from milvus server. Please ensure you have ingested some documents. Please check chain-server logs for more details."]), media_type="text/event-stream")
+        return StreamingResponse(iter(["data: " + str(chain_response.json()) + "\n\n"]), media_type="text/event-stream")
 
     except Exception as e:
+        exception_msg = "Error from chain server. Please check chain-server logs for more details."
+        chain_response = ChainResponse()
+        response_choice = ChainResponseChoices(
+            index=0,
+            message=Message(
+                role="assistant",
+                content=exception_msg
+            ),
+            finish_reason="[DONE]"
+        )
+        chain_response.choices.append(response_choice)
         logger.error(f"Error from /generate endpoint. Error details: {e}")
-        return StreamingResponse(iter(["Error from chain server. Please check chain-server logs for more details."]), media_type="text/event-stream")
+        return StreamingResponse(iter(["data: " + str(chain_response.json()) + "\n\n"]), media_type="text/event-stream")
 
 
 @app.post("/search", response_model=DocumentSearchResponse)
