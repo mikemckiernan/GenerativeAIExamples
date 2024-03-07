@@ -143,7 +143,7 @@ This example showcases RAG pipeline. It uses nemollm inference microservice to h
     4f191fbeda4a   pgvector                                Up 27 minutes
     ```
 
-6. Open browser and interact with rag-playground at http://<host-ip>:8090
+6. Open browser and interact with rag-playground at http://localhost:3001
 
 
 # 02: No-GPU using NVIDIA AI Foundation
@@ -218,7 +218,7 @@ This example showcases a minimilastic RAG usecase built using Nvidia AI Foundati
     4f191fbeda4a   pgvector                                       Up 27 minutes
     ```
 
-6. Open browser and interact with rag-playground at http://<host-ip>:8090
+6. Open browser and interact with rag-playground at http://localhost:3001
 
 # 03: Multi Modal RAG
 
@@ -317,7 +317,7 @@ This example showcases multi modal usecase in a RAG pipeline. It can understand 
     c42df344bb25   milvus-etcd                             Up 48 minutes (healthy)
     ```
 
-6. Open browser and interact with rag-playground at http://<host-ip>:8090
+6. Open browser and interact with rag-playground at http://localhost:3001
 
 
 
@@ -420,5 +420,5 @@ The retriever retrieves context from the document vectorstore and the closest ma
     55135224e8fd   pgvector                                Up 27 minutes
     ```
 
-6. Open browser and interact with rag-playground at http://<host-ip>:8090
+6. Open browser and interact with rag-playground at http://localhost:3001
 

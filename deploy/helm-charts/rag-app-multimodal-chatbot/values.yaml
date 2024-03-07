@@ -12,7 +12,7 @@ imagePullSecret:
   password: ""
 
 query:
-  image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-application-multimodal-chatbot:0.4.0
+  image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-application-multimodal-chatbot:0.5.0-rc1
   name: chain-server-multimodal
   replicas: 1
   nodeSelector: {}
@@ -42,7 +42,7 @@ query:
           name: http
 
 frontend:
-  image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-playground:0.4.0
+  image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-playground:0.5.0-rc1
   name: rag-playground-multimodal
   replicas: 1
   nodeSelector: {}

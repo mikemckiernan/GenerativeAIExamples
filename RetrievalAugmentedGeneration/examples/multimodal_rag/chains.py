@@ -53,10 +53,10 @@ def get_doc_retriever(type: str = "query") -> Retriever:
     embedding_size = embedder.get_embedding_size()
     return Retriever(embedder=get_embedder(type) , vector_client=get_vector_index(embedding_size))
 
-@lru_cache()
 @utils_cache
+@lru_cache()
 def get_llm(model_name, is_response_generator=False, **kwargs):
-    return LLMClient(model_name=model_name, is_response_generator=is_response_generator=model_name, **kwargs)
+    return LLMClient(model_name=model_name, is_response_generator=is_response_generator, **kwargs)
 
 
 class MultimodalRAG(BaseExample):

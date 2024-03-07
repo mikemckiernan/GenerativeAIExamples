@@ -50,7 +50,7 @@ services:
 
   chain-server:
     container_name: rag-application-text-chatbot
-    image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-application-text-chatbot:0.4.0
+    image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-application-text-chatbot:0.5.0-rc1
     command: --port 8081 --host 0.0.0.0
     environment:
       APP_VECTORSTORE_URL: "${POSTGRES_HOST_IP:-pgvector}:${POSTGRES_PORT_NUMBER:-5432}"
@@ -85,9 +85,9 @@ services:
       - "nemollm-inference"
       - "nemollm-embedding"
 
-  rag-playground:
-    container_name: rag-playground
-    image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-playground:0.4.0
+  playground-helper:
+    container_name: playground-helper
+    image: nvcr.io/ohlfw0olaadg/ea-rag-examples/rag-playground:0.5.0-rc1
     command: --port 8090
     environment:
       APP_SERVERURL: http://chain-server
@@ -103,6 +103,16 @@ services:
     - "8090"
     depends_on:
     - chain-server
+
+  rag-playground:
+    container_name: rag-playground
+    image: gitlab-master.nvidia.com:5005/ngc/apps/ai-playground:latest
+    ports:
+    - "3001:3001"
+    expose:
+    - "3001"
+    depends_on:
+    - playground-helper
 
 networks:
   default:
