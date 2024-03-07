@@ -94,12 +94,13 @@ class MultiTurnChatbot(BaseExample):
         logger.info("Using llm to generate response directly without knowledge base.")
         system_message = [("system", settings.prompts.chat_template)]
         conversation_history = [(msg.role, msg.content) for msg in chat_history]
+        user_message = [("user", "")]
 
         # Checking if conversation_history is not None and not empty
         prompt_template = ChatPromptTemplate.from_messages(
             system_message + conversation_history
         ) if conversation_history else ChatPromptTemplate.from_messages(
-            system_message 
+            system_message + user_message
         )
 
         llm = get_llm(**kwargs)
