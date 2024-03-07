@@ -17,6 +17,6 @@ include:
 - template: Security/SAST.gitlab-ci.yml
 - template: Security/Secret-Detection.gitlab-ci.yml
 - project: 'sw-gpu-doctools/docs-ci'
-  ref: 1ee3475c
+  ref: main
   file: 'generative-ai-examples/docs-ci.yaml'
 
