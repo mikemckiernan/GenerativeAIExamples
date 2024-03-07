@@ -58,13 +58,13 @@ The chat bot also supports uploading documents to create a knowledge base.
 
    * - mixtral_8x7b
      - nvolveqa_40k
-     - Langchain
+     - LangChain
      - :doc:`ai-foundation-models`
      - NO
      - NO
      - YES
      - NO
-     - FAISS
+     - Milvus or pgvector
 
    * - llama-2
      - e5-large-v2
@@ -94,7 +94,7 @@ The chat bot also supports uploading documents to create a knowledge base.
      - NO
      - YES
      - NO
-     - FAISS
+     - Milvus or pgvector
 
    * - llama2_7b
      - e5-large-v2
@@ -105,6 +105,39 @@ The chat bot also supports uploading documents to create a knowledge base.
      - NO
      - YES
      - Milvus or pgvector
+
+   * - NV-Llama2-70B-RLHF
+     - Not Applicable
+     - PandasAI
+     - :doc:`structured-data`
+     - NO
+     - NO
+     - YES
+     - NO
+     - Not Applicable
+
+   * - | mixtral_8x7b for response generation,
+       | deplot for graph to text conversion,
+       | neva_22B for image to text conversion
+     - nvolveqa_40k
+     - Custom Python
+     - :doc:`multimodal-data`
+     - NO
+     - NO
+     - YES
+     - NO
+     - Milvus or pgvector
+
+   * - mixtral_8x7b
+     - nvolveqa_40k
+     - LangChain
+     - :doc:`multi-turn`
+     - NO
+     - NO
+     - YES
+     - NO
+     - Milvus or pgvector
+
 ```
 
 ## Open Source Connectors
@@ -121,12 +154,14 @@ The chat bot also supports uploading documents to create a knowledge base.
 
 About the RAG Pipelines <self>
 support-matrix
-Using AI Foundation Models <ai-foundation-models>
-Using Local GPUs <local-gpu>
+AI Foundation Models <ai-foundation-models>
+Local GPUs <local-gpu>
 Multi-GPU for Inference <multi-gpu>
 Query Decomposition <query-decomposition>
 Quantized Model <quantized-llm-model>
-Strutured Data <structured-data>
+Structured Data <structured-data>
+Multimodal Data <multimodal-data>
+Multi-turn <multi-turn>
 Sample Chat Application <using-sample-web-application>
 Alternative Vector Database <vector-database>
 ```
@@ -146,14 +181,13 @@ Observability <observability>
 :hidden:
 :glob:
 
-notebooks/0[1,2,3,4,5]*
+notebooks/*
 ```
 
 ```{toctree}
 :caption: Software Components
 :titlesonly:
 :hidden:
-:glob:
 
 architecture
 llm-inference-server
