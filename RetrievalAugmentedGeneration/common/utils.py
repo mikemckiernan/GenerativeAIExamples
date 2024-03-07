@@ -284,7 +284,7 @@ def get_llm(**kwargs) -> LLM | SimpleChatModel:
         )
         return nemo_infer
     elif settings.llm.model_engine == "nemo-infer-openai":
-        unused_params = [key for key in kwargs.keys() if key not in ['temperature', 'top_p', 'max_tokens',  'stream']]
+        unused_params = [key for key in kwargs.keys() if key not in ['temperature', 'max_tokens',  'stream']]
         if unused_params:
             logger.warning(f"The following parameters from kwargs are not supported: {unused_params} for {settings.llm.model_engine}")
         nemo_infer = ChatOpenAI(
@@ -292,7 +292,6 @@ def get_llm(**kwargs) -> LLM | SimpleChatModel:
             openai_api_key="xyz",
             model_name=settings.llm.model_name,
             temperature = kwargs.get('temperature', None),
-            top_p = kwargs.get('top_p', None),
             max_tokens=kwargs.get('max_tokens', DEFAULT_NUM_TOKENS)
         )
         return nemo_infer
