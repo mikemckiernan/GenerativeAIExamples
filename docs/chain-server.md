@@ -1,26 +1,44 @@
+<!--
+  SPDX-FileCopyrightText: Copyright (c) 2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+  SPDX-License-Identifier: Apache-2.0
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
 
 # Chain Server
-A sample fastapi based server (referred to as chain-server in compose files) is provided in the workflow so that you can test the chat system in an interactive manner.
-This server wraps calls made to different components and orchestrates the entire flow for all the provided examples.
 
-This API endpoint allows for several actions:
-- [Chain Server](#chain-server)
-    - [Upload File Endpoint](#upload-file-endpoint)
-    - [Answer Generation Endpoint](#answer-generation-endpoint)
-    - [Document Search Endpoint](#document-search-endpoint)
-- [Running the chain server](#running-the-chain-server)
+```{contents}
+---
+depth: 2
+local: true
+backlinks: none
+---
+```
 
-The API server swagger schema can be visualized at ``host-ip:8081/docs``.
-You can checkout the openapi standard compatible schema for the endpoints supported [here](./api_reference/openapi_schema.json).
+## About the Chain Server
 
-The following sections describe the API endpoint actions further with relevant examples.
+The chain server is implemented as a sample FastAPI-based server so that you can experience a Q&A chat bot.
+The server wraps calls made to different components and orchestrates the entire flow for all the generative AI examples.
+
+## Endpoints
 
 ### Upload File Endpoint
+
 **Summary:** Upload a file. This endpoint should accept a post request with the following JSON in the body:
 
-```json
+```python
 {
-  "file": (file_path, file_binary_data, mime_type),
+  "file": (file_path, file_binary_data, mime_type)
 }
 ```
 
@@ -127,7 +145,7 @@ The response should in JSON form. It should be a list of dictionaries containing
     "score": 0.89123,
     "content": "The content of the relevant chunks from the vector db.",
   },
-  ...
+  // ...
 ]
 ```
 
@@ -157,19 +175,29 @@ The response should in JSON form. It should be a list of dictionaries containing
   - Description: There was a validation error with the request.
   - Response Body: Details of the validation error.
 
+## API Reference
 
-# Running the chain server
-If the web frontend needs to be stood up manually for development purposes, run the following commands:
+You can view the server API schema two ways:
 
-- Build the web UI container from source
-```
-  source deploy/compose/compose.env
-  docker compose -f deploy/compose/docker-compose.yaml build chain-server
-```
-- Run the container which will start the server
-```
-  source deploy/compose/compose.env
-  docker compose -f deploy/compose/docker-compose.yaml up chain-server
-```
+- View it from ``http://host-ip:8081/docs``.
+- View the [openapi_schema.json](./api_reference/openapi_schema.json) file.
+
+## Running the Chain Server Independently
+
+To run the server for development purposes, run the following commands:
+
+- Build the container from source:
+
+  ```console
+  $ source deploy/compose/compose.env
+  $ docker compose -f deploy/compose/rag-app-text-chatbot.yaml build chain-server
+  ```
+
+- Start the container, which starts the server:
+
+  ```console
+  $ source deploy/compose/compose.env
+  $ docker compose -f deploy/compose/rag-app-text-chatbot.yaml up chain-server
+  ```
 
 - Open the swagger URL at ``http://host-ip:8081`` to try out the exposed endpoints.

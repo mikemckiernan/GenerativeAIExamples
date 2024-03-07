@@ -18,3 +18,8 @@ uploaded_files/
 
 # Node modules
 **/node_modules
+
+# File from docs builds
+docs/_*
+docs/notebooks
+docs/experimental
