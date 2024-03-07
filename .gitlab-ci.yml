@@ -6,9 +6,17 @@
 # Note that environment variables can be set in several places
 # See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 stages:
-- test
+  - .pre
+  - build
+  - test
+  - review
+  - deploy
 sast:
   stage: test
 include:
 - template: Security/SAST.gitlab-ci.yml
 - template: Security/Secret-Detection.gitlab-ci.yml
+- project: 'sw-gpu-doctools/docs-ci'
+  ref: 1ee3475c
+  file: 'generative-ai-examples/docs-ci.yaml'
+
