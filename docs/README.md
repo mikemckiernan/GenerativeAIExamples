@@ -46,3 +46,33 @@ Observability is a crucial aspect that facilitates the monitoring and comprehens
 
 * [Support Matrix](./rag/support_matrix.md)
 * [Open API schema references](./rag/api_reference/openapi_schema.json)
+
+## Building the Documentation
+
+If you change the `Dockerfile`, update `CONTAINER_RELEASE_IMAGE` in the `gitlab-ci.yml` file to the new tag and build the container.
+Use the `Dockerfile` in the repository (under the `docker` directory) to generate the custom doc build container.
+
+1. Build the container:
+
+   ```bash
+   docker build --pull \
+     --tag genai-docs:0.1.0 \
+     --file docs/Dockerfile .
+   ```
+
+1. Run the container from the previous step:
+
+   ```bash
+   docker run -it --rm \
+     -v $(pwd):/work -w /work \
+     genai-docs:0.1.0 \
+     bash
+   ```
+
+1. Build the docs:
+
+   ```bash
+   sphinx-build -E -a -b html docs docs/_build/latest
+   ```
+
+   The documentation is viewable in your browser with a URL like <file://.../docs/_build/latest/>.

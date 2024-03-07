@@ -15,7 +15,7 @@
   limitations under the License.
 -->
 
-# Structured Data
+# Multimodal Data
 
 ```{contents}
 ---
@@ -32,30 +32,14 @@ instead of NVIDIA Triton Inference Server, a local Llama 2 model, or local GPUs.
 
 Developers get free credits for 10K requests to any of the available models.
 
-The key difference from [](./ai-foundation-models.md) example is that the example demonstrates how to use RAG with structured CSV data.
+The key difference from [](./ai-foundation-models.md) example is that the example demonstrates how work with multimodal data.
+The model works with any kind of image in PDF, such as graphs and plots, as well as text and tables.
 
 This example uses models from the NVIDIA AI Foundation Models and Endpoints.
-This approach does not require embedding models or vector database solutions.
-Instead, the example uses [PandasAI](https://docs.pandas-ai.com/en/latest/) to manage the workflow.
-
-For ingestion, the query server loads the structured data from a CSV file into a Pandas dataframe.
-The query server can ingest multiple CSV files, provided the files have identical columns.
-Ingestion of CSV files with differing columns is not supported and results in an exception.
-
-The core functionality uses a PandasAI agent to extract information from the dataframe.
-This agent combines the query with the structure of the dataframe into an LLM prompt.
-The LLM then generates Python code to extract the required information from the dataframe.
-Subsequently, this generated code is executed on the dataframe and yields an output dataframe.
-
-To demonstrate the example, sample CSV files are available.
-These are part of the structured data example Helm chart and represent a subset of the [Microsoft Azure Predictive Maintenance](https://www.kaggle.com/datasets/arnabbiswas1/microsoft-azure-predictive-maintenance) from Kaggle.
-The CSV data retrieval prompt is specifically tuned for three CSV files from this dataset: `PdM_machines.csv`, `PdM_errors.csv`, and `PdM_failures.csv`.
-The CSV files to use are specified in the `rag-app-structured-data-chatbot.yaml` Docker Compose file by updating the environment variable `CSV_NAME`.
-The default value is `PdM_machines`, but can be changed to `PdM_errors` or `PdM_failures`.
-Customization of the CSV data retrieval prompt is not supported.
 
 ```{list-table}
 :header-rows: 1
+:widths: 30 10 10 10 10 10 10 10 10
 
 * - Model
   - Embedding
@@ -67,15 +51,17 @@ Customization of the CSV data retrieval prompt is not supported.
   - Triton
   - Vector Database
 
-* - NV-Llama2-70B-RLHF
-  - Not Applicable
-  - PandasAI
+* - Mixtral_8x7b for response generation,
+    Deplot for graph to text conversion,
+    Neva_22B for image to text conversion
+  - nvolveqa_40k
+  - Custom Python
   - QA chatbot
   - NO
   - NO
   - YES
   - NO
-  - Not Applicable
+  - Milvus
 ```
 
 The following figure shows the sample topology:
@@ -152,13 +138,13 @@ You can use different model API endpoints with the same API key.
 1. From the root of the repository, build the containers:
 
    ```console
-   $ docker compose --env-file deploy/compose/compose.env -f deploy/compose/rag-app-structured-data-chatbot.yaml build
+   $ docker compose --env-file deploy/compose/compose.env -f deploy/compose/rag-app-multimodal-chatbot.yaml build
    ```
 
 1. Start the containers:
 
    ```console
-   $ docker compose --env-file deploy/compose/compose.env -f deploy/compose/rag-app-structured-data-chatbot.yaml up -d
+   $ docker compose --env-file deploy/compose/compose.env -f deploy/compose/rag-app-multimodal-chatbot.yaml up -d
    ```
 
    *Example Output*
@@ -167,6 +153,20 @@ You can use different model API endpoints with the same API key.
     ✔ Network nvidia-rag         Created
     ✔ Container chain-server     Started
     ✔ Container rag-playground   Started
+   ```
+
+1. Start the Milvus vector database:
+
+   ```console
+   $ docker compose --env-file deploy/compose/compose.env -f deploy/compose/docker-compose-vectordb.yaml up -d milvus
+   ```
+
+   *Example Output*
+
+   ```output
+   ✔ Container milvus-minio       Started
+   ✔ Container milvus-etcd        Started
+   ✔ Container milvus-standalone  Started
    ```
 
 1. Confirm the containers are running:
@@ -179,15 +179,18 @@ You can use different model API endpoints with the same API key.
 
    ```output
    CONTAINER ID   NAMES               STATUS
-   39a8524829da   rag-playground      Up 2 minutes
-   bfbd0193dbd2   chain-server        Up 2 minutes
+   37dcdb4ffcb0   rag-playground      Up 3 minutes
+   39718f6a2a06   chain-server        Up 3 minutes
+   68af1e4dfb44   milvus-standalone   Up 2 minutes
+   522b12ec17f0   milvus-minio        Up 2 minutes (healthy)
+   ed48988c5657   milvus-etcd         Up 2 minutes (healthy)
    ```
 
 ## Next Steps
 
 - Access the web interface for the chat server.
   Refer to [](./using-sample-web-application.md) for information about using the web interface.
-- Upload a CSV from the `RetrievalAugmentedGeneration/examples/csv_rag` directory to the knowledge base.
+- Upload one or more PDF files with graphics, plots, and tables.
 - Enable the **Use knowledge base** checkbox when you submit a question.
-- [](./vector-database.md)
-- Stop the containers by running `docker compose -f deploy/compose/rag-app-structured-data-chatbot.yaml down`.
+- Stop the containers by running `docker compose -f deploy/compose/rag-app-multimodal-chatbot.yaml down` and
+  `docker compose -f deploy/compose/docker-compose-vectordb.yaml down`.
