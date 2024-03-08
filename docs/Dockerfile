@@ -20,3 +20,4 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive \
  && rm -rf /var/lib/apt/lists/*
 
 RUN --mount=type=bind,source=docs,target=/docs pip install -r docs/requirements.txt
+RUN --mount=type=bind,source=docs,target=/docs pip install -U --no-deps --no-cache-dir -r docs/swagger-requirements.txt

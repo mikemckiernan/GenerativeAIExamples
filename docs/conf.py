@@ -34,6 +34,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx_copybutton",
     "sphinxcontrib.mermaid",
+    "swagger_plugin_for_sphinx",
     "sphinxcontrib.copydirs",
 ]
 
@@ -73,9 +74,10 @@ html_use_index = False
 html_extra_path = ["versions.json"]
 highlight_language = 'console'
 
-html_static_path = ["media"]
+html_static_path = ["media", "api_reference"]
 html_css_files = [
-    "omni-style.css"
+    "omni-style.css",
+    "custom.css"
 ]
 
 html_js_files = [
@@ -86,6 +88,21 @@ html_logo = "media/nvidia-logo-white.png"
 html_favicon = "media/favicon.ico"
 
 templates_path = ["templates"]
+
+swagger_present_uri = ""
+swagger_bundle_uri = "https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"
+swagger_css_uri = "https://unpkg.com/swagger-ui-dist@5/swagger-ui.css"
+
+swagger = [
+    {
+        "name": "Chain Server API Reference",
+        "id": "chain-server-api",
+        "page": "chain-server-api",
+        "options": {
+            "url": "_static/openapi_schema.json"
+        },
+    }
+]
 
 copydirs_additional_dirs = [
     "../notebooks/",
