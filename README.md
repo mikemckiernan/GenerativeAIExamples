@@ -1,6 +1,9 @@
 # NVIDIA Generative AI Examples
 
+[![documentation](https://img.shields.io/badge/documentation-blue.svg)](https://nvidia.github.io/GenerativeAIExamples/latest)
+
 ## Introduction
+
 State-of-the-art Generative AI examples that are easy to deploy, test, and extend. All examples run on the high performance NVIDIA CUDA-X software stack and NVIDIA GPUs.
 
 ## NVIDIA NGC
