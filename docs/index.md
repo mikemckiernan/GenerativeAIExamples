@@ -17,6 +17,8 @@
 
 # NVIDIA Generative AI Examples
 
+A small change.
+
 Generative AI enables users to quickly generate new content based on a variety of inputs and is a powerful tool for streamlining the workflow of creatives, engineers, researchers, scientists, and more.
 The use cases and possibilities span all industries and individuals.
 Generative AI models can produce novel content like stories, emails, music, images, and videos.
