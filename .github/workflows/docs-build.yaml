@@ -15,39 +15,31 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
-
-  build-and-push-image:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-
   build-docs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set ownership
-        run: |
-          chown -R $(id -u):$(id -g) $PWD
       - name: Build image
         run: |
           docker build --pull --tag docs-builder:latest --file docs/Dockerfile .
-        uses: docker/build-push-action@v5
       - name: Build docs
         run: |
-          docker run -it -v $(pwd):/work -w /work docs-builder:latest sphinx-build -b html docs docs/_build/latest
+          docker run -v $(pwd):/work -w /work docs-builder:latest sphinx-build -b html -d /tmp docs docs/_build/latest
       - name: Delete unnecessary files
         run: |
-          find docs/_build -name .doctrees -prune -exec rm -rf {} \;
+          find docs/_build -name jupyter_execute -prune -exec rm -rf {} \;
           find docs/_build -name .buildinfo -exec rm {} \;
       - name: Upload HTML
         uses: actions/upload-artifact@v4
         with:
           name: html-build-artifact
-          path: docs/_build/latest
+          path: docs/_build/
           if-no-files-found: error
           retention-days: 1
       - name: Store PR information
