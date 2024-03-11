@@ -6,7 +6,7 @@ on:
     types: [ opened, synchronize ]
 
   push:
-    branches: [ main, release-* ]
+    branches: [ main ]
     tags:
       - v*
   workflow_dispatch:
@@ -84,8 +84,9 @@ jobs:
       - name: Store docs for a release tag
         if: ${{ startsWith(github.ref, 'refs/tags/v') }}
         env:
-          LATEST: contains(github.event.head_commit.message, '/not-latest') && 'false' || 'true'
+          LATEST: ${{ contains(github.event.head_commit.message, '/not-latest') && 'not-true' || 'true' }}
         run: |
+          printenv LATEST
           if [[ "${GITHUB_REF}" =~ "-rc" ]]; then
             echo "Not saving documents for release candidates."
             exit 0
@@ -94,11 +95,11 @@ jobs:
             TAG="${BASH_REMATCH[1]}"
             rm -rf "${TAG}" && mkdir "${TAG}"
             cp -r latest/* "${TAG}/"
-            cp latest/versions.json .
             git add "${TAG}/"
             if [[ "${LATEST}" == 'true' ]]; then
               rm -rf "latest" && mkdir latest
               cp -r latest/* latest/
+              cp latest/versions.json .
               git add latest
             fi
           fi
