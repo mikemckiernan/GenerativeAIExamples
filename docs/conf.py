@@ -71,7 +71,7 @@ html_theme_options = {
 
 html_domain_indices = False
 html_use_index = False
-html_extra_path = ["versions.json"]
+html_extra_path = ["versions.json", "project.json"]
 highlight_language = 'console'
 
 html_static_path = ["media", "api_reference"]
