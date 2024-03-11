@@ -154,6 +154,7 @@ The chat bot also supports uploading documents to create a knowledge base.
 
 About the RAG Pipelines <self>
 support-matrix
+release-notes
 AI Foundation Models <ai-foundation-models>
 Local GPUs <local-gpu>
 Multi-GPU for Inference <multi-gpu>
